@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EasyVora — IA y Automatización para Empresas</title>
+  <meta name="description" content="EasyVora automatiza tu empresa con inteligencia artificial. Chatbots, análisis de procesos y soluciones a medida." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: #04091A; color: rgba(255,255,255,.85); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    :root {
+      --blue:  #2563EB; --sky: #60A5FA; --navy: #0F1F60;
+      --card:  rgba(255,255,255,.03); --border: rgba(255,255,255,.08);
+      --muted: rgba(255,255,255,.42); --bg1: #04091A; --bg2: #060D22;
+    }
+
+    /* ── CURSOR ── */
+    @media (pointer:fine){ body { cursor:none; } }
+    #cur-dot,#cur-ring { position:fixed; top:0; left:0; border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); }
+    #cur-dot  { width:5px; height:5px; background:var(--sky); }
+    #cur-ring { width:34px; height:34px; border:1.5px solid rgba(96,165,250,.5); transition:width .25s,height .25s,border-color .25s,background .25s; }
+    #cur-ring.big   { width:54px; height:54px; border-color:rgba(96,165,250,.25); background:rgba(96,165,250,.05); }
+    #cur-ring.small { width:20px; height:20px; }
+
+    /* ── SPLASH ── */
+    #splash {
+      position:fixed; inset:0; z-index:10000;
+      background:#04091A;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      transition:opacity 1s ease, transform 1s ease;
+    }
+    #splash.out { opacity:0; transform:translateY(-8px); pointer-events:none; }
+    #splash-logo {
+      width:min(300px,60vw);
+      opacity:0; transform:scale(.65) translateY(24px);
+      animation:logo-in .9s cubic-bezier(.22,.68,0,1.3) .2s forwards;
+      border-radius:20px;
+      box-shadow:0 0 0 1px rgba(255,255,255,.08), 0 0 60px rgba(37,99,235,.35), 0 40px 80px rgba(0,0,0,.4);
+    }
+    @keyframes logo-in {
+      to { opacity:1; transform:scale(1) translateY(0); }
+    }
+    #splash-tag {
+      margin-top:22px; font-size:11px; font-weight:700; letter-spacing:.22em;
+      text-transform:uppercase; color:var(--sky); opacity:0;
+      animation:fadein .7s ease 1.1s forwards;
+    }
+    #splash-line {
+      position:absolute; bottom:0; left:0; height:2px;
+      background:linear-gradient(90deg,var(--blue),var(--sky));
+      animation:load-bar 2.5s cubic-bezier(.4,0,.2,1) .1s forwards;
+      width:0;
+    }
+    @keyframes load-bar { to { width:100%; } }
+    @keyframes fadein    { to { opacity:1; } }
+
+    /* ── SCROLL BAR ── */
+    #sbar { position:fixed; top:0; left:0; height:2px; background:linear-gradient(90deg,var(--blue),var(--sky)); z-index:1100; width:0%; pointer-events:none; }
+
+    /* ── LAYOUT ── */
+    .container { max-width:1160px; margin:0 auto; padding:0 32px; }
+    section { padding:96px 0; }
+    .dot-bg { background-image:radial-gradient(rgba(255,255,255,.025) 1px,transparent 1px); background-size:40px 40px; }
+
+    /* ── TYPE ── */
+    h1 { font-size:clamp(36px,5.2vw,64px); font-weight:800; line-height:1.07; letter-spacing:-.03em; }
+    h2 { font-size:clamp(26px,3.8vw,42px); font-weight:700; line-height:1.1; letter-spacing:-.02em; }
+    h3 { font-size:16px; font-weight:700; line-height:1.3; }
+    .eyebrow { display:inline-flex; align-items:center; gap:9px; font-size:11px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; color:var(--sky); margin-bottom:20px; }
+    .eyebrow::before { content:''; display:block; width:20px; height:1.5px; background:var(--sky); }
+    .s-hdr { margin-bottom:52px; }
+    .s-hdr.center { text-align:center; max-width:600px; margin-left:auto; margin-right:auto; }
+    .s-hdr h2 { margin-bottom:12px; }
+    .s-hdr p  { font-size:16px; color:var(--muted); line-height:1.7; }
+    /* Animated shimmer gradient text */
+    .grad {
+      background:linear-gradient(135deg,#fff 0%,var(--sky) 40%,#a5b4fc 70%,#fff 100%);
+      background-size:300% 300%; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      animation:shimmer 5s ease infinite;
+    }
+    @keyframes shimmer { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+
+    /* ── BUTTONS ── */
+    .btn { display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:600; padding:12px 24px; border-radius:8px; border:none; cursor:none; text-decoration:none; transition:all .2s; font-family:'Inter',sans-serif; white-space:nowrap; position:relative; overflow:hidden; }
+    .btn::before { content:''; position:absolute; inset:0; opacity:0; transition:opacity .3s; }
+    .btn:hover::before { opacity:1; }
+    .btn svg { width:15px; height:15px; flex-shrink:0; transition:transform .2s; }
+    .btn:hover svg { transform:translateX(4px); }
+    .btn-blue { background:var(--blue); color:#fff; box-shadow:0 0 28px rgba(37,99,235,.4); }
+    .btn-blue::before { background:linear-gradient(135deg,rgba(255,255,255,.12),transparent); }
+    .btn-blue:hover { box-shadow:0 0 40px rgba(37,99,235,.6); transform:translateY(-1px); }
+    .btn-ghost { background:rgba(255,255,255,.05); color:#fff; border:1px solid var(--border); }
+    .btn-ghost:hover { background:rgba(255,255,255,.09); border-color:rgba(255,255,255,.16); transform:translateY(-1px); }
+
+    /* ── NAV ── */
+    #nav { position:fixed; top:0; left:0; right:0; z-index:900; background:rgba(4,9,26,.85); backdrop-filter:blur(18px); border-bottom:1px solid var(--border); transition:box-shadow .3s; }
+    #nav.scrolled { box-shadow:0 2px 40px rgba(0,0,0,.5); }
+    .nav-inner { display:flex; align-items:center; justify-content:space-between; height:64px; }
+    .nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+    .nav-logo img { height:36px; width:auto; border-radius:6px; }
+    .nav-logo-name { font-size:17px; font-weight:800; color:#fff; letter-spacing:-.02em; }
+    .nav-logo-sub  { font-size:9px; font-weight:600; letter-spacing:.1em; color:var(--sky); text-transform:uppercase; display:block; margin-top:1px; }
+    .nav-links { display:flex; gap:2px; }
+    .nav-links a { font-size:13.5px; font-weight:500; color:var(--muted); text-decoration:none; padding:7px 13px; border-radius:6px; transition:color .15s,background .15s; position:relative; }
+    .nav-links a::after { content:''; position:absolute; bottom:3px; left:13px; right:13px; height:1px; background:var(--sky); transform:scaleX(0); transform-origin:left; transition:transform .22s; }
+    .nav-links a:hover { color:#fff; }
+    .nav-links a:hover::after { transform:scaleX(1); }
+    .nav-actions { display:flex; gap:8px; }
+    .hamburger { display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:none; padding:6px; }
+    .hamburger span { display:block; width:22px; height:2px; background:#fff; border-radius:1px; transition:all .3s; }
+    #mob-menu { display:none; position:fixed; top:64px; left:0; right:0; background:rgba(4,9,26,.97); border-bottom:1px solid var(--border); z-index:800; padding:10px 20px 18px; }
+    #mob-menu a { display:block; padding:10px 12px; color:var(--muted); font-size:15px; font-weight:500; text-decoration:none; border-radius:6px; transition:all .15s; }
+    #mob-menu a:hover { color:#fff; background:rgba(255,255,255,.05); }
+
+    /* ── HERO ── */
+    #inicio { min-height:100vh; position:relative; display:flex; align-items:center; padding:110px 0 80px; overflow:hidden; }
+    .hero-spotlight { position:absolute; inset:0; z-index:1; pointer-events:none; background:radial-gradient(600px circle at var(--mx,50%) var(--my,50%),rgba(37,99,235,.1),transparent 70%); }
+    .hero-grid { display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center; position:relative; z-index:2; }
+    .hero-eyebrow { display:inline-flex; align-items:center; gap:9px; font-size:11px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; color:var(--sky); margin-bottom:22px; }
+    .hero-eyebrow::before { content:''; display:block; width:20px; height:1.5px; background:var(--sky); }
+    h1.hero-h { color:#fff; margin-bottom:8px; }
+    .tw-line { font-size:clamp(36px,5.2vw,64px); font-weight:800; line-height:1.07; letter-spacing:-.03em; display:block; min-height:1.07em; }
+    #tw { color:transparent; background:linear-gradient(135deg,#fff,var(--sky)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+    .tw-cursor { color:var(--sky); animation:blink .7s step-end infinite; font-weight:300; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .hero-sub { font-size:16px; color:rgba(255,255,255,.52); line-height:1.75; max-width:500px; margin:18px 0 36px; }
+    .hero-btns { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:60px; }
+    .hero-stats { display:flex; flex-wrap:wrap; }
+    .hstat { padding:0 32px 0 0; }
+    .hstat+.hstat { border-left:1px solid rgba(255,255,255,.1); padding-left:32px; }
+    .hstat-val { font-size:30px; font-weight:800; color:#fff; letter-spacing:-.04em; line-height:1; margin-bottom:4px; }
+    .hstat-val sub { font-size:16px; color:var(--sky); vertical-align:baseline; }
+    .hstat-lbl { font-size:11.5px; color:rgba(255,255,255,.35); }
+    /* Neural canvas */
+    #neural-canvas { width:100%; max-width:520px; aspect-ratio:1; display:block; margin:0 auto; opacity:.9; }
+
+    /* ── SERVICES ── */
+    #servicios { background:var(--bg2); }
+    .svc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+    .svc-card { background:var(--card); padding:36px 30px; transition:background .3s,box-shadow .3s,transform .3s; position:relative; overflow:hidden; transform-style:preserve-3d; will-change:transform; }
+    .svc-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background:linear-gradient(180deg,var(--sky),var(--blue)); transform:scaleY(0); transform-origin:top; transition:transform .35s cubic-bezier(.22,.68,0,1.3); }
+    .svc-card::after  { content:''; position:absolute; inset:0; background:radial-gradient(circle at 50% 0%,rgba(37,99,235,.08),transparent 70%); opacity:0; transition:opacity .3s; }
+    .svc-card:hover::before { transform:scaleY(1); }
+    .svc-card:hover::after  { opacity:1; }
+    .svc-card:hover { background:rgba(255,255,255,.055); box-shadow:0 0 40px rgba(37,99,235,.1); }
+    .svc-card:nth-child(4){ grid-column:1; }
+    .svc-card:nth-child(5){ grid-column:2/4; }
+    .svc-n   { font-size:10.5px; font-weight:700; letter-spacing:.1em; color:rgba(96,165,250,.55); margin-bottom:16px; }
+    .svc-ico { width:40px; height:40px; border:1px solid var(--border); border-radius:9px; display:flex; align-items:center; justify-content:center; color:var(--sky); margin-bottom:16px; transition:border-color .3s,box-shadow .3s; }
+    .svc-ico svg { width:20px; height:20px; }
+    .svc-card:hover .svc-ico { border-color:rgba(96,165,250,.4); box-shadow:0 0 16px rgba(96,165,250,.2); }
+    .svc-card h3 { color:#fff; margin-bottom:9px; }
+    .svc-card p  { font-size:13.5px; color:var(--muted); line-height:1.65; }
+
+    /* ── PROCESS ── */
+    #proceso { background:var(--bg1); }
+    .proc-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:0; position:relative; }
+    .proc-grid::before { content:''; position:absolute; top:26px; left:8%; right:8%; height:1px; background:linear-gradient(90deg,var(--blue),var(--sky)); transform:scaleX(0); transform-origin:left; transition:transform 1s cubic-bezier(.4,0,.2,1); }
+    .proc-grid.drawn::before { transform:scaleX(1); }
+    .proc-step { padding:0 20px; }
+    .proc-step:first-child { padding-left:0; } .proc-step:last-child { padding-right:0; }
+    .proc-dot { width:52px; height:52px; border-radius:50%; border:1px solid var(--border); background:var(--bg1); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--sky); margin-bottom:24px; position:relative; z-index:1; letter-spacing:.03em; transition:border-color .3s,box-shadow .3s; }
+    .proc-step:hover .proc-dot { border-color:var(--blue); box-shadow:0 0 24px rgba(37,99,235,.4); }
+    .proc-step.active .proc-dot { background:var(--blue); color:#fff; border-color:var(--blue); animation:dot-pulse 2.4s ease-out infinite; }
+    @keyframes dot-pulse { 0%{box-shadow:0 0 0 0 rgba(37,99,235,.5)} 70%{box-shadow:0 0 0 12px rgba(37,99,235,0)} 100%{box-shadow:0 0 0 0 rgba(37,99,235,0)} }
+    .proc-step h3 { font-size:15px; color:#fff; margin-bottom:8px; }
+    .proc-step p  { font-size:13px; color:var(--muted); line-height:1.6; }
+
+    /* ── CHATBOT ── */
+    #chatbot { background:var(--bg2); }
+    .chat-grid { display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:center; }
+    .chat-text h2 { margin-bottom:14px; }
+    .chat-text>p { font-size:15px; color:var(--muted); line-height:1.75; margin-bottom:32px; }
+    .feat-list { display:flex; flex-direction:column; gap:18px; margin-bottom:36px; }
+    .feat { display:flex; align-items:flex-start; gap:13px; }
+    .feat-ico { width:34px; height:34px; border:1px solid var(--border); border-radius:7px; display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--sky); transition:border-color .3s,box-shadow .3s; }
+    .feat-ico svg { width:16px; height:16px; }
+    .feat:hover .feat-ico { border-color:rgba(96,165,250,.5); box-shadow:0 0 14px rgba(96,165,250,.2); }
+    .feat h4 { font-size:13.5px; font-weight:700; color:#fff; margin-bottom:2px; }
+    .feat p  { font-size:13px; color:var(--muted); line-height:1.5; }
+    .phone-wrap { display:flex; justify-content:center; position:relative; }
+    .phone { width:272px; background:#111827; border-radius:38px; padding:12px; box-shadow:0 40px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.05),0 0 60px rgba(37,99,235,.1); animation:phone-float 5s ease-in-out infinite; }
+    @keyframes phone-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    .phone-screen { background:#fff; border-radius:28px; overflow:hidden; }
+    .p-bar { background:#128C7E; padding:12px 14px; display:flex; align-items:center; gap:9px; }
+    .p-av  { width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; }
+    .p-av svg { width:14px; height:14px; }
+    .p-inf strong { display:block; color:#fff; font-size:13px; font-weight:600; }
+    .p-inf span   { color:rgba(255,255,255,.65); font-size:11px; }
+    .p-msgs { padding:12px 9px; background:#ECE5DD; min-height:330px; display:flex; flex-direction:column; gap:7px; }
+    .pm { max-width:83%; padding:8px 11px; font-size:12.5px; line-height:1.5; border-radius:7px; }
+    .pm-in  { background:#fff; color:#111; border-radius:0 7px 7px 7px; }
+    .pm-out { background:#DCF8C6; color:#111; margin-left:auto; border-radius:7px 7px 0 7px; }
+    .pm-t   { font-size:10px; color:#999; text-align:right; margin-top:2px; }
+
+    /* ── WHY ── */
+    #porque { background:var(--bg1); }
+    .why-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+    .why-item { padding:36px 30px; background:var(--card); transition:background .25s,box-shadow .25s; position:relative; overflow:hidden; }
+    .why-item::after { content:''; position:absolute; inset:0; background:radial-gradient(circle at 50% 0%,rgba(37,99,235,.07),transparent 70%); opacity:0; transition:opacity .3s; }
+    .why-item:hover { background:rgba(255,255,255,.055); }
+    .why-item:hover::after { opacity:1; }
+    .why-n  { font-size:10.5px; font-weight:700; letter-spacing:.1em; color:rgba(96,165,250,.5); margin-bottom:14px; }
+    .why-item h3 { font-size:16px; color:#fff; margin-bottom:8px; }
+    .why-item p  { font-size:13.5px; color:var(--muted); line-height:1.65; }
+
+    /* ── CONTACT ── */
+    #contacto { background:var(--bg2); }
+    .contact-grid { display:grid; grid-template-columns:5fr 7fr; gap:72px; align-items:start; }
+    .contact-left h2 { margin-bottom:14px; }
+    .contact-left>p  { font-size:15px; color:var(--muted); line-height:1.75; margin-bottom:28px; }
+    .c-link { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+    .c-link svg { width:16px; height:16px; color:var(--sky); flex-shrink:0; }
+    .c-link a    { font-size:14px; color:var(--sky); text-decoration:none; font-weight:500; }
+    .c-link a:hover { text-decoration:underline; }
+    .c-link span { font-size:14px; color:var(--muted); }
+    .c-form { background:rgba(255,255,255,.03); border:1px solid var(--border); border-radius:12px; padding:36px; }
+    .f-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+    .f-col { display:flex; flex-direction:column; gap:5px; margin-bottom:12px; }
+    .f-col label { font-size:11.5px; font-weight:600; color:rgba(255,255,255,.45); letter-spacing:.03em; }
+    .f-col input,.f-col select,.f-col textarea { background:rgba(255,255,255,.05); border:1px solid var(--border); border-radius:6px; padding:10px 13px; font-size:14px; color:#fff; font-family:'Inter',sans-serif; transition:border-color .2s,box-shadow .2s; outline:none; -webkit-appearance:none; appearance:none; }
+    .f-col input:focus,.f-col select:focus,.f-col textarea:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(37,99,235,.15); }
+    .f-col input::placeholder,.f-col textarea::placeholder { color:rgba(255,255,255,.18); }
+    .f-col select option { background:#0d1a30; }
+    .f-col textarea { resize:none; height:88px; }
+    .f-submit { width:100%; background:var(--blue); color:#fff; font-size:14px; font-weight:600; padding:13px; border:none; border-radius:7px; cursor:none; font-family:'Inter',sans-serif; transition:all .2s; box-shadow:0 0 24px rgba(37,99,235,.35); }
+    .f-submit:hover { background:#1a44c8; box-shadow:0 0 36px rgba(37,99,235,.55); transform:translateY(-1px); }
+    .f-note { font-size:12px; color:rgba(255,255,255,.28); text-align:center; margin-top:10px; }
+    .f-note a { color:var(--sky); text-decoration:none; }
+
+    /* ── FOOTER ── */
+    footer { background:#020710; padding:56px 0 28px; border-top:1px solid var(--border); }
+    .ft-top { display:grid; grid-template-columns:2.5fr 1fr 1fr 1fr; gap:44px; padding-bottom:44px; border-bottom:1px solid var(--border); margin-bottom:26px; }
+    .ft-name { font-size:17px; font-weight:800; color:#fff; letter-spacing:-.02em; margin-bottom:9px; }
+    .ft-brand>p { font-size:13.5px; color:rgba(255,255,255,.28); line-height:1.7; max-width:240px; margin-bottom:20px; }
+    .ft-socials { display:flex; gap:7px; }
+    .ft-social { width:32px; height:32px; border-radius:6px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.4); text-decoration:none; font-size:12px; font-weight:700; transition:all .18s; }
+    .ft-social:hover { border-color:var(--sky); color:var(--sky); }
+    .ft-col h5 { font-size:10.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.45); margin-bottom:16px; }
+    .ft-col ul { list-style:none; display:flex; flex-direction:column; gap:9px; }
+    .ft-col ul a { font-size:13.5px; color:rgba(255,255,255,.28); text-decoration:none; transition:color .15s; }
+    .ft-col ul a:hover { color:#fff; }
+    .ft-bottom { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+    .ft-bottom p { font-size:12.5px; color:rgba(255,255,255,.22); }
+    .ft-legal { display:flex; gap:20px; }
+    .ft-legal a { font-size:12.5px; color:rgba(255,255,255,.18); text-decoration:none; transition:color .15s; }
+    .ft-legal a:hover { color:rgba(255,255,255,.6); }
+
+    /* ── HERO LOGO + SLOGAN ── */
+    .hero-logo { height:88px; width:auto; border-radius:12px; margin-bottom:22px; display:block; box-shadow:0 0 28px rgba(37,99,235,.2); }
+    .hero-slogan { font-size:clamp(32px,5vw,60px); font-weight:800; line-height:1.08; letter-spacing:-.03em; color:#fff; margin-bottom:10px; }
+    .hero-slogan .hs-grad { background:linear-gradient(135deg,#fff 0%,var(--sky) 50%,#a5b4fc 100%); background-size:200%; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+    .tw-sub { font-size:clamp(17px,2.2vw,26px); font-weight:700; display:block; min-height:1.3em; margin-bottom:2px; opacity:.72; }
+
+    /* ── MODAL ── */
+    #modal-ov { position:fixed; inset:0; z-index:5000; background:rgba(2,7,16,.84); backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .3s; padding:20px; }
+    #modal-ov.open { opacity:1; pointer-events:all; }
+    #modal-box { background:linear-gradient(155deg,#0c1d38,#070f1e); border:1px solid rgba(255,255,255,.1); border-radius:18px; max-width:680px; width:100%; max-height:88vh; overflow-y:auto; transform:translateY(32px) scale(.97); transition:transform .38s cubic-bezier(.22,.68,0,1.2); padding:48px 52px 44px; position:relative; box-shadow:0 50px 100px rgba(0,0,0,.7); scrollbar-width:thin; scrollbar-color:rgba(96,165,250,.2) transparent; }
+    #modal-ov.open #modal-box { transform:none; }
+    .m-close { position:absolute; top:18px; right:20px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:rgba(255,255,255,.45); cursor:none; font-size:16px; padding:6px 11px; border-radius:6px; transition:all .15s; font-family:'Inter',sans-serif; }
+    .m-close:hover { background:rgba(255,255,255,.11); color:#fff; }
+    .m-tag   { font-size:10.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:rgba(96,165,250,.7); margin-bottom:16px; }
+    .m-title { font-size:clamp(20px,3vw,28px); font-weight:800; color:#fff; letter-spacing:-.025em; margin-bottom:14px; line-height:1.15; }
+    .m-lead  { font-size:15px; color:var(--muted); line-height:1.82; margin-bottom:28px; border-bottom:1px solid var(--border); padding-bottom:26px; }
+    .m-items { display:flex; flex-direction:column; gap:20px; margin-bottom:30px; }
+    .m-item  { display:flex; gap:14px; }
+    .m-ico   { width:34px; height:34px; flex-shrink:0; border:1px solid rgba(96,165,250,.25); border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--sky); margin-top:1px; }
+    .m-ico svg { width:15px; height:15px; }
+    .m-txt h4 { font-size:14px; font-weight:700; color:#fff; margin-bottom:3px; }
+    .m-txt p  { font-size:13.5px; color:var(--muted); line-height:1.62; }
+    .m-foot  { display:flex; gap:10px; flex-wrap:wrap; padding-top:22px; border-top:1px solid var(--border); }
+    @media(max-width:600px){ #modal-box{ padding:32px 24px 28px; } }
+
+    /* ── SVC MORE ── */
+    .svc-more { display:inline-flex; align-items:center; gap:7px; font-size:12.5px; font-weight:600; color:var(--sky); background:none; border:none; cursor:none; padding:0; margin-top:18px; opacity:.6; transition:opacity .2s,gap .2s; font-family:'Inter',sans-serif; position:relative; z-index:3; }
+    .svc-more:hover { opacity:1; gap:11px; }
+    .svc-more svg { width:13px; height:13px; }
+
+    /* ── ANIMATIONS ── */
+    .fi { opacity:0; transform:translateY(22px); transition:opacity .65s cubic-bezier(.22,.68,0,1.2),transform .65s cubic-bezier(.22,.68,0,1.2); }
+    .fi.in { opacity:1; transform:none; }
+    .d1{transition-delay:.07s} .d2{transition-delay:.14s} .d3{transition-delay:.21s} .d4{transition-delay:.28s}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:1024px){
+      .hero-grid{grid-template-columns:1fr} #neural-canvas{display:none}
+      .svc-grid{grid-template-columns:1fr 1fr}
+      .svc-card:nth-child(4),.svc-card:nth-child(5){grid-column:span 1}
+      .why-grid{grid-template-columns:1fr 1fr}
+      .ft-top{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:768px){
+      section{padding:64px 0} .container{padding:0 20px}
+      .nav-links,.nav-actions .btn-ghost{display:none} .hamburger{display:flex}
+      .chat-grid{grid-template-columns:1fr;gap:44px} .phone-wrap{order:-1}
+      .proc-grid{grid-template-columns:1fr 1fr;gap:28px} .proc-grid::before{display:none}
+      .contact-grid{grid-template-columns:1fr;gap:40px}
+      .svc-grid{grid-template-columns:1fr}
+      .why-grid{grid-template-columns:1fr}
+      .hstat{padding:0 18px 0 0} .hstat+.hstat{padding-left:18px}
+    }
+    @media(max-width:480px){
+      .ft-top{grid-template-columns:1fr} .proc-grid{grid-template-columns:1fr} .f-row{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <img id="splash-logo" src="Logo.png" alt="EasyVora" />
+  <div id="splash-tag">Automatización &nbsp;·&nbsp; Servicios de IA</div>
+  <div id="splash-line"></div>
+</div>
+
+<!-- CURSOR -->
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+<div id="sbar"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#inicio" class="nav-logo">
+        <img src="Logo.png" alt="EasyVora" onerror="this.style.display='none'" />
+        <div><span class="nav-logo-name">EasyVora</span><span class="nav-logo-sub">Automatización y IA</span></div>
+      </a>
+      <div class="nav-links">
+        <a href="#servicios">Servicios</a>
+        <a href="#proceso">Proceso</a>
+        <a href="#chatbot">Chatbot IA</a>
+        <a href="#porque">Nosotros</a>
+        <a href="#contacto">Contacto</a>
+      </div>
+      <div class="nav-actions">
+        <a href="#contacto" class="btn btn-ghost" style="padding:8px 16px;font-size:13px;">Contactar</a>
+        <a href="mailto:info@easyvoraproyect.com" class="btn btn-blue" style="padding:8px 16px;font-size:13px;">Solicitar información</a>
+      </div>
+      <button class="hamburger" onclick="toggleMob()" aria-label="Menú"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+<div id="mob-menu">
+  <a href="#servicios" onclick="toggleMob()">Servicios</a>
+  <a href="#proceso"   onclick="toggleMob()">Proceso</a>
+  <a href="#chatbot"   onclick="toggleMob()">Chatbot IA</a>
+  <a href="#porque"    onclick="toggleMob()">Nosotros</a>
+  <a href="#contacto"  onclick="toggleMob()">Contacto</a>
+  <a href="mailto:info@easyvoraproyect.com" onclick="toggleMob()" class="btn btn-blue" style="margin-top:8px;justify-content:center;">Solicitar información</a>
+</div>
+
+<!-- HERO -->
+<section id="inicio">
+  <div class="hero-spotlight"></div>
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <img src="Logo.png" alt="EasyVora" class="hero-logo" />
+        <div class="hero-eyebrow">IA · Automatización · Procesos</div>
+        <div class="hero-slogan"><span class="hs-grad">Optimiza hoy.</span><br/>Lidera mañana.</div>
+        <h1 class="hero-h" style="display:none;"></h1>
+        <div class="tw-line tw-sub" style="margin:14px 0 0;"><span id="tw"></span><span class="tw-cursor">_</span></div>
+        <p class="hero-sub">Automatizamos los procesos de tu empresa para que tu equipo se centre en lo que realmente importa.</p>
+        <div class="hero-btns">
+          <a href="#contacto" class="btn btn-blue">Solicitar información <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+          <a href="#servicios" class="btn btn-ghost">Ver servicios</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hstat"><div class="hstat-val" data-count="40" data-prefix="+"><span class="cnt">0</span><sub>h</sub></div><div class="hstat-lbl">ahorradas / semana</div></div>
+          <div class="hstat"><div class="hstat-val" data-count="3"><span class="cnt">0</span><sub>×</sub></div><div class="hstat-lbl">más productividad</div></div>
+          <div class="hstat"><div class="hstat-val">24<sub>/7</sub></div><div class="hstat-lbl">atención automática</div></div>
+          <div class="hstat"><div class="hstat-val" data-count="60" data-prefix="-"><span class="cnt">0</span><sub>%</sub></div><div class="hstat-lbl">tareas manuales</div></div>
+        </div>
+      </div>
+      <div class="hero-right" style="display:flex;align-items:center;justify-content:center;">
+        <canvas id="neural-canvas"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="servicios" class="dot-bg">
+  <div class="container">
+    <div class="s-hdr fi">
+      <div class="eyebrow">Servicios</div>
+      <h2>Todo lo que necesitas para<br/><span class="grad">automatizar tu empresa</span></h2>
+      <p>Adaptamos cada solución a tu empresa, no al revés.</p>
+    </div>
+    <div class="svc-grid">
+      <div class="svc-card fi d1">
+        <div class="svc-n">01</div>
+        <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><circle cx="4.5" cy="7.5" r="1.8"/><circle cx="19.5" cy="7.5" r="1.8"/><circle cx="4.5" cy="16.5" r="1.8"/><circle cx="19.5" cy="16.5" r="1.8"/><line x1="6.3" y1="8.7" x2="10.2" y2="11"/><line x1="17.7" y1="8.7" x2="13.8" y2="11"/><line x1="6.3" y1="15.3" x2="10.2" y2="13"/><line x1="17.7" y1="15.3" x2="13.8" y2="13"/></svg></div>
+        <h3>IA Aplicada</h3>
+        <p>Modelos de inteligencia artificial integrados en tus herramientas actuales. Sin cambiar tu infraestructura.</p>
+        <button class="svc-more" onclick="openModal('svc1')">Saber más <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+      </div>
+      <div class="svc-card fi d2">
+        <div class="svc-n">02</div>
+        <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></div>
+        <h3>Automatización de Procesos</h3>
+        <p>Flujos automáticos que eliminan tareas repetitivas y sincronizan tus sistemas sin intervención humana.</p>
+        <button class="svc-more" onclick="openModal('svc2')">Saber más <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+      </div>
+      <div class="svc-card fi d3">
+        <div class="svc-n">03</div>
+        <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <h3>Análisis de Procesos</h3>
+        <p>Auditamos cómo trabaja tu empresa. El informe que entregamos tiene valor propio, tanto si contratas como si no.</p>
+        <button class="svc-more" onclick="openModal('svc3')">Saber más <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+      </div>
+      <div class="svc-card fi d1">
+        <div class="svc-n">04</div>
+        <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <h3>Chatbot IA · WhatsApp</h3>
+        <p>Atiende clientes, agenda citas y envía recordatorios de forma autónoma. 24/7 sin intervención de tu equipo.</p>
+        <button class="svc-more" onclick="openModal('svc4')">Saber más <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+      </div>
+      <div class="svc-card fi d2">
+        <div class="svc-n">05</div>
+        <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="M3 17.5A3.5 3.5 0 0 0 6.5 21H10v-7H6.5A3.5 3.5 0 0 0 3 17.5z"/></svg></div>
+        <h3>Proyecto a Medida</h3>
+        <p>Cuando los servicios estándar no encajan. Diseñamos e implementamos una solución completamente personalizada.</p>
+        <button class="svc-more" onclick="openModal('svc5')">Saber más <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="proceso">
+  <div class="container">
+    <div class="s-hdr center fi">
+      <div class="eyebrow">Cómo trabajamos</div>
+      <h2>De la consulta a la <span class="grad">implementación</span></h2>
+      <p>Un proceso claro y sin sorpresas donde cada paso tiene un resultado concreto.</p>
+    </div>
+    <div class="proc-grid">
+      <div class="proc-step fi d1"><div class="proc-dot">01</div><h3>Consulta inicial</h3><p>Conocemos tu empresa y tus objetivos. Sin compromisos.</p></div>
+      <div class="proc-step active fi d2"><div class="proc-dot">02</div><h3>Diagnóstico</h3><p>Identificamos las oportunidades de mayor impacto.</p></div>
+      <div class="proc-step fi d3"><div class="proc-dot">03</div><h3>Implementación</h3><p>Integramos la solución en tus sistemas actuales.</p></div>
+      <div class="proc-step fi d4"><div class="proc-dot">04</div><h3>Soporte continuo</h3><p>Te acompañamos a largo plazo a medida que creces.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CHATBOT -->
+<section id="chatbot" class="dot-bg">
+  <div class="container">
+    <div class="chat-grid">
+      <div class="chat-text fi">
+        <div class="eyebrow">Chatbot IA · WhatsApp Business</div>
+        <h2>Tu negocio,<br/>disponible <span class="grad">siempre</span></h2>
+        <p>Un asistente IA en WhatsApp que atiende clientes, gestiona citas y envía recordatorios sin que tengas que hacer nada.</p>
+        <div class="feat-list">
+          <div class="feat"><div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div><h4>Gestión de citas</h4><p>Agenda, modifica y cancela en tiempo real desde WhatsApp.</p></div></div>
+          <div class="feat"><div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div><h4>Recordatorios automáticos</h4><p>Reduce ausencias con avisos personalizados antes de cada cita.</p></div></div>
+          <div class="feat"><div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div><div><h4>Respuestas inteligentes</h4><p>Aprende sobre tu negocio y responde preguntas con precisión.</p></div></div>
+        </div>
+        <a href="#contacto" class="btn btn-blue">Solicitar información <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+      </div>
+      <div class="phone-wrap fi d2">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="p-bar"><div class="p-av"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="p-inf"><strong>EasyVora IA</strong><span>en línea</span></div></div>
+            <div class="p-msgs">
+              <div class="pm pm-in">Buenas, ¿tienen disponibilidad esta semana?</div>
+              <div class="pm pm-out">Buenas tardes. Tenemos hueco el miércoles y el viernes. ¿Prefiere mañana o tarde?<div class="pm-t">14:32 ✓✓</div></div>
+              <div class="pm pm-in">El viernes por la mañana</div>
+              <div class="pm pm-out">El viernes a las 9:00 y a las 11:00. ¿Cuál le viene mejor?<div class="pm-t">14:33 ✓✓</div></div>
+              <div class="pm pm-in">A las 11 perfecto</div>
+              <div class="pm pm-out">Cita confirmada el viernes a las 11:00. Le enviaré un recordatorio el día anterior.<div class="pm-t">14:33 ✓✓</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="porque">
+  <div class="container">
+    <div class="s-hdr center fi">
+      <div class="eyebrow">Por qué EasyVora</div>
+      <h2>No vendemos tecnología.<br/><span class="grad">Vendemos resultados.</span></h2>
+      <p>Empezamos entendiendo tu negocio, no imponiendo herramientas.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-item fi d1"><div class="why-n">01</div><h3>Análisis antes de proponer</h3><p>Estudiamos cómo funciona tu empresa antes de recomendar nada. Sin soluciones genéricas.</p></div>
+      <div class="why-item fi d2"><div class="why-n">02</div><h3>ROI medible desde el inicio</h3><p>Definimos métricas de éxito antes de empezar. Sabrás exactamente cuánto estás ahorrando.</p></div>
+      <div class="why-item fi d3"><div class="why-n">03</div><h3>Sin fricciones técnicas</h3><p>Nos integramos con las herramientas que ya usas. Sin cambiar tu infraestructura.</p></div>
+      <div class="why-item fi d1"><div class="why-n">04</div><h3>Acompañamiento real</h3><p>No desaparecemos tras la entrega. Somos tu equipo de IA a largo plazo.</p></div>
+      <div class="why-item fi d2"><div class="why-n">05</div><h3>Seguridad y RGPD</h3><p>Todas las soluciones cumplen los estándares de seguridad y normativa vigente.</p></div>
+      <div class="why-item fi d3"><div class="why-n">06</div><h3>Escalable sin sorpresas</h3><p>Las soluciones crecen con tu empresa. Sin costes ocultos.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contacto" class="dot-bg">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-left fi">
+        <div class="eyebrow">Contacto</div>
+        <h2>Hablemos sobre<br/><span class="grad">tu empresa</span></h2>
+        <p>Cuéntanos qué quieres mejorar. Te respondemos con una propuesta concreta.</p>
+        <div class="c-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:info@easyvoraproyect.com">info@easyvoraproyect.com</a></div>
+        <div class="c-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15.46l-5.27-.61-2.52 2.52a15.05 15.05 0 0 1-6.59-6.59l2.53-2.53L8.54 3H3.03C2.45 13.18 10.82 21.55 21 20.97l.46-5.51z"/></svg><span>También disponibles por WhatsApp</span></div>
+      </div>
+      <div class="fi d2">
+        <form class="c-form" onsubmit="handleSubmit(event)">
+          <div class="f-row">
+            <div class="f-col" style="margin-bottom:0"><label>Nombre *</label><input name="nombre" type="text" placeholder="Tu nombre" required /></div>
+            <div class="f-col" style="margin-bottom:0"><label>Empresa *</label><input name="empresa" type="text" placeholder="Tu empresa" required /></div>
+          </div>
+          <div class="f-row">
+            <div class="f-col" style="margin-bottom:0"><label>Email *</label><input name="email" type="email" placeholder="tu@empresa.com" required /></div>
+            <div class="f-col" style="margin-bottom:0"><label>Teléfono</label><input name="telefono" type="tel" placeholder="+34 600 000 000" /></div>
+          </div>
+          <div class="f-col"><label>Servicio de interés</label>
+            <select name="servicio"><option value="">Seleccionar...</option><option>IA Aplicada</option><option>Automatización de Procesos</option><option>Análisis de Procesos</option><option>Chatbot IA para WhatsApp</option><option>Proyecto a Medida</option><option>No lo sé todavía</option></select>
+          </div>
+          <div class="f-col"><label>Cuéntanos</label><textarea name="mensaje" placeholder="¿Qué quieres mejorar en tu empresa?"></textarea></div>
+          <button type="submit" class="f-submit">Enviar solicitud</button>
+          <p class="f-note">O escríbenos a <a href="mailto:info@easyvoraproyect.com">info@easyvoraproyect.com</a></p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="ft-top">
+      <div class="ft-brand">
+        <div class="ft-name">EasyVora</div>
+        <p>Inteligencia artificial y automatización para empresas que quieren trabajar mejor.</p>
+        <div class="ft-socials">
+          <a href="#" class="ft-social" aria-label="LinkedIn">in</a>
+          <a href="#" class="ft-social" aria-label="Instagram">ig</a>
+          <a href="#" class="ft-social" aria-label="WhatsApp">wa</a>
+        </div>
+      </div>
+      <div class="ft-col"><h5>Servicios</h5><ul><li><a href="#servicios">IA Aplicada</a></li><li><a href="#servicios">Automatización</a></li><li><a href="#servicios">Análisis de Procesos</a></li><li><a href="#chatbot">Chatbot WhatsApp</a></li><li><a href="#servicios">Proyecto a Medida</a></li></ul></div>
+      <div class="ft-col"><h5>Empresa</h5><ul><li><a href="#proceso">Cómo trabajamos</a></li><li><a href="#porque">Por qué EasyVora</a></li><li><a href="#contacto">Contacto</a></li></ul></div>
+      <div class="ft-col"><h5>Contacto</h5><ul><li><a href="mailto:info@easyvoraproyect.com">info@easyvoraproyect.com</a></li><li><a href="#contacto">Formulario</a></li></ul></div>
+    </div>
+    <div class="ft-bottom">
+      <p>© 2025 EasyVora · Automatización y Servicios de IA</p>
+      <div class="ft-legal"><a href="#">Privacidad</a><a href="#">Aviso legal</a><a href="#">Cookies</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div id="modal-ov" onclick="closeModal(event)">
+  <div id="modal-box">
+    <button class="m-close" onclick="closeModal()">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+/* ══ SPLASH ══ */
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const s = document.getElementById('splash');
+    s.classList.add('out');
+    setTimeout(() => s.remove(), 1000);
+    setTimeout(runCounts, 200);
+  }, 2700);
+});
+
+/* ══ CUSTOM CURSOR ══ */
+const dot = document.getElementById('cur-dot');
+const ring = document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e => {
+  mx=e.clientX; my=e.clientY;
+  dot.style.left=mx+'px'; dot.style.top=my+'px';
+});
+document.addEventListener('mousedown', () => ring.classList.add('small'));
+document.addEventListener('mouseup',   () => ring.classList.remove('small'));
+(function lerpRing(){
+  rx+=(mx-rx)*.12; ry+=(my-ry)*.12;
+  ring.style.left=rx+'px'; ring.style.top=ry+'px';
+  requestAnimationFrame(lerpRing);
+})();
+document.querySelectorAll('a,button,.svc-card,.why-item,.feat,.svc-more').forEach(el=>{
+  el.addEventListener('mouseenter',()=>ring.classList.add('big'));
+  el.addEventListener('mouseleave',()=>ring.classList.remove('big'));
+});
+
+/* ══ SCROLL PROGRESS ══ */
+const sbar = document.getElementById('sbar');
+const nav  = document.getElementById('nav');
+window.addEventListener('scroll',()=>{
+  sbar.style.width=(scrollY/(document.body.scrollHeight-innerHeight)*100)+'%';
+  nav.classList.toggle('scrolled',scrollY>20);
+},{passive:true});
+
+const hero = document.getElementById('inicio');
+
+/* ══ HERO SPOTLIGHT ══ */
+hero.addEventListener('mousemove',e=>{
+  const r=hero.getBoundingClientRect();
+  hero.style.setProperty('--mx',(e.clientX-r.left)+'px');
+  hero.style.setProperty('--my',(e.clientY-r.top)+'px');
+});
+
+/* ══ SPHERE · DERECHA HERO ══ */
+(function(){
+  const canvas = document.getElementById('neural-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, cx, cy, R, particles = [];
+
+  function init() {
+    const s = canvas.offsetWidth || 520;
+    W = canvas.width = s; H = canvas.height = s;
+    cx = W/2; cy = H/2; R = W * 0.38;
+    particles = [];
+    for (let i = 0; i < 1800; i++) {
+      const u = Math.random(), v = Math.random();
+      const theta = 2 * Math.PI * u, phi = Math.acos(2 * v - 1);
+      const r = R * Math.cbrt(Math.random());
+      particles.push({
+        x: r * Math.sin(phi) * Math.cos(theta),
+        y: r * Math.sin(phi) * Math.sin(theta),
+        z: r * Math.cos(phi),
+        size: Math.random() * 1.5 + 0.2,
+        brightness: Math.random() * 0.7 + 0.3,
+      });
+    }
+  }
+
+  let smouse = {x: -9999, y: -9999, active: false};
+  let rotY = 0, rotX = 0.15;
+
+  canvas.addEventListener('mousemove', e => {
+    const rect = canvas.getBoundingClientRect();
+    smouse.x = e.clientX - rect.left;
+    smouse.y = e.clientY - rect.top;
+    smouse.active = true;
+  });
+  canvas.addEventListener('mouseleave', () => { smouse.active = false; });
+
+  function project(x, y, z) {
+    const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+    const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+    const x1 = x * cosY - z * sinY, z1 = x * sinY + z * cosY;
+    const y1 = y * cosX - z1 * sinX, z2 = y * sinX + z1 * cosX;
+    const sc = 900 / (900 + z2 + R);
+    return { sx: cx + x1 * sc, sy: cy + y1 * sc, sc, depth: z2 };
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const mdx = smouse.active ? (smouse.x - cx) / W : 0;
+    const mdy = smouse.active ? (smouse.y - cy) / H : 0;
+    rotY += 0.004 + mdx * 0.04;
+    rotX += mdy * 0.015;
+    rotX = Math.max(-0.6, Math.min(0.6, rotX));
+
+    const sorted = particles.map(p => {
+      let px = p.x, py = p.y, pz = p.z;
+      if (smouse.active) {
+        const proj = project(p.x, p.y, p.z);
+        const dx = proj.sx - smouse.x, dy = proj.sy - smouse.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        const inf = Math.max(0, 1 - dist / 120);
+        if (inf > 0) {
+          const push = inf * 30, nx = dx/(dist||1), ny = dy/(dist||1);
+          px += nx*push*0.3; py += ny*push*0.3; pz += inf*push*0.2;
+        }
+      }
+      const proj = project(px, py, pz);
+      return { ...p, sx: proj.sx, sy: proj.sy, scale: proj.sc, depth: proj.depth };
+    }).sort((a, b) => a.depth - b.depth);
+
+    for (const p of sorted) {
+      const norm  = (p.depth + R) / (2 * R);
+      const alpha = (0.15 + norm * 0.85) * p.brightness;
+      const size  = p.size * p.scale * (0.5 + norm * 0.8);
+      if (smouse.active) {
+        const dx = p.sx - smouse.x, dy = p.sy - smouse.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 80) {
+          const boost = 1 - dist/80;
+          ctx.fillStyle = `rgba(${Math.floor(boost*180)},${Math.floor(180+boost*75)},255,${Math.min(1, alpha+boost*0.8)})`;
+          ctx.beginPath(); ctx.arc(p.sx, p.sy, size*(1+boost*2.5), 0, Math.PI*2); ctx.fill();
+          continue;
+        }
+      }
+      const bv = Math.floor(150+norm*105), gv = Math.floor(60+norm*80);
+      ctx.fillStyle = `rgba(${gv},${gv+20},${bv},${alpha})`;
+      ctx.beginPath(); ctx.arc(p.sx, p.sy, Math.max(0.3, size), 0, Math.PI*2); ctx.fill();
+    }
+
+    if (smouse.active) {
+      const grd = ctx.createRadialGradient(smouse.x, smouse.y, 0, smouse.x, smouse.y, 90);
+      grd.addColorStop(0, 'rgba(120,200,255,0.06)');
+      grd.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grd;
+      ctx.beginPath(); ctx.arc(smouse.x, smouse.y, 90, 0, Math.PI*2); ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+
+  init();
+  window.addEventListener('resize', init);
+  draw();
+})();
+
+/* ══ TYPEWRITER ══ */
+(function(){
+  const el=document.getElementById('tw');
+  if(!el) return;
+  const words=['Más inteligencia artificial.','Más automatización.','Más tiempo libre.','Más resultados.'];
+  let wi=0,ci=0,del=false;
+  function type(){
+    const w=words[wi];
+    if(!del){ el.textContent=w.slice(0,++ci); if(ci===w.length){del=true;setTimeout(type,1800);return;} }
+    else    { el.textContent=w.slice(0,--ci); if(ci===0){del=false;wi=(wi+1)%words.length;} }
+    setTimeout(type,del?55:95);
+  }
+  setTimeout(type,3200);
+})();
+
+/* ══ HERO PARALLAX ══ */
+const heroInner=document.querySelector('.hero-left');
+window.addEventListener('scroll',()=>{
+  if(scrollY<hero.offsetHeight){
+    heroInner.style.transform=`translateY(${scrollY*.2}px)`;
+    heroInner.style.opacity=1-scrollY/(hero.offsetHeight*.75);
+  }
+},{passive:true});
+
+/* ══ 3D CARD TILT ══ */
+document.querySelectorAll('.svc-card,.why-item').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width-.5;
+    const y=(e.clientY-r.top)/r.height-.5;
+    card.style.transform=`perspective(700px) rotateX(${-y*8}deg) rotateY(${x*8}deg) translateZ(6px)`;
+  });
+  card.addEventListener('mouseleave',()=>{ card.style.transform=''; });
+});
+
+/* ══ MAGNETIC BUTTONS ══ */
+document.querySelectorAll('.btn-blue').forEach(btn=>{
+  btn.addEventListener('mousemove',e=>{
+    const r=btn.getBoundingClientRect();
+    const x=(e.clientX-r.left-r.width/2)*.25;
+    const y=(e.clientY-r.top-r.height/2)*.25;
+    btn.style.transform=`translate(${x}px,${y}px) translateY(-1px)`;
+  });
+  btn.addEventListener('mouseleave',()=>{ btn.style.transform=''; });
+});
+
+/* ══ FADE-IN (re-triggers) ══ */
+const io=new IntersectionObserver(e=>e.forEach(x=>x.target.classList.toggle('in',x.isIntersecting)),{threshold:.1});
+document.querySelectorAll('.fi').forEach(el=>io.observe(el));
+
+/* ══ PROCESS LINE (re-triggers) ══ */
+const lo=new IntersectionObserver(e=>e.forEach(x=>x.target.classList.toggle('drawn',x.isIntersecting)),{threshold:.4});
+const pg=document.querySelector('.proc-grid'); if(pg)lo.observe(pg);
+
+/* ══ COUNTERS (re-triggers) ══ */
+function animCount(el,target,prefix,dur){
+  const span=el.querySelector('.cnt'); if(!span)return;
+  el._raf&&cancelAnimationFrame(el._raf);
+  const t0=performance.now();
+  (function step(now){
+    const p=Math.min((now-t0)/dur,1),e=1-Math.pow(1-p,3);
+    span.textContent=(prefix||'')+Math.round(e*target);
+    if(p<1)el._raf=requestAnimationFrame(step);
+  })(t0);
+}
+function resetCounts(){ document.querySelectorAll('[data-count]').forEach(el=>{ const s=el.querySelector('.cnt'); if(s)s.textContent=(el.dataset.prefix||'')+'0'; }); }
+function runCounts(){ document.querySelectorAll('[data-count]').forEach((el,i)=>setTimeout(()=>animCount(el,+el.dataset.count,el.dataset.prefix||'',1400),i*160)); }
+const ho=new IntersectionObserver(e=>e.forEach(x=>{ if(x.isIntersecting)runCounts(); else resetCounts(); }),{threshold:.3});
+ho.observe(hero);
+
+/* ══ MOBILE MENU ══ */
+function toggleMob(){ const m=document.getElementById('mob-menu'); m.style.display=m.style.display==='none'?'block':'none'; }
+
+/* ══ FORM ══ */
+const API_URL = 'https://backend-api.hlbbht.easypanel.host';
+
+function showToast(msg, ok) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = `
+    position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(10px);
+    background:${ok ? '#0f5132' : '#6b1a1a'};color:#fff;
+    padding:14px 26px;border-radius:8px;font-family:'Inter',sans-serif;
+    font-size:14px;font-weight:600;z-index:99999;
+    box-shadow:0 8px 32px rgba(0,0,0,.45);
+    opacity:0;transition:opacity .3s,transform .3s;`;
+  document.body.appendChild(t);
+  requestAnimationFrame(() => { t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)'; });
+  setTimeout(() => {
+    t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(10px)';
+    setTimeout(() => t.remove(), 350);
+  }, 4500);
+}
+
+async function handleSubmit(e) {
+  e.preventDefault();
+  const f   = e.target;
+  const btn = f.querySelector('.f-submit');
+  const original = btn.textContent;
+
+  btn.textContent = 'Enviando…';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(`${API_URL}/api/contact`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nombre:   f.nombre.value,
+        empresa:  f.empresa.value,
+        email:    f.email.value,
+        telefono: f.telefono.value,
+        servicio: f.servicio.value,
+        mensaje:  f.mensaje.value,
+      }),
+    });
+
+    const json = await res.json();
+
+    if (res.ok) {
+      showToast('¡Solicitud enviada! Te contactaremos pronto.', true);
+      f.reset();
+    } else {
+      showToast(json.error || 'Error al enviar. Inténtalo de nuevo.', false);
+    }
+  } catch {
+    // Backend no disponible — fallback mailto
+    const sub  = encodeURIComponent(`Solicitud — ${f.empresa.value}`);
+    const body = encodeURIComponent(`Nombre: ${f.nombre.value}\nEmpresa: ${f.empresa.value}\nEmail: ${f.email.value}\nTeléfono: ${f.telefono.value||'—'}\nServicio: ${f.servicio.value||'—'}\n\n${f.mensaje.value}`);
+    window.location.href = `mailto:info@easyvoraproyect.com?subject=${sub}&body=${body}`;
+  } finally {
+    btn.textContent = original;
+    btn.disabled = false;
+  }
+}
+
+/* ══ MODAL ══ */
+const MODALS = {
+  svc1: {
+    tag:'01 — IA Aplicada',
+    title:'Inteligencia Artificial para tu Empresa',
+    lead:'Integramos modelos de IA directamente en los sistemas que ya usas: CRM, ERP, plataformas de comunicación o bases de datos propias. Sin cambiar infraestructura, sin largos proyectos de migración.',
+    items:[
+      {icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',title:'Procesamiento de lenguaje natural',text:'Clasifica emails, analiza contratos, genera respuestas y extrae información clave de documentos en segundos.'},
+      {icon:'<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',title:'Análisis predictivo',text:'Anticipa tendencias, detecta anomalías y optimiza recursos antes de que surjan problemas operativos.'},
+      {icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="M3 17.5A3.5 3.5 0 0 0 6.5 21H10v-7H6.5A3.5 3.5 0 0 0 3 17.5z"/>',title:'Integración sin fricción',text:'Compatible con más de 2.000 aplicaciones. Nos adaptamos a tu stack actual, no al revés.'},
+      {icon:'<circle cx="12" cy="12" r="3"/><circle cx="4.5" cy="7.5" r="1.8"/><circle cx="19.5" cy="7.5" r="1.8"/><circle cx="4.5" cy="16.5" r="1.8"/><circle cx="19.5" cy="16.5" r="1.8"/><line x1="6.3" y1="8.7" x2="10.2" y2="11"/><line x1="17.7" y1="8.7" x2="13.8" y2="11"/><line x1="6.3" y1="15.3" x2="10.2" y2="13"/><line x1="17.7" y1="15.3" x2="13.8" y2="13"/>',title:'Asistentes internos privados',text:'Chatbots entrenados con el conocimiento de tu empresa para uso exclusivo de tu equipo, con acceso seguro a tu información.'},
+    ]
+  },
+  svc2: {
+    tag:'02 — Automatización de Procesos',
+    title:'Automatización que Trabaja por Ti',
+    lead:'Diseñamos flujos automáticos que conectan tus sistemas, eliminan tareas repetitivas y ejecutan procesos complejos sin intervención humana. Tu equipo se libera de lo mecánico y se centra en lo estratégico.',
+    items:[
+      {icon:'<circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>',title:'Workflows inteligentes',text:'Automatiza aprobaciones, reportes, sincronizaciones y notificaciones entre departamentos y sistemas.'},
+      {icon:'<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',title:'Integraciones entre plataformas',text:'Conectamos CRM, ERP, contabilidad, logística y comunicaciones en un ecosistema unificado y coherente.'},
+      {icon:'<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>',title:'RPA — Robots de software',text:'Para sistemas sin API usamos robots que operan como un humano pero sin errores, sin pausas y sin coste por hora.'},
+      {icon:'<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',title:'Monitorización y alertas',text:'Supervisamos los flujos en tiempo real. Ante cualquier incidencia, el sistema te notifica y actúa de forma autónoma.'},
+    ]
+  },
+  svc3: {
+    tag:'03 — Análisis de Procesos',
+    title:'Entiende tu Empresa antes de Automatizarla',
+    lead:'Antes de proponer ninguna solución, estudiamos en profundidad cómo trabaja tu empresa. El resultado es un informe con valor propio — útil aunque no implementes ninguna tecnología nueva.',
+    items:[
+      {icon:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',title:'Entrevistas y observación directa',text:'Analizamos cómo trabaja tu equipo en el día a día: herramientas, tiempos, fricciones y cuellos de botella reales.'},
+      {icon:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',title:'Mapeo de procesos',text:'Representación visual completa de tus flujos de trabajo actuales, con tiempos, responsables y puntos de mejora identificados.'},
+      {icon:'<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',title:'Informe de recomendaciones',text:'Documento con oportunidades de mejora priorizadas por impacto y coste, accionable de forma independiente.'},
+      {icon:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',title:'Valor independiente garantizado',text:'Muchos clientes reorganizan internamente su empresa usando solo este informe, sin necesidad de implementar tecnología adicional.'},
+    ]
+  },
+  svc4: {
+    tag:'04 — Chatbot IA · WhatsApp',
+    title:'Atención al Cliente 24/7 en WhatsApp',
+    lead:'Un asistente de inteligencia artificial integrado en WhatsApp Business que gestiona clientes, citas y recordatorios de forma completamente autónoma. Sin costes de personal, sin horarios, sin errores.',
+    items:[
+      {icon:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',title:'Gestión completa de agenda',text:'Agenda, modifica y cancela citas consultando tu calendario en tiempo real, sin intervención de tu equipo.'},
+      {icon:'<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',title:'Recordatorios automáticos',text:'Reduce ausencias hasta un 40% con mensajes personalizados enviados automáticamente antes de cada cita o evento.'},
+      {icon:'<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>',title:'Respuestas inteligentes',text:'Entrenado con la información de tu empresa: catálogo, precios, preguntas frecuentes, políticas y más.'},
+      {icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',title:'Escalado humano inteligente',text:'Cuando detecta una situación compleja, transfiere la conversación a un agente real de forma transparente para el cliente.'},
+    ]
+  },
+  svc5: {
+    tag:'05 — Proyecto a Medida',
+    title:'Tu Problema, Nuestra Solución',
+    lead:'Cuando ningún servicio estándar encaja, diseñamos e implementamos una solución completamente personalizada desde cero, adaptada a la realidad específica de tu empresa y sus objetivos de negocio.',
+    items:[
+      {icon:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',title:'Diagnóstico profundo',text:'Análisis exhaustivo de necesidades, limitaciones técnicas y objetivos antes de escribir una sola línea de código.'},
+      {icon:'<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',title:'Propuesta técnica detallada',text:'Recibes un plan con hitos, plazos y criterios de éxito definidos antes de empezar. Sin sorpresas ni costes ocultos.'},
+      {icon:'<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',title:'Desarrollo iterativo con demos',text:'Construimos en ciclos cortos con entregas frecuentes para que puedas validar y redirigir en cada etapa.'},
+      {icon:'<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>',title:'Soporte post-entrega incluido',text:'Período de garantía y soporte continuado. No desaparecemos tras la implementación — somos tu equipo de IA a largo plazo.'},
+    ]
+  }
+};
+
+function openModal(id) {
+  const d = MODALS[id]; if(!d) return;
+  const items = d.items.map(it=>`
+    <div class="m-item">
+      <div class="m-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">${it.icon}</svg></div>
+      <div class="m-txt"><h4>${it.title}</h4><p>${it.text}</p></div>
+    </div>`).join('');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="m-tag">${d.tag}</div>
+    <div class="m-title">${d.title}</div>
+    <p class="m-lead">${d.lead}</p>
+    <div class="m-items">${items}</div>
+    <div class="m-foot">
+      <a href="#contacto" class="btn btn-blue" onclick="closeModal()">Solicitar información <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+      <button class="btn btn-ghost" onclick="closeModal()">Cerrar</button>
+    </div>`;
+  document.getElementById('modal-ov').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(e) {
+  if(e && e.currentTarget === document.getElementById('modal-ov') && e.target !== e.currentTarget) return;
+  document.getElementById('modal-ov').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+/* ══ SMOOTH SCROLL ══ */
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
+  const t=document.querySelector(a.getAttribute('href'));
+  if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'});}
+}));
+</script>
+</body>
+</html>
