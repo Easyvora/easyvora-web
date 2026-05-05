@@ -23,7 +23,7 @@
     @media (pointer:coarse){ #cur-dot,#cur-ring { display:none; } }
     #cur-dot,#cur-ring { position:fixed; top:0; left:0; border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); }
     #cur-dot  { width:5px; height:5px; background:var(--sky); }
-    #cur-ring { width:34px; height:34px; border:1.5px solid rgba(96,165,250,.5); transition:width .25s,height .25s,border-color .25s,background .25s; }
+    #cur-ring { width:34px; height:34px; border:1.5px solid rgba(96,165,250,.5); transition:width .15s,height .15s,border-color .15s,background .15s; }
     #cur-ring.big   { width:54px; height:54px; border-color:rgba(96,165,250,.25); background:rgba(96,165,250,.05); }
     #cur-ring.small { width:20px; height:20px; }
 
@@ -142,31 +142,30 @@
     /* ── SERVICES ── */
     #servicios { background:var(--bg2); }
     .svc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
-    .svc-card { background:var(--card); padding:36px 30px; transition:background .3s,box-shadow .3s,transform .3s; position:relative; overflow:hidden; transform-style:preserve-3d; will-change:transform; }
-    .svc-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background:linear-gradient(180deg,var(--sky),var(--blue)); transform:scaleY(0); transform-origin:top; transition:transform .35s cubic-bezier(.22,.68,0,1.3); }
-    .svc-card::after  { content:''; position:absolute; inset:0; background:radial-gradient(circle at 50% 0%,rgba(37,99,235,.08),transparent 70%); opacity:0; transition:opacity .3s; }
-    .svc-card:hover::before { transform:scaleY(1); }
+    .svc-card { background:linear-gradient(160deg,rgba(255,255,255,.038),rgba(255,255,255,.012)); padding:36px 30px 32px; transition:background .35s,box-shadow .4s,transform .3s; position:relative; overflow:hidden; transform-style:preserve-3d; will-change:transform; cursor:pointer; }
+    .svc-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--blue),var(--sky),rgba(96,165,250,.3)); transform:scaleX(0); transform-origin:left; transition:transform .45s cubic-bezier(.22,.68,0,1.2); z-index:2; }
+    .svc-card::after  { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 50% 0%,rgba(37,99,235,.13),transparent 65%); opacity:0; transition:opacity .4s; }
+    .svc-card:hover::before { transform:scaleX(1); }
     .svc-card:hover::after  { opacity:1; }
-    .svc-card:hover { background:rgba(255,255,255,.055); box-shadow:0 0 40px rgba(37,99,235,.1); }
+    .svc-card:hover { background:linear-gradient(160deg,rgba(37,99,235,.09),rgba(255,255,255,.025)); box-shadow:0 0 0 1px rgba(96,165,250,.12),0 20px 56px rgba(37,99,235,.18),0 4px 16px rgba(0,0,0,.25); transform:translateY(-2px); }
     .svc-card:nth-child(4){ grid-column:1; }
     .svc-card:nth-child(5){ grid-column:2/4; }
-    .svc-n   { font-size:10.5px; font-weight:700; letter-spacing:.1em; color:rgba(96,165,250,.55); margin-bottom:16px; }
-    .svc-ico { width:40px; height:40px; border:1px solid var(--border); border-radius:9px; display:flex; align-items:center; justify-content:center; color:var(--sky); margin-bottom:16px; transition:border-color .3s,box-shadow .3s; }
-    .svc-ico svg { width:20px; height:20px; }
-    .svc-card:hover .svc-ico { border-color:rgba(96,165,250,.4); box-shadow:0 0 16px rgba(96,165,250,.2); }
-    .svc-card h3 { color:#fff; margin-bottom:9px; }
-    .svc-card p  { font-size:13.5px; color:var(--muted); line-height:1.65; }
+    .svc-n   { font-size:10.5px; font-weight:700; letter-spacing:.1em; color:rgba(96,165,250,.45); margin-bottom:18px; position:relative; z-index:1; }
+    .svc-ico { width:52px; height:52px; border:1px solid rgba(96,165,250,.2); border-radius:12px; background:linear-gradient(135deg,rgba(37,99,235,.18),rgba(96,165,250,.07)); display:flex; align-items:center; justify-content:center; color:var(--sky); margin-bottom:20px; transition:border-color .35s,box-shadow .35s,background .35s; position:relative; z-index:1; }
+    .svc-ico svg { width:24px; height:24px; }
+    .svc-card:hover .svc-ico { border-color:rgba(96,165,250,.5); background:linear-gradient(135deg,rgba(37,99,235,.28),rgba(96,165,250,.14)); box-shadow:0 0 22px rgba(96,165,250,.35),0 0 44px rgba(37,99,235,.12); }
+    .svc-card h3 { color:#fff; margin-bottom:10px; font-size:16px; position:relative; z-index:1; }
+    .svc-card p  { font-size:13.5px; color:var(--muted); line-height:1.68; position:relative; z-index:1; }
 
     /* ── PROCESS ── */
     #proceso { background:var(--bg1); }
     .proc-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:0; position:relative; }
-    .proc-grid::before { content:''; position:absolute; top:26px; left:8%; right:8%; height:1px; background:linear-gradient(90deg,var(--blue),var(--sky)); transform:scaleX(0); transform-origin:left; transition:transform 1s cubic-bezier(.4,0,.2,1); }
+    .proc-grid::before { content:''; position:absolute; top:26px; left:26px; right:calc(25% - 46px); height:1px; background:linear-gradient(90deg,var(--blue),var(--sky)); transform:scaleX(0); transform-origin:left; transition:transform 1s cubic-bezier(.4,0,.2,1); }
     .proc-grid.drawn::before { transform:scaleX(1); }
     .proc-step { padding:0 20px; }
     .proc-step:first-child { padding-left:0; } .proc-step:last-child { padding-right:0; }
-    .proc-dot { width:52px; height:52px; border-radius:50%; border:1px solid var(--border); background:var(--bg1); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--sky); margin-bottom:24px; position:relative; z-index:1; letter-spacing:.03em; transition:border-color .3s,box-shadow .3s; }
-    .proc-step:hover .proc-dot { border-color:var(--blue); box-shadow:0 0 24px rgba(37,99,235,.4); }
-    .proc-step.active .proc-dot { background:var(--blue); color:#fff; border-color:var(--blue); animation:dot-pulse 2.4s ease-out infinite; }
+    .proc-dot { width:52px; height:52px; border-radius:50%; border:1px solid var(--border); background:var(--bg1); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--sky); margin-bottom:24px; position:relative; z-index:1; letter-spacing:.03em; transition:border-color .3s,box-shadow .3s,background .3s,color .3s; }
+    .proc-step:hover .proc-dot { border-color:var(--blue); box-shadow:0 0 0 0 rgba(37,99,235,.5); animation:dot-pulse 2.4s ease-out infinite; background:var(--blue); color:#fff; }
     @keyframes dot-pulse { 0%{box-shadow:0 0 0 0 rgba(37,99,235,.5)} 70%{box-shadow:0 0 0 12px rgba(37,99,235,0)} 100%{box-shadow:0 0 0 0 rgba(37,99,235,0)} }
     .proc-step h3 { font-size:15px; color:#fff; margin-bottom:8px; }
     .proc-step p  { font-size:13px; color:var(--muted); line-height:1.6; }
@@ -185,6 +184,11 @@
     .feat p  { font-size:13px; color:var(--muted); line-height:1.5; }
     /* ── PHONE FRAME ── */
     .phone-wrap { display:flex; justify-content:center; position:relative; }
+    .phone-wrap::before { content:''; position:absolute; width:300px; height:300px; border-radius:50%; background:radial-gradient(rgba(37,99,235,.28),transparent 70%); top:50%; left:50%; transform:translate(-50%,-50%); filter:blur(55px); z-index:0; pointer-events:none; }
+    .phone-badge { position:absolute; background:rgba(8,18,52,.92); border:1px solid rgba(96,165,250,.18); border-radius:11px; padding:9px 14px; font-size:12px; font-weight:500; color:rgba(255,255,255,.88); display:flex; align-items:center; gap:8px; backdrop-filter:blur(14px); white-space:nowrap; box-shadow:0 8px 28px rgba(0,0,0,.35); z-index:3; animation:badge-float 4s ease-in-out infinite; }
+    .badge-dot { width:8px; height:8px; border-radius:50%; background:#22c55e; flex-shrink:0; box-shadow:0 0 8px rgba(34,197,94,.6); }
+    .pb2 { animation-delay:.9s; } .pb3 { animation-delay:1.8s; }
+    @keyframes badge-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
     .phone {
       width:282px; background:#1c1c1e; border-radius:46px; padding:9px;
       box-shadow:
@@ -295,6 +299,86 @@
     .ft-legal a { font-size:12.5px; color:rgba(255,255,255,.18); text-decoration:none; transition:color .15s; }
     .ft-legal a:hover { color:rgba(255,255,255,.6); }
 
+    /* ── VORA WIDGET ── */
+    #vora-widget { position:fixed; bottom:24px; right:24px; z-index:9000; display:flex; flex-direction:column; align-items:flex-end; gap:12px; transition:bottom .4s cubic-bezier(.22,.68,0,1.2); }
+    #vora-btn { width:60px; height:60px; border-radius:50%; border:2px solid rgba(96,165,250,.35); background:linear-gradient(135deg,#1a44c8,var(--blue)); box-shadow:0 4px 20px rgba(37,99,235,.55); cursor:none; padding:0; overflow:hidden; transition:transform .2s,box-shadow .2s; animation:vora-pulse 2.8s ease-in-out infinite; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+    #vora-btn img { width:100%; height:100%; object-fit:contain; display:block; padding:8px; filter:brightness(1.1); }
+    #vora-btn svg { width:26px; height:26px; color:#fff; flex-shrink:0; }
+    #vora-btn:hover { transform:scale(1.1); box-shadow:0 6px 30px rgba(37,99,235,.7); }
+    @keyframes vora-pulse { 0%,100%{box-shadow:0 4px 20px rgba(37,99,235,.55),0 0 0 0 rgba(37,99,235,.3)} 55%{box-shadow:0 4px 20px rgba(37,99,235,.55),0 0 0 12px rgba(37,99,235,0)} }
+    #vora-tooltip { position:absolute; right:72px; bottom:50%; transform:translateY(50%); background:rgba(8,18,52,.95); border:1px solid rgba(96,165,250,.2); color:rgba(255,255,255,.88); font-size:12px; font-weight:500; padding:7px 12px; border-radius:8px; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity .2s; font-family:'Inter',sans-serif; box-shadow:0 4px 16px rgba(0,0,0,.3); }
+    #vora-tooltip::after { content:''; position:absolute; right:-6px; top:50%; transform:translateY(-50%); border:6px solid transparent; border-right:none; border-left-color:rgba(8,18,52,.95); }
+    #vora-btn:hover ~ #vora-tooltip,#vora-btn:hover+#vora-tooltip { opacity:1; }
+    #vora-widget:hover #vora-tooltip { opacity:1; }
+    #vora-chat { width:340px; background:linear-gradient(160deg,#0c1d38,#070f1e); border:1px solid rgba(255,255,255,.1); border-radius:18px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,.65),0 0 0 1px rgba(96,165,250,.07); transform:scale(.88) translateY(14px); transform-origin:bottom right; transition:transform .32s cubic-bezier(.22,.68,0,1.2),opacity .28s; opacity:0; pointer-events:none; max-height:480px; }
+    #vora-chat.open { transform:scale(1) translateY(0); opacity:1; pointer-events:all; }
+    #vora-header { background:linear-gradient(135deg,rgba(37,99,235,.22),rgba(15,31,96,.3)); padding:13px 15px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,.07); flex-shrink:0; }
+    #vora-hdr-left { display:flex; align-items:center; gap:10px; }
+    #vora-avatar { width:38px; height:38px; border-radius:50%; overflow:hidden; border:2px solid rgba(96,165,250,.3); flex-shrink:0; background:#070f1e; display:flex; align-items:center; justify-content:center; }
+    #vora-avatar img { width:100%; height:100%; object-fit:contain; padding:4px; }
+    #vora-name { font-size:14px; font-weight:700; color:#fff; line-height:1.2; }
+    #vora-status { font-size:10.5px; color:rgba(96,165,250,.85); display:flex; align-items:center; gap:5px; margin-top:1px; }
+    #vora-status::before { content:''; display:inline-block; width:6px; height:6px; border-radius:50%; background:#22c55e; flex-shrink:0; box-shadow:0 0 6px rgba(34,197,94,.6); }
+    #vora-close { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); color:rgba(255,255,255,.5); cursor:none; font-size:14px; padding:4px 9px; border-radius:6px; transition:all .15s; font-family:'Inter',sans-serif; line-height:1; }
+    #vora-close:hover { background:rgba(255,255,255,.13); color:#fff; }
+    #vora-msgs { flex:1; overflow-y:auto; padding:14px 12px 10px; display:flex; flex-direction:column; gap:8px; scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.08) transparent; min-height:200px; }
+    .vm { max-width:86%; padding:9px 12px; font-size:13px; line-height:1.52; border-radius:14px; font-family:'Inter',sans-serif; word-break:break-word; }
+    .vm-bot { background:rgba(255,255,255,.07); color:rgba(255,255,255,.88); border-bottom-left-radius:4px; align-self:flex-start; }
+    .vm-usr { background:var(--blue); color:#fff; border-bottom-right-radius:4px; align-self:flex-end; }
+    .vm-typing { display:flex; gap:5px; padding:11px 14px; background:rgba(255,255,255,.07); border-radius:14px; border-bottom-left-radius:4px; align-self:flex-start; }
+    .vm-typing span { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.4); animation:vdot .9s ease-in-out infinite; }
+    .vm-typing span:nth-child(2){animation-delay:.18s} .vm-typing span:nth-child(3){animation-delay:.36s}
+    @keyframes vdot { 0%,60%,100%{transform:translateY(0);opacity:.35} 30%{transform:translateY(-5px);opacity:1} }
+    #vora-footer { padding:10px 12px; border-top:1px solid rgba(255,255,255,.06); display:flex; gap:8px; flex-shrink:0; align-items:center; }
+    #vora-input { flex:1; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:9px 12px; font-size:13px; color:#fff; font-family:'Inter',sans-serif; outline:none; transition:border-color .2s; resize:none; }
+    #vora-input::placeholder { color:rgba(255,255,255,.22); }
+    #vora-input:focus { border-color:rgba(96,165,250,.4); }
+    #vora-send { width:36px; height:36px; min-width:36px; border-radius:9px; border:none; background:var(--blue); color:#fff; cursor:none; display:flex; align-items:center; justify-content:center; transition:background .2s; }
+    #vora-send:hover { background:#1a44c8; }
+    #vora-send:disabled { opacity:.5; }
+    #vora-send svg { width:14px; height:14px; }
+    @media(max-width:400px){ #vora-chat{width:calc(100vw - 32px);} #vora-widget{bottom:16px;right:16px;} }
+
+    /* ── CONTACT CTA ── */
+    .contact-cta { background:rgba(255,255,255,.03); border:1px solid var(--border); border-radius:14px; padding:40px 36px; display:flex; flex-direction:column; align-items:flex-start; gap:20px; }
+    .contact-cta-tag { font-size:10.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:rgba(96,165,250,.7); }
+    .contact-cta>p { font-size:15px; color:var(--muted); line-height:1.75; }
+    .contact-cta-badges { display:flex; flex-wrap:wrap; gap:10px; }
+    .contact-badge { display:flex; align-items:center; gap:7px; font-size:12.5px; color:rgba(255,255,255,.38); }
+    .contact-badge svg { color:var(--sky); flex-shrink:0; }
+
+    /* ── CONTACT FORM MODAL ── */
+    #cform-ov { position:fixed; inset:0; z-index:5100; background:rgba(2,7,16,.88); backdrop-filter:blur(14px); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .35s; padding:20px; }
+    #cform-ov.open { opacity:1; pointer-events:all; }
+    #cform-box { background:linear-gradient(155deg,#0c1d38,#070f1e); border:1px solid rgba(255,255,255,.1); border-radius:18px; max-width:900px; width:100%; max-height:90vh; overflow-y:auto; transform:translateY(32px) scale(.97); transition:transform .38s cubic-bezier(.22,.68,0,1.2); position:relative; box-shadow:0 50px 100px rgba(0,0,0,.7); display:grid; grid-template-columns:2fr 3fr; scrollbar-width:thin; scrollbar-color:rgba(96,165,250,.2) transparent; }
+    #cform-ov.open #cform-box { transform:none; }
+    #cform-close { position:absolute; top:18px; right:20px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:rgba(255,255,255,.45); cursor:none; font-size:16px; padding:6px 11px; border-radius:6px; transition:all .15s; font-family:'Inter',sans-serif; z-index:10; }
+    #cform-close:hover { background:rgba(255,255,255,.11); color:#fff; }
+    .cform-left { padding:44px 36px; border-right:1px solid rgba(255,255,255,.07); display:flex; flex-direction:column; background:rgba(37,99,235,.04); border-radius:18px 0 0 18px; }
+    .cform-left-hdr { margin-bottom:30px; }
+    .cform-left-hdr h3 { font-size:20px; font-weight:800; color:#fff; letter-spacing:-.02em; line-height:1.2; }
+    .cform-left-hdr p { font-size:13.5px; color:var(--muted); line-height:1.7; margin-top:8px; }
+    .cinfo-item { display:flex; align-items:flex-start; gap:13px; margin-bottom:22px; }
+    .cinfo-ico { width:38px; height:38px; flex-shrink:0; border:1px solid rgba(96,165,250,.2); border-radius:9px; display:flex; align-items:center; justify-content:center; color:var(--sky); background:rgba(96,165,250,.06); }
+    .cinfo-ico svg { width:17px; height:17px; }
+    .cinfo-body { padding-top:2px; }
+    .cinfo-body label { display:block; font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.32); margin-bottom:4px; }
+    .cinfo-body span { font-size:14px; color:rgba(255,255,255,.78); line-height:1.5; display:block; }
+    .cinfo-body a { font-size:14px; color:var(--sky); text-decoration:none; }
+    .cinfo-body a:hover { text-decoration:underline; }
+    .cinfo-empty { color:rgba(255,255,255,.25) !important; font-style:italic; font-size:13px !important; }
+    .cform-right { padding:44px 44px 40px; }
+    .cform-right-hdr { margin-bottom:20px; padding-right:44px; }
+    .cform-right-hdr h3 { font-size:18px; font-weight:700; color:#fff; letter-spacing:-.02em; }
+    .cform-right-hdr p { font-size:13.5px; color:var(--muted); margin-top:5px; line-height:1.6; }
+    @media(max-width:768px){
+      #cform-box { grid-template-columns:1fr; }
+      .cform-left { border-right:none; border-bottom:1px solid rgba(255,255,255,.07); padding:32px 24px; border-radius:18px 18px 0 0; }
+      .cform-right { padding:28px 24px 32px; }
+      .cform-right-hdr { padding-right:0; }
+    }
+    @media(max-width:600px){ #cform-box{ border-radius:14px; } }
+
     /* ── HERO LOGO + SLOGAN ── */
     .hero-logo { height:300px; width:auto; display:block; margin-bottom:2px; filter:invert(1) hue-rotate(185deg); mix-blend-mode:screen; }
     @media(max-width:768px){ .hero-logo { height:200px; } }
@@ -382,7 +466,6 @@
         <a href="#chatbot">Chatbot IA</a>
         <a href="#porque">Nosotros</a>
         <a href="#contacto">Contacto</a>
-        <a href="formulario.html">Formulario</a>
       </div>
       <div class="nav-actions">
         <a href="#contacto" class="btn btn-ghost" style="padding:8px 16px;font-size:13px;">Contactar</a>
@@ -398,7 +481,6 @@
   <a href="#chatbot"   onclick="toggleMob()">Chatbot IA</a>
   <a href="#porque"    onclick="toggleMob()">Nosotros</a>
   <a href="#contacto"  onclick="toggleMob()">Contacto</a>
-  <a href="formulario.html" onclick="toggleMob()">Formulario</a>
   <a href="mailto:info@easyvoraproyect.com" onclick="toggleMob()" class="btn btn-blue" style="margin-top:8px;justify-content:center;">Solicitar información</a>
 </div>
 
@@ -444,40 +526,40 @@
       <p>Adaptamos cada solución a tu empresa, no al revés.</p>
     </div>
     <div class="svc-grid">
-      <div class="svc-card fi d1">
+      <div class="svc-card fi d1" onclick="openModal('svc1')">
         <div class="svc-n">01</div>
         <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><circle cx="4.5" cy="7.5" r="1.8"/><circle cx="19.5" cy="7.5" r="1.8"/><circle cx="4.5" cy="16.5" r="1.8"/><circle cx="19.5" cy="16.5" r="1.8"/><line x1="6.3" y1="8.7" x2="10.2" y2="11"/><line x1="17.7" y1="8.7" x2="13.8" y2="11"/><line x1="6.3" y1="15.3" x2="10.2" y2="13"/><line x1="17.7" y1="15.3" x2="13.8" y2="13"/></svg></div>
         <h3>IA Aplicada</h3>
         <p>Modelos de inteligencia artificial integrados en tus herramientas actuales. Sin cambiar tu infraestructura.</p>
-        <button class="svc-more" onclick="openModal('svc1')">Saber más <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+        <div class="svc-more">Saber más <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></div>
       </div>
-      <div class="svc-card fi d2">
+      <div class="svc-card fi d2" onclick="openModal('svc2')">
         <div class="svc-n">02</div>
         <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></div>
         <h3>Automatización de Procesos</h3>
         <p>Flujos automáticos que eliminan tareas repetitivas y sincronizan tus sistemas sin intervención humana.</p>
-        <button class="svc-more" onclick="openModal('svc2')">Saber más <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+        <div class="svc-more">Saber más <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></div>
       </div>
-      <div class="svc-card fi d3">
+      <div class="svc-card fi d3" onclick="openModal('svc3')">
         <div class="svc-n">03</div>
         <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
         <h3>Análisis de Procesos</h3>
         <p>Auditamos cómo trabaja tu empresa. El informe que entregamos tiene valor propio, tanto si contratas como si no.</p>
-        <button class="svc-more" onclick="openModal('svc3')">Saber más <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+        <div class="svc-more">Saber más <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></div>
       </div>
-      <div class="svc-card fi d1">
+      <div class="svc-card fi d1" onclick="openModal('svc4')">
         <div class="svc-n">04</div>
         <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
         <h3>Chatbot IA · WhatsApp</h3>
         <p>Atiende clientes, agenda citas y envía recordatorios de forma autónoma. 24/7 sin intervención de tu equipo.</p>
-        <button class="svc-more" onclick="openModal('svc4')">Saber más <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+        <div class="svc-more">Saber más <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></div>
       </div>
-      <div class="svc-card fi d2">
+      <div class="svc-card fi d2" onclick="openModal('svc5')">
         <div class="svc-n">05</div>
         <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="M3 17.5A3.5 3.5 0 0 0 6.5 21H10v-7H6.5A3.5 3.5 0 0 0 3 17.5z"/></svg></div>
         <h3>Proyecto a Medida</h3>
         <p>Cuando los servicios estándar no encajan. Diseñamos e implementamos una solución completamente personalizada.</p>
-        <button class="svc-more" onclick="openModal('svc5')">Saber más <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+        <div class="svc-more">Saber más <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></div>
       </div>
     </div>
   </div>
@@ -493,7 +575,7 @@
     </div>
     <div class="proc-grid">
       <div class="proc-step fi d1"><div class="proc-dot">01</div><h3>Consulta inicial</h3><p>Conocemos tu empresa y tus objetivos. Sin compromisos.</p></div>
-      <div class="proc-step active fi d2"><div class="proc-dot">02</div><h3>Diagnóstico</h3><p>Identificamos las oportunidades de mayor impacto.</p></div>
+      <div class="proc-step fi d2"><div class="proc-dot">02</div><h3>Diagnóstico</h3><p>Identificamos las oportunidades de mayor impacto.</p></div>
       <div class="proc-step fi d3"><div class="proc-dot">03</div><h3>Implementación</h3><p>Integramos la solución en tus sistemas actuales.</p></div>
       <div class="proc-step fi d4"><div class="proc-dot">04</div><h3>Soporte continuo</h3><p>Te acompañamos a largo plazo a medida que creces.</p></div>
     </div>
@@ -516,11 +598,15 @@
         <a href="#contacto" class="btn btn-blue">Solicitar información <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
       </div>
       <div class="phone-wrap fi d2">
+        <!-- Floating badges -->
+        <div class="phone-badge" style="top:6%;right:-4%;"><div class="badge-dot"></div><span>Bot activo 24/7</span></div>
+        <div class="phone-badge pb2" style="bottom:16%;left:-8%;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13" style="color:#60A5FA"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.62 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.09A16 16 0 0 0 14 15.09l.82-.82a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>−40% ausencias</span></div>
+        <div class="phone-badge pb3" style="top:44%;right:-9%;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13" style="color:#60A5FA"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg><span>IA personalizada</span></div>
         <div class="phone">
           <div class="phone-screen">
             <!-- Status bar -->
             <div class="p-status">
-              <span class="p-status-time">14:31</span>
+              <span class="p-status-time">10:14</span>
               <div class="p-status-icons">
                 <svg viewBox="0 0 24 24" width="10" height="10" fill="white" opacity=".9"><rect x="1" y="13" width="3" height="10" rx="1"/><rect x="6" y="9" width="3" height="14" rx="1"/><rect x="11" y="5" width="3" height="18" rx="1"/><rect x="16" y="1" width="3" height="22" rx="1" opacity=".3"/></svg>
                 <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="white" stroke-width="2" opacity=".9"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="white"/></svg>
@@ -531,7 +617,7 @@
             <div class="p-bar">
               <div class="p-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></div>
               <div class="p-av"><img src="Logo.png" alt="Vora" /></div>
-              <div class="p-inf"><strong>Vora</strong><span>en línea</span></div>
+              <div class="p-inf"><strong>Vora IA</strong><span>en línea ahora</span></div>
               <div class="p-actions">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 10l4.553-2.369A1 1 0 0 1 21 8.535v6.93a1 1 0 0 1-1.447.894L15 14M5 18h8a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2z"/></svg>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.62 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.09A16 16 0 0 0 14 15.09l.82-.82a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
@@ -540,12 +626,12 @@
             <!-- Messages -->
             <div class="p-msgs">
               <div class="pm-date">Hoy</div>
-              <div class="pm pm-in">Buenas, ¿tienen disponibilidad esta semana?</div>
-              <div class="pm pm-out">Buenas tardes 👋 Tenemos hueco el miércoles y el viernes. ¿Prefiere mañana o tarde?<div class="pm-t">14:32 <span class="tks">✓✓</span></div></div>
-              <div class="pm pm-in">El viernes por la mañana</div>
-              <div class="pm pm-out">El viernes a las 9:00 y a las 11:00. ¿Cuál le viene mejor?<div class="pm-t">14:33 <span class="tks">✓✓</span></div></div>
-              <div class="pm pm-in">A las 11 perfecto</div>
-              <div class="pm pm-out">✅ Cita confirmada el viernes a las 11:00. Le enviaré un recordatorio el día anterior.<div class="pm-t">14:34 <span class="tks">✓✓</span></div></div>
+              <div class="pm pm-in">Hola, ¿podéis automatizar el seguimiento de mis clientes?</div>
+              <div class="pm pm-out">¡Hola! Sí, podemos automatizarlo por completo 🤖 ¿Usas CRM actualmente o gestionas los contactos de otra forma?<div class="pm-t">10:14 <span class="tks">✓✓</span></div></div>
+              <div class="pm pm-in">Usamos HubSpot pero hacemos muchos pasos a mano</div>
+              <div class="pm pm-out">Perfecto, integramos IA en HubSpot para automatizar seguimientos, recordatorios y clasificación de leads. Sin cambiar tu flujo actual 💡<div class="pm-t">10:15 <span class="tks">✓✓</span></div></div>
+              <div class="pm pm-in">¿Y cuánto tarda en implementarse?</div>
+              <div class="pm pm-out">Entre 1 y 3 semanas según la complejidad. ¿Te agendo una consulta gratuita esta semana para darte un diagnóstico? ✅<div class="pm-t">10:16 <span class="tks">✓✓</span></div></div>
               <div class="pm pm-typing"><span></span><span></span><span></span></div>
             </div>
             <!-- Input bar -->
@@ -592,22 +678,16 @@
         <div class="c-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15.46l-5.27-.61-2.52 2.52a15.05 15.05 0 0 1-6.59-6.59l2.53-2.53L8.54 3H3.03C2.45 13.18 10.82 21.55 21 20.97l.46-5.51z"/></svg><span>También disponibles por WhatsApp</span></div>
       </div>
       <div class="fi d2">
-        <form class="c-form" onsubmit="handleSubmit(event)">
-          <div class="f-row">
-            <div class="f-col" style="margin-bottom:0"><label>Nombre *</label><input name="nombre" type="text" placeholder="Tu nombre" required /></div>
-            <div class="f-col" style="margin-bottom:0"><label>Empresa *</label><input name="empresa" type="text" placeholder="Tu empresa" required /></div>
+        <div class="contact-cta">
+          <div class="contact-cta-tag">Formulario de contacto</div>
+          <p>Rellena nuestro formulario y te responderemos con una propuesta personalizada en menos de 24 horas. Sin compromiso.</p>
+          <button onclick="openContactForm()" class="btn btn-blue">Contactar con nosotros <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+          <div class="contact-cta-badges">
+            <div class="contact-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.62 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.09A16 16 0 0 0 14 15.09l.82-.82a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Respuesta en &lt;24h</div>
+            <div class="contact-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Sin compromiso</div>
+            <div class="contact-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Propuesta personalizada</div>
           </div>
-          <div class="f-row">
-            <div class="f-col" style="margin-bottom:0"><label>Email *</label><input name="email" type="email" placeholder="tu@empresa.com" required /></div>
-            <div class="f-col" style="margin-bottom:0"><label>Teléfono</label><input name="telefono" type="tel" placeholder="+34 600 000 000" /></div>
-          </div>
-          <div class="f-col"><label>Servicio de interés</label>
-            <select name="servicio"><option value="">Seleccionar...</option><option>IA Aplicada</option><option>Automatización de Procesos</option><option>Análisis de Procesos</option><option>Chatbot IA para WhatsApp</option><option>Proyecto a Medida</option><option>No lo sé todavía</option></select>
-          </div>
-          <div class="f-col"><label>Cuéntanos</label><textarea name="mensaje" placeholder="¿Qué quieres mejorar en tu empresa?"></textarea></div>
-          <button type="submit" class="f-submit">Enviar solicitud</button>
-          <p class="f-note">O escríbenos a <a href="mailto:info@easyvoraproyect.com">info@easyvoraproyect.com</a></p>
-        </form>
+        </div>
       </div>
     </div>
   </div>
@@ -648,6 +728,68 @@
   <div style="display:flex;gap:10px;flex-shrink:0;">
     <a href="cookies.html" style="font-size:13px;font-weight:600;color:rgba(255,255,255,.45);padding:9px 16px;border-radius:7px;text-decoration:none;border:1px solid rgba(255,255,255,.1);transition:all .2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.45)'">Política de cookies</a>
     <button onclick="acceptCookies()" style="font-size:13px;font-weight:600;color:#fff;background:#2563EB;border:none;padding:9px 20px;border-radius:7px;cursor:pointer;box-shadow:0 0 20px rgba(37,99,235,.4);transition:all .2s;" onmouseover="this.style.background='#1a44c8'" onmouseout="this.style.background='#2563EB'">Aceptar y cerrar</button>
+  </div>
+</div>
+
+<!-- CONTACT FORM MODAL -->
+<div id="cform-ov" onclick="closeContactForm(event)">
+  <div id="cform-box">
+    <button id="cform-close" onclick="closeContactForm()">✕</button>
+    <!-- Panel izquierdo: datos de la empresa -->
+    <div class="cform-left">
+      <div class="cform-left-hdr">
+        <h3>Información de<br/>contacto</h3>
+        <p>Estamos aquí para ayudarte. Cuéntanos tu necesidad y te respondemos en menos de 24 horas.</p>
+      </div>
+      <div class="cinfo-item">
+        <div class="cinfo-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="cinfo-body">
+          <label>Dirección</label>
+          <span>Av. Manuel Azaña 8<br/>Madrid</span>
+        </div>
+      </div>
+      <div class="cinfo-item">
+        <div class="cinfo-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div class="cinfo-body">
+          <label>Email</label>
+          <a href="mailto:info@easyvoraproyect.com">info@easyvoraproyect.com</a>
+        </div>
+      </div>
+      <div class="cinfo-item">
+        <div class="cinfo-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.62 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.09A16 16 0 0 0 14 15.09l.82-.82a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div class="cinfo-body">
+          <label>Teléfono</label>
+          <span class="cinfo-empty">Próximamente disponible</span>
+        </div>
+      </div>
+    </div>
+    <!-- Panel derecho: formulario -->
+    <div class="cform-right">
+      <div class="cform-right-hdr">
+        <h3>Cuéntanos sobre tu empresa</h3>
+        <p>Te respondemos con una propuesta personalizada en menos de 24 horas.</p>
+      </div>
+      <form id="cform" onsubmit="handleSubmit(event)">
+        <div class="f-row">
+          <div class="f-col" style="margin-bottom:0"><label>Nombre completo *</label><input name="nombre" type="text" placeholder="Tu nombre completo" required /></div>
+          <div class="f-col" style="margin-bottom:0"><label>Email Corporativo *</label><input name="email" type="email" placeholder="tu@empresa.com" required /></div>
+        </div>
+        <div class="f-row">
+          <div class="f-col" style="margin-bottom:0"><label>Teléfono</label><input name="telefono" type="tel" placeholder="+34 600 000 000" /></div>
+          <div class="f-col" style="margin-bottom:0"><label>Nombre de la Empresa *</label><input name="empresa" type="text" placeholder="Tu empresa" required /></div>
+        </div>
+        <div class="f-col"><label>Cargo *</label><input name="cargo" type="text" placeholder="Tu cargo en la empresa" required /></div>
+        <div class="f-col"><label>Mensaje *</label><textarea name="mensaje" placeholder="Cuéntanos cómo podemos ayudarte." required style="height:100px;resize:none;"></textarea></div>
+        <button type="submit" class="f-submit">Enviar mensaje</button>
+        <p class="f-note">O escríbenos a <a href="mailto:info@easyvoraproyect.com">info@easyvoraproyect.com</a></p>
+      </form>
+    </div>
   </div>
 </div>
 
@@ -693,7 +835,7 @@ if(matchMedia('(pointer:fine)').matches){
   document.addEventListener('mousedown', () => ring.classList.add('small'));
   document.addEventListener('mouseup',   () => ring.classList.remove('small'));
   (function lerpRing(){
-    rx+=(mx-rx)*.12; ry+=(my-ry)*.12;
+    rx+=(mx-rx)*.45; ry+=(my-ry)*.45;
     ring.style.left=rx+'px'; ring.style.top=ry+'px';
     requestAnimationFrame(lerpRing);
   })();
@@ -967,18 +1109,20 @@ async function handleSubmit(e) {
   btn.textContent = 'Enviando…';
   btn.disabled = true;
 
+  const payload = {
+    nombre:   f.nombre.value,
+    empresa:  f.empresa.value,
+    email:    f.email.value,
+    telefono: f.telefono ? (f.telefono.value || '—') : '—',
+    cargo:    f.cargo    ? (f.cargo.value    || '—') : '—',
+    mensaje:  f.mensaje.value,
+  };
+
   try {
     const res = await fetch(`${API_URL}/api/contact`, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        nombre:   f.nombre.value,
-        empresa:  f.empresa.value,
-        email:    f.email.value,
-        telefono: f.telefono.value,
-        servicio: f.servicio.value,
-        mensaje:  f.mensaje.value,
-      }),
+      body: JSON.stringify(payload),
     });
 
     const json = await res.json();
@@ -993,12 +1137,12 @@ async function handleSubmit(e) {
     // Backend no disponible — envía con EmailJS (sin abrir ningún cliente de correo)
     try {
       await emailjs.send(EJS_SERVICE, EJS_TEMPLATE, {
-        from_name: f.nombre.value,
-        empresa:   f.empresa.value,
-        reply_to:  f.email.value,
-        telefono:  f.telefono.value  || '—',
-        servicio:  f.servicio.value  || '—',
-        mensaje:   f.mensaje.value   || '—',
+        from_name: payload.nombre,
+        empresa:   payload.empresa,
+        reply_to:  payload.email,
+        telefono:  payload.telefono,
+        cargo:     payload.cargo,
+        mensaje:   payload.mensaje,
       }, EJS_KEY);
       showToast('¡Solicitud enviada! Te contactaremos pronto.', true);
       f.reset();
@@ -1009,6 +1153,17 @@ async function handleSubmit(e) {
     btn.textContent = original;
     btn.disabled = false;
   }
+}
+
+/* ══ CONTACT FORM MODAL ══ */
+function openContactForm() {
+  document.getElementById('cform-ov').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeContactForm(e) {
+  if (e && e.currentTarget === document.getElementById('cform-ov') && e.target !== e.currentTarget) return;
+  document.getElementById('cform-ov').classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 /* ══ MODAL ══ */
@@ -1094,7 +1249,7 @@ function closeModal(e) {
   document.getElementById('modal-ov').classList.remove('open');
   document.body.style.overflow = '';
 }
-document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape') { closeModal(); closeContactForm(); } });
 
 /* ══ SMOOTH SCROLL ══ */
 document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
@@ -1103,20 +1258,181 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',
 }));
 
 /* ══ COOKIE BANNER ══ */
+function getVoraBaseline() { return window.innerWidth <= 400 ? 16 : 24; }
+
+function updateVoraPosition() {
+  const banner = document.getElementById('cookie-banner');
+  const widget = document.getElementById('vora-widget');
+  if (!widget) return;
+  const bannerH = (banner && banner.offsetHeight > 0) ? banner.offsetHeight : 0;
+  widget.style.bottom = (getVoraBaseline() + bannerH) + 'px';
+}
+
 (function(){
   const banner = document.getElementById('cookie-banner');
   if(!banner) return;
   if(!localStorage.getItem('ev_cookie_consent')){
-    // Show after splash (3.2s) so it doesn't compete visually
-    setTimeout(()=>{ banner.style.display='flex'; }, 3200);
+    setTimeout(()=>{
+      banner.style.display='flex';
+      requestAnimationFrame(updateVoraPosition);
+    }, 3200);
   }
+  window.addEventListener('resize', updateVoraPosition, { passive: true });
 })();
+
 function acceptCookies(){
   localStorage.setItem('ev_cookie_consent','1');
   const b = document.getElementById('cookie-banner');
   if(b){ b.style.opacity='0'; b.style.transition='opacity .4s'; setTimeout(()=>b.remove(),420); }
+  const widget = document.getElementById('vora-widget');
+  if(widget) widget.style.bottom = getVoraBaseline() + 'px';
 }
 </script>
 <script src="spa.js"></script>
+
+<!-- ══ VORA WIDGET ══ -->
+<div id="vora-widget">
+  <div id="vora-chat">
+    <div id="vora-header">
+      <div id="vora-hdr-left">
+        <div id="vora-avatar"><img src="LogoSimple.png" alt="Vora" onerror="this.src='Logo.png'" /></div>
+        <div>
+          <div id="vora-name">Vora</div>
+          <div id="vora-status">Asistente de Easyvora · En línea</div>
+        </div>
+      </div>
+      <button id="vora-close" onclick="toggleVora()">✕</button>
+    </div>
+    <div id="vora-msgs"></div>
+    <div id="vora-footer">
+      <input id="vora-input" type="text" placeholder="Escribe tu pregunta…" autocomplete="off" />
+      <button id="vora-send" onclick="voraSend()">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </div>
+  </div>
+  <button id="vora-btn" onclick="toggleVora()"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg></button>
+  <div id="vora-tooltip">¿Necesitas ayuda? Habla con Vora</div>
+</div>
+
+<script>
+/* ══ VORA ASSISTANT ══ */
+const VORA_KEY = ''; /* ← Inserta aquí tu API key de Anthropic */
+const VORA_MODEL = 'claude-sonnet-4-6';
+const VORA_SYS = `Eres Vora, el asistente virtual de Easyvora, empresa especializada en inteligencia artificial y automatización para empresas hispanohablantes.
+
+EASYVORA — INFORMACIÓN COMPLETA:
+• Servicios: IA Aplicada (modelos IA integrados en herramientas actuales), Automatización de Procesos (flujos automáticos, RPA, integraciones), Análisis de Procesos (auditoría y diagnóstico con informe de valor), Chatbot IA para WhatsApp (atención 24/7, agenda de citas, recordatorios), Proyectos a Medida.
+• Proceso: Consulta inicial → Diagnóstico → Implementación → Soporte continuo.
+• Contacto: info@easyvoraproyect.com | Dirección: Av. Manuel Azaña 8, Madrid.
+• Propuesta de valor: sin cambiar infraestructura del cliente, ROI medible desde el inicio, cumple RGPD, sin costes ocultos, acompañamiento a largo plazo.
+• Para contactar o solicitar presupuesto: formulario en la web (botón "Contactar con nosotros").
+
+INSTRUCCIONES:
+- Responde ÚNICAMENTE sobre Easyvora, sus servicios o temas directamente relacionados.
+- Tono: profesional pero cercano, en español de España.
+- Respuestas cortas y directas (máximo 3-4 oraciones). Sin listas largas.
+- Si preguntan precio, demo o propuesta concreta: deriva al formulario de contacto.
+- Si no sabes algo específico: invita a escribir a info@easyvoraproyect.com.
+- Nunca inventes datos, precios ni compromisos concretos.`;
+
+let voraHistory = [];
+let voraOpen = false;
+let voraGreeted = false;
+
+function toggleVora() {
+  voraOpen = !voraOpen;
+  document.getElementById('vora-chat').classList.toggle('open', voraOpen);
+  if (voraOpen && !voraGreeted) {
+    voraGreeted = true;
+    setTimeout(() => voraAddMsg('¡Hola! Soy Vora 👋 el asistente virtual de Easyvora. ¿En qué puedo ayudarte hoy?', 'bot'), 280);
+  }
+  if (voraOpen) setTimeout(() => document.getElementById('vora-input').focus(), 340);
+}
+
+function voraAddMsg(text, who) {
+  const msgs = document.getElementById('vora-msgs');
+  const el = document.createElement('div');
+  el.className = 'vm vm-' + who;
+  el.textContent = text;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+  return el;
+}
+
+function voraShowTyping() {
+  const msgs = document.getElementById('vora-msgs');
+  const el = document.createElement('div');
+  el.className = 'vm-typing';
+  el.innerHTML = '<span></span><span></span><span></span>';
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+  return el;
+}
+
+async function voraSend() {
+  const input = document.getElementById('vora-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+
+  voraAddMsg(text, 'usr');
+  voraHistory.push({ role: 'user', content: text });
+
+  const typing = voraShowTyping();
+  const sendBtn = document.getElementById('vora-send');
+  sendBtn.disabled = true;
+  input.disabled = true;
+
+  try {
+    if (!VORA_KEY) throw new Error('no-key');
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': VORA_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-allow-browser': 'true'
+      },
+      body: JSON.stringify({
+        model: VORA_MODEL,
+        max_tokens: 320,
+        system: [{ type: 'text', text: VORA_SYS, cache_control: { type: 'ephemeral' } }],
+        messages: voraHistory
+      })
+    });
+    if (!res.ok) throw new Error('api-error');
+    const data = await res.json();
+    const reply = data.content[0].text;
+    voraHistory.push({ role: 'assistant', content: reply });
+    typing.remove();
+    voraAddMsg(reply, 'bot');
+  } catch(err) {
+    typing.remove();
+    if (err.message === 'no-key') {
+      voraAddMsg('Para activar el chat con IA, añade tu API key de Anthropic en el código. Mientras tanto, escríbenos a info@easyvoraproyect.com 😊', 'bot');
+    } else {
+      voraAddMsg('Lo siento, no puedo responder ahora mismo. Escríbenos a info@easyvoraproyect.com y te atendemos en seguida.', 'bot');
+    }
+    voraHistory.pop();
+  } finally {
+    sendBtn.disabled = false;
+    input.disabled = false;
+    input.focus();
+  }
+}
+
+document.getElementById('vora-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); voraSend(); }
+});
+
+/* Cursor ring en elementos del widget */
+if (matchMedia('(pointer:fine)').matches && window.EV_RING) {
+  document.querySelectorAll('#vora-btn,#vora-close,#vora-send').forEach(el => {
+    el.addEventListener('mouseenter', () => EV_RING.classList.add('big'));
+    el.addEventListener('mouseleave', () => EV_RING.classList.remove('big'));
+  });
+}
+</script>
 </body>
 </html>
