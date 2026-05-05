@@ -1,0 +1,248 @@
+
+<canvas id="c" style="display:block;width:100%;height:600px;cursor:none;border-radius:8px;"></canvas>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+canvas.width = canvas.offsetWidth;
+canvas.height = 600;
+const W = canvas.width, H = canvas.height;
+const cx = W/2, cy = H/2;
+const R = Math.min(W,H)*0.30;
+
+let mouse = {x:-999,y:-999,active:false};
+let time = 0;
+
+// Estrellas de fondo
+const stars = [];
+for(let i=0;i<400;i++){
+  stars.push({
+    x:Math.random()*W, y:Math.random()*H,
+    size:Math.random()*1.0+0.1,
+    alpha:Math.random()*0.5+0.08,
+    twinkle:Math.random()*Math.PI*2,
+    ts:Math.random()*0.018+0.004
+  });
+}
+
+// Nebulosas flotantes alrededor de la esfera
+const nebulas = [
+  {ox:-0.55, oy: 0.30, rx:0.22,ry:0.08, rot:-0.3,  n:900, bright:0.45, col:[160,185,255]},
+  {ox: 0.55, oy:-0.25, rx:0.18,ry:0.06, rot: 0.2,  n:700, bright:0.38, col:[170,195,255]},
+  {ox: 0.10, oy: 0.55, rx:0.20,ry:0.06, rot:-0.1,  n:600, bright:0.32, col:[180,200,255]},
+  {ox:-0.20, oy:-0.50, rx:0.14,ry:0.05, rot: 0.4,  n:400, bright:0.25, col:[150,180,255]},
+  {ox: 0.60, oy: 0.42, rx:0.12,ry:0.04, rot:-0.2,  n:350, bright:0.22, col:[190,210,255]},
+  {ox:-0.55, oy:-0.38, rx:0.10,ry:0.04, rot: 0.3,  n:300, bright:0.20, col:[160,190,255]},
+];
+
+// Partículas de la esfera (3D)
+let sphereParticles = [];
+const SN = 2200;
+for(let i=0;i<SN;i++){
+  const u=Math.random(), v=Math.random();
+  const theta=2*Math.PI*u;
+  const phi=Math.acos(2*v-1);
+  const r=R*Math.cbrt(Math.random());
+  const px=r*Math.sin(phi)*Math.cos(theta);
+  const py=r*Math.sin(phi)*Math.sin(theta);
+  const pz=r*Math.cos(phi);
+  sphereParticles.push({
+    x:px,y:py,z:pz,
+    bx:px,by:py,bz:pz,
+    vx:0,vy:0,
+    size:Math.random()*1.6+0.2,
+    brightness:Math.random()*0.7+0.3,
+    twinkle:Math.random()*Math.PI*2,
+    ts:Math.random()*0.025+0.008,
+    col:[200,215,255]
+  });
+}
+
+// Partículas de nebulosas
+let nebParticles = [];
+for(const f of nebulas){
+  const bx = cx + f.ox*W*0.5;
+  const by = cy + f.oy*H*0.5;
+  for(let i=0;i<f.n;i++){
+    const angle=Math.random()*Math.PI*2;
+    const rr=Math.sqrt(Math.random());
+    const lx=f.rx*W*rr*Math.cos(angle);
+    const ly=f.ry*H*rr*Math.sin(angle);
+    const cos=Math.cos(f.rot),sin=Math.sin(f.rot);
+    const px=bx+lx*cos-ly*sin;
+    const py=by+lx*sin+ly*cos;
+    const brightness=f.bright*Math.pow(1-rr,0.35)*(0.3+Math.random()*0.7);
+    nebParticles.push({
+      x:px,y:py,bx:px,by:py,
+      vx:0,vy:0,
+      size:Math.random()*1.5+0.15,
+      baseAlpha:brightness,
+      twinkle:Math.random()*Math.PI*2,
+      ts:Math.random()*0.02+0.005,
+      col:f.col
+    });
+  }
+}
+
+let rotY=0, rotX=0.12;
+
+canvas.addEventListener('mousemove',e=>{
+  const r=canvas.getBoundingClientRect();
+  mouse.x=(e.clientX-r.left)*(W/r.width);
+  mouse.y=(e.clientY-r.top)*(H/r.height);
+  mouse.active=true;
+});
+canvas.addEventListener('mouseleave',()=>{mouse.active=false;});
+
+function projectSphere(x,y,z){
+  const cosY=Math.cos(rotY),sinY=Math.sin(rotY);
+  const cosX=Math.cos(rotX),sinX=Math.sin(rotX);
+  let x1=x*cosY-z*sinY;
+  let z1=x*sinY+z*cosY;
+  let y1=y*cosX-z1*sinX;
+  let z2=y*sinX+z1*cosX;
+  const fov=900;
+  const scale=fov/(fov+z2+R);
+  return{sx:cx+x1*scale, sy:cy+y1*scale, scale, depth:z2};
+}
+
+function draw(){
+  ctx.fillStyle='#03050d';
+  ctx.fillRect(0,0,W,H);
+
+  // Niebla de fondo
+  const fog1=ctx.createRadialGradient(cx,cy,R*0.5,cx,cy,W*0.6);
+  fog1.addColorStop(0,'rgba(15,20,60,0.18)');
+  fog1.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=fog1;
+  ctx.fillRect(0,0,W,H);
+
+  time+=0.012;
+  const mdx=mouse.active?(mouse.x-cx)/W:0;
+  const mdy=mouse.active?(mouse.y-cy)/H:0;
+  rotY+=0.003+mdx*0.035;
+  rotX+=mdy*0.012;
+  rotX=Math.max(-0.55,Math.min(0.55,rotX));
+
+  // Estrellas
+  for(const s of stars){
+    s.twinkle+=s.ts;
+    const tw=0.6+0.4*Math.sin(s.twinkle);
+    ctx.globalAlpha=s.alpha*tw;
+    ctx.fillStyle='#fff';
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
+    ctx.fill();
+  }
+  ctx.globalAlpha=1;
+
+  // Nebulosas flotantes
+  for(const p of nebParticles){
+    p.twinkle+=p.ts;
+    const dx=p.x-mouse.x, dy=p.y-mouse.y;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    const MR=150;
+    if(mouse.active&&dist<MR){
+      const force=(1-dist/MR);
+      p.vx+=(dx/(dist||1))*force*5;
+      p.vy+=(dy/(dist||1))*force*5;
+    }
+    p.vx+=(p.bx-p.x)*0.03; p.vy+=(p.by-p.y)*0.03;
+    p.vx*=0.8; p.vy*=0.8;
+    p.x+=p.vx; p.y+=p.vy;
+    const tw=0.78+0.22*Math.sin(p.twinkle);
+    let alpha=p.baseAlpha*tw;
+    let size=p.size;
+    let [r,g,b]=p.col;
+    if(mouse.active&&dist<MR){
+      const boost=1-dist/MR;
+      alpha=Math.min(1,alpha+boost*1.1);
+      size=p.size*(1+boost*3.5);
+      r=Math.min(255,r+boost*50); g=Math.min(255,g+boost*40); b=255;
+    }
+    ctx.globalAlpha=Math.min(1,alpha);
+    ctx.fillStyle=`rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,Math.max(0.2,size),0,Math.PI*2);
+    ctx.fill();
+  }
+  ctx.globalAlpha=1;
+
+  // Halo de la esfera
+  const halo=ctx.createRadialGradient(cx,cy,R*0.7,cx,cy,R*1.35);
+  halo.addColorStop(0,'rgba(60,90,200,0.06)');
+  halo.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=halo;
+  ctx.beginPath();
+  ctx.arc(cx,cy,R*1.35,0,Math.PI*2);
+  ctx.fill();
+
+  // Partículas de la esfera ordenadas por profundidad
+  const sorted=sphereParticles.map(p=>{
+    let px=p.x,py=p.y,pz=p.z;
+    const proj=projectSphere(px,py,pz);
+    const dx=proj.sx-mouse.x, dy=proj.sy-mouse.y;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    if(mouse.active&&dist<120){
+      const force=(1-dist/120);
+      const nx=dx/(dist||1),ny=dy/(dist||1);
+      px+=nx*force*25*0.3;
+      py+=ny*force*25*0.3;
+      pz+=force*20*0.2;
+    }
+    const proj2=projectSphere(px,py,pz);
+    return{...p,sx:proj2.sx,sy:proj2.sy,scale:proj2.scale,depth:proj2.depth,dist};
+  }).sort((a,b)=>a.depth-b.depth);
+
+  for(const p of sorted){
+    p.twinkle+=p.ts;
+    const norm=(p.depth+R)/(2*R);
+    const tw=0.78+0.22*Math.sin(p.twinkle);
+    let alpha=(0.12+norm*0.88)*p.brightness*tw;
+    let size=p.size*p.scale*(0.5+norm*0.8);
+    let r=180,g=200,b=255;
+
+    if(mouse.active&&p.dist<120){
+      const boost=(1-p.dist/120);
+      alpha=Math.min(1,alpha+boost*0.9);
+      size=p.size*p.scale*(1+boost*2.5);
+      r=Math.min(255,180+boost*75);
+      g=Math.min(255,200+boost*55);
+      b=255;
+    }
+
+    const bv=Math.floor(150+norm*105);
+    const gv=Math.floor(80+norm*100);
+    if(!mouse.active||p.dist>=120){
+      r=gv+20; g=gv+40; b=bv+30;
+    }
+
+    ctx.globalAlpha=Math.min(1,alpha);
+    ctx.fillStyle=`rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
+    ctx.beginPath();
+    ctx.arc(p.sx,p.sy,Math.max(0.2,size),0,Math.PI*2);
+    ctx.fill();
+  }
+  ctx.globalAlpha=1;
+
+  // Halo del cursor
+  if(mouse.active){
+    const grd=ctx.createRadialGradient(mouse.x,mouse.y,0,mouse.x,mouse.y,150);
+    grd.addColorStop(0,'rgba(140,170,255,0.10)');
+    grd.addColorStop(0.4,'rgba(100,140,255,0.04)');
+    grd.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=grd;
+    ctx.beginPath();
+    ctx.arc(mouse.x,mouse.y,150,0,Math.PI*2);
+    ctx.fill();
+    ctx.globalAlpha=0.8;
+    ctx.fillStyle='#fff';
+    ctx.beginPath();
+    ctx.arc(mouse.x,mouse.y,2,0,Math.PI*2);
+    ctx.fill();
+    ctx.globalAlpha=1;
+  }
+
+  requestAnimationFrame(draw);
+}
+draw();
+</script>

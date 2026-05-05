@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin Diagnósticos — EasyVora</title>
+  <!-- ═══════════════════════════════════════════════════
+       PANEL DE ADMINISTRACIÓN — ACCESO RESTRINGIDO
+       URL Admin      : /admin-diagnosticos-n4r8bz2k
+       URL Formulario : /diagnostico-ia-n4r8bz2k
+       ═══════════════════════════════════════════════════ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: #04091A; color: rgba(255,255,255,.85); -webkit-font-smoothing: antialiased; min-height: 100vh; }
+    :root {
+      --blue: #2563EB; --sky: #60A5FA; --navy: #0F1F60;
+      --card: rgba(255,255,255,.03); --border: rgba(255,255,255,.08);
+      --muted: rgba(255,255,255,.42); --bg1: #04091A; --bg2: #060D22;
+      --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
+    }
+
+    /* ── CURSOR ── */
+    @media (pointer:fine){ body { cursor: none; } }
+    @media (pointer:coarse){ #cur-dot,#cur-ring { display:none; } }
+    #cur-dot,#cur-ring { position:fixed; top:0; left:0; border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); }
+    #cur-dot  { width:5px; height:5px; background:var(--sky); }
+    #cur-ring { width:34px; height:34px; border:1.5px solid rgba(96,165,250,.5); transition:width .25s,height .25s,border-color .25s,background .25s; }
+    #cur-ring.big   { width:54px; height:54px; border-color:rgba(96,165,250,.25); background:rgba(96,165,250,.05); }
+    #cur-ring.small { width:20px; height:20px; }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── NAV ── */
+    #nav { position:fixed; top:0; left:0; right:0; z-index:900; background:rgba(4,9,26,.95); backdrop-filter:blur(18px); border-bottom:1px solid var(--border); height:64px; display:flex; align-items:center; }
+    .nav-inner { display:flex; align-items:center; justify-content:space-between; width:100%; padding:0 32px; }
+    .nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+    .nav-logo img { height:32px; border-radius:6px; }
+    .nav-logo-name { font-size:17px; font-weight:800; color:#fff; letter-spacing:-.02em; }
+    .nav-logo-sub  { font-size:9px; font-weight:600; letter-spacing:.1em; color:var(--sky); text-transform:uppercase; display:block; margin-top:1px; }
+    .admin-badge { font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#f59e0b; background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.3); padding:4px 12px; border-radius:100px; }
+
+    /* ── PAGE ── */
+    .page { padding:84px 0 60px; }
+
+    /* ── PAGE HEADER ── */
+    .page-hdr { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; margin-bottom:32px; flex-wrap:wrap; }
+    .page-hdr h1 { font-size:clamp(22px,3vw,30px); font-weight:800; letter-spacing:-.03em; color:#fff; margin-bottom:4px; }
+    .page-hdr p  { font-size:13px; color:var(--muted); }
+
+    /* ── STATS ── */
+    .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:28px; }
+    .stat-card { background:rgba(255,255,255,.03); border:1px solid var(--border); border-radius:10px; padding:18px 20px; position:relative; overflow:hidden; }
+    .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; border-radius:10px 10px 0 0; }
+    .stat-card.total::before { background:linear-gradient(90deg,var(--blue),var(--sky)); }
+    .stat-card.alta::before  { background:var(--danger); }
+    .stat-card.media::before { background:var(--warning); }
+    .stat-card.baja::before  { background:var(--success); }
+    .stat-val  { font-size:32px; font-weight:800; letter-spacing:-.04em; color:#fff; line-height:1; margin-bottom:4px; }
+    .stat-lbl  { font-size:11.5px; color:var(--muted); }
+    @media(max-width:640px){ .stats { grid-template-columns:1fr 1fr; } }
+
+    /* ── FILTERS ── */
+    .filters { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; align-items:center; }
+    .filter-label { font-size:12px; font-weight:600; color:var(--muted); white-space:nowrap; }
+    .filter-btn { font-size:12px; font-weight:600; padding:7px 14px; border-radius:100px; border:1px solid var(--border); background:var(--card); color:var(--muted); cursor:pointer; transition:all .18s; font-family:'Inter',sans-serif; white-space:nowrap; }
+    .filter-btn:hover { border-color:rgba(96,165,250,.3); color:rgba(255,255,255,.8); }
+    .filter-btn.active { border-color:var(--blue); background:rgba(37,99,235,.15); color:#fff; }
+    .filter-btn.f-alta.active  { border-color:var(--danger); background:rgba(239,68,68,.12); color:#fca5a5; }
+    .filter-btn.f-media.active { border-color:var(--warning); background:rgba(245,158,11,.12); color:#fcd34d; }
+    .filter-btn.f-baja.active  { border-color:var(--success); background:rgba(16,185,129,.12); color:#6ee7b7; }
+
+    /* ── TABLE ── */
+    .table-wrap { background:rgba(255,255,255,.02); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+    table { width:100%; border-collapse:collapse; }
+    thead th { padding:11px 16px; text-align:left; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:rgba(255,255,255,.35); border-bottom:1px solid var(--border); white-space:nowrap; background:rgba(255,255,255,.015); }
+    tbody tr { border-bottom:1px solid var(--border); transition:background .15s; }
+    tbody tr:last-child { border-bottom:none; }
+    tbody tr:hover { background:rgba(255,255,255,.03); }
+    tbody td { padding:13px 16px; font-size:13px; color:rgba(255,255,255,.75); vertical-align:middle; }
+    .td-empresa { font-weight:600; color:#fff; }
+    .td-sector  { color:var(--muted); font-size:12px; }
+    .td-id      { font-family:monospace; font-size:11.5px; color:var(--sky); }
+    .td-date    { font-size:12px; color:var(--muted); white-space:nowrap; }
+
+    /* urgency badges */
+    .urg { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:100px; font-size:11px; font-weight:700; letter-spacing:.04em; }
+    .urg-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+    .urg.alta  { background:rgba(239,68,68,.12); color:#fca5a5; border:1px solid rgba(239,68,68,.3); }
+    .urg.alta .urg-dot  { background:var(--danger); }
+    .urg.media { background:rgba(245,158,11,.12); color:#fcd34d; border:1px solid rgba(245,158,11,.3); }
+    .urg.media .urg-dot { background:var(--warning); }
+    .urg.baja  { background:rgba(16,185,129,.12); color:#6ee7b7; border:1px solid rgba(16,185,129,.3); }
+    .urg.baja .urg-dot  { background:var(--success); }
+
+    /* action buttons */
+    .td-actions { display:flex; gap:6px; }
+    .act-btn { display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:600; padding:5px 11px; border-radius:6px; border:1px solid var(--border); background:var(--card); color:var(--muted); cursor:pointer; transition:all .15s; font-family:'Inter',sans-serif; white-space:nowrap; }
+    .act-btn:hover { border-color:var(--sky); color:var(--sky); }
+    .act-btn.copy:hover { border-color:var(--success); color:var(--success); }
+    .act-btn svg { width:12px; height:12px; }
+
+    /* empty state */
+    .empty { text-align:center; padding:60px 20px; }
+    .empty svg { width:48px; height:48px; color:rgba(255,255,255,.12); margin:0 auto 16px; display:block; }
+    .empty h3  { font-size:16px; font-weight:600; color:rgba(255,255,255,.4); margin-bottom:8px; }
+    .empty p   { font-size:13px; color:rgba(255,255,255,.25); }
+    .empty a   { color:var(--sky); text-decoration:none; }
+
+    /* ── MODAL ── */
+    #modal-ov { position:fixed; inset:0; z-index:5000; background:rgba(2,7,16,.85); backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .3s; padding:20px; }
+    #modal-ov.open { opacity:1; pointer-events:all; }
+    #modal-box { background:linear-gradient(155deg,#0c1d38,#070f1e); border:1px solid rgba(255,255,255,.1); border-radius:16px; max-width:760px; width:100%; max-height:90vh; overflow-y:auto; transform:translateY(28px) scale(.97); transition:transform .35s cubic-bezier(.22,.68,0,1.2); padding:40px 44px 36px; position:relative; box-shadow:0 50px 100px rgba(0,0,0,.7); scrollbar-width:thin; scrollbar-color:rgba(96,165,250,.2) transparent; }
+    #modal-ov.open #modal-box { transform:none; }
+    @media(max-width:600px){ #modal-box { padding:28px 20px 24px; } }
+    .m-close { position:absolute; top:16px; right:18px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:rgba(255,255,255,.45); cursor:pointer; font-size:16px; padding:5px 10px; border-radius:6px; transition:all .15s; font-family:'Inter',sans-serif; }
+    .m-close:hover { background:rgba(255,255,255,.11); color:#fff; }
+
+    .m-eyebrow { font-size:10.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:rgba(96,165,250,.7); margin-bottom:8px; }
+    .m-title { font-size:clamp(18px,3vw,24px); font-weight:800; color:#fff; letter-spacing:-.025em; margin-bottom:4px; }
+    .m-meta  { font-size:12px; color:var(--muted); margin-bottom:24px; display:flex; gap:14px; flex-wrap:wrap; }
+    .m-meta span { display:flex; align-items:center; gap:5px; }
+
+    .m-section { margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid var(--border); }
+    .m-section:last-child { border-bottom:none; margin-bottom:0; }
+    .m-section h3 { font-size:10.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(96,165,250,.65); margin-bottom:14px; }
+    .m-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    @media(max-width:520px){ .m-grid { grid-template-columns:1fr; } }
+    .m-kv dt { font-size:11px; color:rgba(255,255,255,.38); margin-bottom:3px; }
+    .m-kv dd { font-size:13.5px; color:#fff; margin:0; }
+    .m-kv dd.pills { display:flex; flex-wrap:wrap; gap:5px; }
+    .m-pill { font-size:11px; background:rgba(37,99,235,.15); border:1px solid rgba(37,99,235,.3); color:var(--sky); padding:2px 8px; border-radius:100px; }
+    .m-full { grid-column:1/-1; }
+    .json-block { background:#020710; border-radius:8px; padding:16px; font-family:monospace; font-size:11px; color:#60A5FA; word-break:break-all; white-space:pre-wrap; max-height:260px; overflow-y:auto; margin-top:8px; scrollbar-width:thin; scrollbar-color:rgba(96,165,250,.2) transparent; }
+    .m-footer { display:flex; gap:10px; flex-wrap:wrap; padding-top:20px; border-top:1px solid var(--border); margin-top:4px; }
+
+    /* ── BUTTONS ── */
+    .btn { display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:600; padding:11px 22px; border-radius:8px; border:none; cursor:pointer; text-decoration:none; transition:all .2s; font-family:'Inter',sans-serif; white-space:nowrap; }
+    .btn svg { width:14px; height:14px; flex-shrink:0; }
+    .btn-blue  { background:var(--blue); color:#fff; box-shadow:0 0 24px rgba(37,99,235,.3); }
+    .btn-blue:hover { box-shadow:0 0 36px rgba(37,99,235,.5); transform:translateY(-1px); }
+    .btn-ghost { background:rgba(255,255,255,.05); color:#fff; border:1px solid var(--border); }
+    .btn-ghost:hover { background:rgba(255,255,255,.09); }
+    .btn-green { background:rgba(16,185,129,.15); color:#6ee7b7; border:1px solid rgba(16,185,129,.3); }
+    .btn-green:hover { background:rgba(16,185,129,.25); }
+
+    /* ── TOAST ── */
+    #toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(10px); background:#0f5132; color:#fff; padding:12px 22px; border-radius:8px; font-family:'Inter',sans-serif; font-size:13.5px; font-weight:600; z-index:9999; box-shadow:0 8px 32px rgba(0,0,0,.45); opacity:0; transition:opacity .3s,transform .3s; pointer-events:none; }
+    #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+    @media(max-width:800px){
+      table thead th:nth-child(3),
+      table tbody td:nth-child(3) { display:none; }
+    }
+    @media(max-width:640px){
+      table thead th:nth-child(4),
+      table tbody td:nth-child(4) { display:none; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="Logo.png" alt="EasyVora" onerror="this.style.display='none'" />
+      <div><span class="nav-logo-name">EasyVora</span><span class="nav-logo-sub">Automatización y IA</span></div>
+    </a>
+    <span class="admin-badge">Panel Admin — Diagnósticos</span>
+  </div>
+</nav>
+
+<!-- PAGE -->
+<div class="page">
+  <div class="container">
+
+    <div class="page-hdr">
+      <div>
+        <h1>Panel de Diagnósticos IA</h1>
+        <p>Diagnósticos recibidos · Acceso restringido</p>
+      </div>
+      <a href="diagnostico-ia-n4r8bz2k.html" class="btn btn-blue" target="_blank">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
+        Ver formulario
+      </a>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats" id="stats">
+      <div class="stat-card total"><div class="stat-val" id="st-total">0</div><div class="stat-lbl">Diagnósticos totales</div></div>
+      <div class="stat-card alta"><div class="stat-val" id="st-alta">0</div><div class="stat-lbl">Urgencia Alta</div></div>
+      <div class="stat-card media"><div class="stat-val" id="st-media">0</div><div class="stat-lbl">Urgencia Media</div></div>
+      <div class="stat-card baja"><div class="stat-val" id="st-baja">0</div><div class="stat-lbl">Urgencia Baja</div></div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters">
+      <span class="filter-label">Filtrar por urgencia:</span>
+      <button class="filter-btn active" onclick="setFilter('all',this)">Todos</button>
+      <button class="filter-btn f-alta" onclick="setFilter('Alta',this)">🔴 Alta</button>
+      <button class="filter-btn f-media" onclick="setFilter('Media',this)">🟡 Media</button>
+      <button class="filter-btn f-baja" onclick="setFilter('Baja',this)">🟢 Baja</button>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Empresa</th>
+            <th>Urgencia</th>
+            <th>Sector</th>
+            <th>Fecha</th>
+            <th>ID</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tbl-body"></tbody>
+      </table>
+      <div class="empty" id="empty-state" style="display:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"/></svg>
+        <h3>No hay diagnósticos todavía</h3>
+        <p>Cuando alguien complete el formulario aparecerá aquí.<br/><a href="diagnostico-ia-n4r8bz2k.html" target="_blank">Abrir formulario de diagnóstico →</a></p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL DETALLE -->
+<div id="modal-ov" onclick="closeModal(event)">
+  <div id="modal-box">
+    <button class="m-close" onclick="closeModal()">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   EASYVORA — ADMIN DIAGNÓSTICOS
+   URL Admin      : /admin-diagnosticos-n4r8bz2k
+   URL Formulario : /diagnostico-ia-n4r8bz2k
+   ═══════════════════════════════════════════════════════════ */
+
+const LS_KEY = 'ev_diagnosticos';
+let allDiags = [];
+let activeFilter = 'all';
+
+/* ── CURSOR ── */
+if (matchMedia('(pointer:fine)').matches) {
+  const dot = document.getElementById('cur-dot'), ring = document.getElementById('cur-ring');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; dot.style.left=mx+'px'; dot.style.top=my+'px'; });
+  document.addEventListener('mousedown', () => ring.classList.add('small'));
+  document.addEventListener('mouseup',   () => ring.classList.remove('small'));
+  (function lr(){ rx+=(mx-rx)*.12; ry+=(my-ry)*.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(lr); })();
+  document.querySelectorAll('a,button').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('big'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('big'));
+  });
+}
+
+/* ── DATA ── */
+function loadData() {
+  try { allDiags = JSON.parse(localStorage.getItem(LS_KEY) || '[]'); }
+  catch(e) { allDiags = []; }
+  renderStats();
+  renderTable();
+}
+
+/* ── STATS ── */
+function renderStats() {
+  document.getElementById('st-total').textContent = allDiags.length;
+  document.getElementById('st-alta').textContent  = allDiags.filter(d => d.urgency === 'Alta').length;
+  document.getElementById('st-media').textContent = allDiags.filter(d => d.urgency === 'Media').length;
+  document.getElementById('st-baja').textContent  = allDiags.filter(d => d.urgency === 'Baja').length;
+}
+
+/* ── FILTER ── */
+function setFilter(f, btn) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+/* ── TABLE ── */
+function renderTable() {
+  const filtered = activeFilter === 'all' ? allDiags : allDiags.filter(d => d.urgency === activeFilter);
+  const tbody = document.getElementById('tbl-body');
+  const empty = document.getElementById('empty-state');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = filtered.map(diag => {
+    const d = diag.data || {};
+    const date = new Date(diag.timestamp);
+    const dateStr = date.toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'}) + ' ' +
+                    date.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+    const urgLow = (diag.urgency||'baja').toLowerCase();
+    return `
+    <tr>
+      <td>
+        <div class="td-empresa">${esc(d.empresa||'—')}</div>
+        <div class="td-sector">${esc(d.sector||'—')} · ${esc(d.empleados||'—')}</div>
+      </td>
+      <td><span class="urg ${urgLow}"><div class="urg-dot"></div>${diag.urgency||'—'}</span></td>
+      <td>${esc(d.sector||'—')}</td>
+      <td class="td-date">${dateStr}</td>
+      <td class="td-id">${esc(diag.id||'—')}</td>
+      <td>
+        <div class="td-actions">
+          <button class="act-btn" onclick='openDetail(${JSON.stringify(diag.id)})'>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="5"/><path d="M8 5v3l2 2"/></svg>
+            Ver
+          </button>
+          <button class="act-btn copy" onclick='copyJSON(${JSON.stringify(diag.id)})'>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M11 5V3a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h2"/></svg>
+            JSON
+          </button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── COPY JSON ── */
+function copyJSON(id) {
+  const diag = allDiags.find(d => d.id === id);
+  if (!diag) return;
+  navigator.clipboard.writeText(JSON.stringify(diag.data, null, 2)).then(() => showToast('JSON copiado al portapapeles')).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = JSON.stringify(diag.data, null, 2);
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    showToast('JSON copiado al portapapeles');
+  });
+}
+
+/* ── DETAIL MODAL ── */
+function openDetail(id) {
+  const diag = allDiags.find(d => d.id === id);
+  if (!diag) return;
+  const d = diag.data || {};
+  const date = new Date(diag.timestamp);
+  const dateStr = date.toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const urgLow = (diag.urgency||'baja').toLowerCase();
+
+  const pillHtml = arr => (arr&&arr.length) ? arr.map(v => `<span class="m-pill">${esc(v)}</span>`).join('') : '<span style="color:var(--muted)">—</span>';
+
+  document.getElementById('modal-content').innerHTML = `
+    <div class="m-eyebrow">Diagnóstico IA · ${dateStr}</div>
+    <div class="m-title">${esc(d.empresa||'—')}</div>
+    <div class="m-meta">
+      <span><span class="urg ${urgLow}"><div class="urg-dot"></div>Urgencia: ${diag.urgency}</span></span>
+      <span>ID: <strong style="color:var(--sky);font-family:monospace;">${esc(diag.id)}</strong></span>
+      <span>Contacto: <strong style="color:#fff;">${esc(d.nombre_cargo||'—')}</strong></span>
+    </div>
+
+    <div class="m-section">
+      <h3>Tu Empresa</h3>
+      <div class="m-grid">
+        <dl class="m-kv"><dt>Sector</dt><dd>${esc(d.sector||'—')}</dd></dl>
+        <dl class="m-kv"><dt>Empleados</dt><dd>${esc(d.empleados||'—')}</dd></dl>
+        <dl class="m-kv"><dt>Facturación anual</dt><dd>${esc(d.facturacion||'—')}</dd></dl>
+        <dl class="m-kv"><dt>Problema principal</dt><dd>${esc(d.problema||'—')}</dd></dl>
+        <dl class="m-kv m-full"><dt>Horas perdidas / semana</dt><dd>${esc(d.horas_perdidas||'—')}</dd></dl>
+      </div>
+    </div>
+
+    <div class="m-section">
+      <h3>Atención al Cliente</h3>
+      <div class="m-grid">
+        <dl class="m-kv m-full"><dt>Canales de contacto</dt><dd class="pills">${pillHtml(d.canales)}</dd></dl>
+        <dl class="m-kv"><dt>Consultas / semana</dt><dd>${esc(d.consultas_semana||'—')}</dd></dl>
+        <dl class="m-kv"><dt>% preguntas repetitivas</dt><dd>${esc(d.pct_repetitivas||'—')}</dd></dl>
+        <dl class="m-kv"><dt>Tiempo de respuesta</dt><dd>${esc(d.tiempo_respuesta||'—')}</dd></dl>
+        <dl class="m-kv"><dt>Clientes perdidos</dt><dd>${esc(d.clientes_perdidos||'—')}</dd></dl>
+        <dl class="m-kv"><dt>Sistema automático</dt><dd>${esc(d.sistema_automatico||'—')}</dd></dl>
+        <dl class="m-kv"><dt>Seguimiento leads</dt><dd>${esc(d.seguimiento_leads||'—')}</dd></dl>
+      </div>
+    </div>
+
+    <div class="m-section">
+      <h3>Operaciones y Procesos</h3>
+      <div class="m-grid">
+        <dl class="m-kv m-full"><dt>Tareas que podrían automatizarse</dt><dd>${esc(d.tareas_manuales||'—')}</dd></dl>
+        <dl class="m-kv m-full"><dt>Herramientas usadas</dt><dd class="pills">${pillHtml(d.herramientas)}</dd></dl>
+        <dl class="m-kv"><dt>Datos centralizados</dt><dd>${esc(d.datos_centralizados||'—')}</dd></dl>
+        <dl class="m-kv"><dt>Frecuencia reportes</dt><dd>${esc(d.frecuencia_reportes||'—')}</dd></dl>
+        <dl class="m-kv"><dt>Tiempo administrativo</dt><dd>${esc(d.tiempo_admin||'—')}</dd></dl>
+        <dl class="m-kv"><dt>Procesos documentados</dt><dd>${esc(d.procesos_documentados||'—')}</dd></dl>
+      </div>
+    </div>
+
+    <div class="m-section">
+      <h3>Ventas y Marketing</h3>
+      <div class="m-grid">
+        <dl class="m-kv"><dt>Captación clientes</dt><dd>${esc(d.captacion_clientes||'—')}</dd></dl>
+        <dl class="m-kv"><dt>Proceso de ventas</dt><dd>${esc(d.proceso_ventas||'—')}</dd></dl>
+        <dl class="m-kv"><dt>Seguimiento presupuestos</dt><dd>${esc(d.seguimiento_presupuestos||'—')}</dd></dl>
+        <dl class="m-kv"><dt>Publicación redes</dt><dd>${esc(d.redes_sociales||'—')}</dd></dl>
+        <dl class="m-kv"><dt>Tiempo redes / semana</dt><dd>${esc(d.tiempo_redes||'—')}</dd></dl>
+        <dl class="m-kv"><dt>Medición marketing</dt><dd>${esc(d.medicion_marketing||'—')}</dd></dl>
+      </div>
+    </div>
+
+    <div class="m-section">
+      <h3>Objetivos</h3>
+      <div class="m-grid">
+        <dl class="m-kv"><dt>Objetivo principal</dt><dd>${esc(d.objetivo_principal||'—')}</dd></dl>
+        <dl class="m-kv"><dt>Tiempo implementación</dt><dd>${esc(d.tiempo_implementacion||'—')}</dd></dl>
+        <dl class="m-kv"><dt>Intentos previos</dt><dd>${esc(d.intentos_previos||'—')}</dd></dl>
+        <dl class="m-kv"><dt>Mayor miedo / freno</dt><dd>${esc(d.miedos_ia||'—')}</dd></dl>
+        <dl class="m-kv m-full"><dt>Visión de éxito en 12 meses</dt><dd>${esc(d.vision_exito||'—')}</dd></dl>
+      </div>
+    </div>
+
+    <div class="m-section">
+      <h3>Datos de Contacto</h3>
+      <div class="m-grid">
+        <dl class="m-kv"><dt>Nombre y cargo</dt><dd>${esc(d.nombre_cargo||'—')}</dd></dl>
+        <dl class="m-kv"><dt>Email</dt><dd><a href="mailto:${esc(d.email_contacto||'')}" style="color:var(--sky);text-decoration:none;">${esc(d.email_contacto||'—')}</a></dd></dl>
+        <dl class="m-kv"><dt>Teléfono</dt><dd>${esc(d.telefono_contacto||'—')}</dd></dl>
+      </div>
+    </div>
+
+    <div class="m-section">
+      <h3>JSON Completo para Análisis IA</h3>
+      <div class="json-block">${esc(JSON.stringify(d, null, 2))}</div>
+    </div>
+
+    <div class="m-footer">
+      <button class="btn btn-green" onclick='copyJSON(${JSON.stringify(id)})'>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M11 5V3a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h2"/></svg>
+        Copiar JSON para análisis IA
+      </button>
+      <a href="mailto:${esc(d.email_contacto||'')}" class="btn btn-ghost">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4zm0 0l6 5 6-5"/></svg>
+        Escribir al cliente
+      </a>
+    </div>
+  `;
+
+  const ov = document.getElementById('modal-ov');
+  ov.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal-ov')) return;
+  document.getElementById('modal-ov').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+/* ── TOAST ── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ── INIT ── */
+document.addEventListener('DOMContentLoaded', () => {
+  loadData();
+  console.log('%c🔐 EasyVora — Admin Diagnósticos', 'color:#f59e0b;font-size:14px;font-weight:800;');
+  console.log('%cURL Admin      : /admin-diagnosticos-n4r8bz2k', 'color:#f59e0b;font-size:12px;');
+  console.log('%cURL Formulario : /diagnostico-ia-n4r8bz2k', 'color:#60A5FA;font-size:12px;');
+  console.log('%cDatos guardados en localStorage clave: ev_diagnosticos', 'color:rgba(255,255,255,.4);font-size:11px;');
+});
+
+// Recarga automática si la pestaña gana foco (por si enviaron un diagnóstico en otra)
+window.addEventListener('focus', loadData);
+</script>
+</body>
+</html>

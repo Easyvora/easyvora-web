@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Formulario de Contacto · EasyVora</title>
+  <meta name="description" content="Cuéntanos tu necesidad. El equipo de EasyVora te responderá en menos de 24 horas." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: #04091A; color: rgba(255,255,255,.85); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    :root {
+      --blue:  #2563EB; --sky: #60A5FA; --navy: #0F1F60;
+      --card:  rgba(255,255,255,.03); --border: rgba(255,255,255,.08);
+      --muted: rgba(255,255,255,.42); --bg1: #04091A; --bg2: #060D22;
+    }
+
+    /* ── CURSOR ── */
+    @media (pointer:fine){ body { cursor:none; } }
+    @media (pointer:coarse){ #cur-dot,#cur-ring { display:none; } }
+    #cur-dot,#cur-ring { position:fixed; top:0; left:0; border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); }
+    #cur-dot  { width:5px; height:5px; background:var(--sky); }
+    #cur-ring { width:34px; height:34px; border:1.5px solid rgba(96,165,250,.5); transition:width .25s,height .25s,border-color .25s,background .25s; }
+    #cur-ring.big   { width:54px; height:54px; border-color:rgba(96,165,250,.25); background:rgba(96,165,250,.05); }
+    #cur-ring.small { width:20px; height:20px; }
+
+    /* ── SCROLL BAR ── */
+    #sbar { position:fixed; top:0; left:0; height:2px; background:linear-gradient(90deg,var(--blue),var(--sky)); z-index:1100; width:0%; pointer-events:none; }
+
+    /* ── LAYOUT ── */
+    .container { max-width:1160px; margin:0 auto; padding:0 32px; }
+    .dot-bg { background-image:radial-gradient(rgba(255,255,255,.025) 1px,transparent 1px); background-size:40px 40px; }
+
+    /* ── TYPE ── */
+    h1 { font-size:clamp(32px,4.5vw,56px); font-weight:800; line-height:1.07; letter-spacing:-.03em; }
+    h2 { font-size:clamp(24px,3.2vw,38px); font-weight:700; line-height:1.1; letter-spacing:-.02em; }
+    .eyebrow { display:inline-flex; align-items:center; gap:9px; font-size:11px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; color:var(--sky); margin-bottom:20px; }
+    .eyebrow::before { content:''; display:block; width:20px; height:1.5px; background:var(--sky); }
+    .grad {
+      background:linear-gradient(135deg,#fff 0%,var(--sky) 40%,#a5b4fc 70%,#fff 100%);
+      background-size:300% 300%; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      animation:shimmer 5s ease infinite;
+    }
+    @keyframes shimmer { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+
+    /* ── BUTTONS ── */
+    .btn { display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:600; padding:12px 24px; border-radius:8px; border:none; cursor:none; text-decoration:none; transition:all .2s; font-family:'Inter',sans-serif; white-space:nowrap; position:relative; overflow:hidden; }
+    .btn::before { content:''; position:absolute; inset:0; opacity:0; transition:opacity .3s; }
+    .btn:hover::before { opacity:1; }
+    .btn svg { width:15px; height:15px; flex-shrink:0; transition:transform .2s; }
+    .btn:hover svg { transform:translateX(4px); }
+    .btn-blue { background:var(--blue); color:#fff; box-shadow:0 0 28px rgba(37,99,235,.4); }
+    .btn-blue::before { background:linear-gradient(135deg,rgba(255,255,255,.12),transparent); }
+    .btn-blue:hover { box-shadow:0 0 40px rgba(37,99,235,.6); transform:translateY(-1px); }
+    .btn-ghost { background:rgba(255,255,255,.05); color:#fff; border:1px solid var(--border); }
+    .btn-ghost:hover { background:rgba(255,255,255,.09); border-color:rgba(255,255,255,.16); transform:translateY(-1px); }
+
+    /* ── NAV ── */
+    #nav { position:fixed; top:0; left:0; right:0; z-index:900; background:rgba(4,9,26,.85); backdrop-filter:blur(18px); border-bottom:1px solid var(--border); transition:box-shadow .3s; }
+    #nav.scrolled { box-shadow:0 2px 40px rgba(0,0,0,.5); }
+    .nav-inner { display:flex; align-items:center; justify-content:space-between; height:64px; }
+    .nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+    .nav-logo img { height:36px; width:auto; border-radius:6px; }
+    .nav-logo-name { font-size:17px; font-weight:800; color:#fff; letter-spacing:-.02em; }
+    .nav-logo-sub  { font-size:9px; font-weight:600; letter-spacing:.1em; color:var(--sky); text-transform:uppercase; display:block; margin-top:1px; }
+    .nav-links { display:flex; gap:2px; }
+    .nav-links a { font-size:13.5px; font-weight:500; color:var(--muted); text-decoration:none; padding:7px 13px; border-radius:6px; transition:color .15s,background .15s; position:relative; }
+    .nav-links a::after { content:''; position:absolute; bottom:3px; left:13px; right:13px; height:1px; background:var(--sky); transform:scaleX(0); transform-origin:left; transition:transform .22s; }
+    .nav-links a:hover { color:#fff; }
+    .nav-links a:hover::after { transform:scaleX(1); }
+    .nav-links a.active { color:#fff; }
+    .nav-links a.active::after { transform:scaleX(1); }
+    .nav-actions { display:flex; gap:8px; }
+    .hamburger { display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:none; padding:6px; }
+    .hamburger span { display:block; width:22px; height:2px; background:#fff; border-radius:1px; transition:all .3s; }
+    #mob-menu { display:none; position:fixed; top:64px; left:0; right:0; background:rgba(4,9,26,.97); border-bottom:1px solid var(--border); z-index:800; padding:10px 20px 18px; }
+    #mob-menu a { display:block; padding:10px 12px; color:var(--muted); font-size:15px; font-weight:500; text-decoration:none; border-radius:6px; transition:all .15s; }
+    #mob-menu a:hover { color:#fff; background:rgba(255,255,255,.05); }
+
+    /* ── PAGE HERO ── */
+    #page-hero {
+      background:var(--bg1);
+      padding:128px 0 64px;
+      position:relative;
+      overflow:hidden;
+    }
+    #page-hero::before {
+      content:'';
+      position:absolute; inset:0;
+      background:radial-gradient(ellipse 70% 60% at 50% 0%, rgba(37,99,235,.12), transparent 70%);
+      pointer-events:none;
+    }
+    .page-hero-inner { position:relative; z-index:1; max-width:680px; }
+    .page-hero-inner h1 { color:#fff; margin-bottom:14px; }
+    .page-hero-inner p { font-size:16px; color:var(--muted); line-height:1.75; max-width:520px; }
+
+    /* ── FORM SECTION ── */
+    #formulario-section {
+      background:var(--bg2);
+      padding:60px 0 96px;
+    }
+    .form-layout {
+      display:grid;
+      grid-template-columns:5fr 7fr;
+      gap:64px;
+      align-items:start;
+    }
+
+    /* Info sidebar */
+    .form-sidebar { padding-top:8px; }
+    .form-sidebar h2 { font-size:20px; font-weight:700; color:#fff; margin-bottom:12px; line-height:1.3; }
+    .form-sidebar > p { font-size:14px; color:var(--muted); line-height:1.75; margin-bottom:28px; }
+    .info-item { display:flex; align-items:flex-start; gap:12px; margin-bottom:18px; }
+    .info-ico { width:34px; height:34px; border:1px solid var(--border); border-radius:7px; display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--sky); }
+    .info-ico svg { width:15px; height:15px; }
+    .info-txt h4 { font-size:13.5px; font-weight:700; color:#fff; margin-bottom:2px; }
+    .info-txt p  { font-size:13px; color:var(--muted); line-height:1.5; }
+
+    /* Form card */
+    .c-form { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:36px; }
+    .f-section-title {
+      font-size:10.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+      color:rgba(96,165,250,.6); margin-bottom:16px; margin-top:24px;
+    }
+    .f-section-title:first-child { margin-top:0; }
+    .f-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+    .f-col { display:flex; flex-direction:column; gap:5px; margin-bottom:12px; }
+    .f-col label { font-size:11.5px; font-weight:600; color:rgba(255,255,255,.45); letter-spacing:.03em; }
+    .f-col label .req { color:var(--blue); margin-left:3px; }
+    .f-col input,
+    .f-col textarea {
+      background:rgba(255,255,255,.05); border:1px solid var(--border); border-radius:6px;
+      padding:10px 13px; font-size:14px; color:#fff; font-family:'Inter',sans-serif;
+      transition:border-color .2s,box-shadow .2s; outline:none;
+      -webkit-appearance:none; appearance:none;
+    }
+    .f-col input:focus,
+    .f-col textarea:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(37,99,235,.15); }
+    .f-col input::placeholder,
+    .f-col textarea::placeholder { color:rgba(255,255,255,.18); }
+    .f-col input.err { border-color:rgba(239,68,68,.6); }
+    .f-col textarea { resize:vertical; min-height:110px; line-height:1.6; }
+
+    /* Euro prefix */
+    .euro-wrap { position:relative; }
+    .euro-wrap input { padding-left:30px; }
+    .euro-wrap::before { content:'€'; position:absolute; left:11px; top:50%; transform:translateY(-50%); color:rgba(255,255,255,.3); font-size:13px; pointer-events:none; }
+
+    /* Multi-select pills */
+    .pills-wrap { display:flex; flex-wrap:wrap; gap:7px; margin-top:2px; }
+    .pill { position:relative; }
+    .pill input[type="checkbox"] { position:absolute; opacity:0; width:0; height:0; }
+    .pill label {
+      display:flex; align-items:center; gap:6px;
+      padding:6px 13px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+      font-size:12.5px; font-weight:500;
+      cursor:pointer; transition:all .18s; user-select:none; white-space:nowrap;
+      font-family:'Inter',sans-serif;
+    }
+    .pill label:hover { border-color:rgba(96,165,250,.4); color:#fff; }
+    .pill input:checked + label {
+      background:rgba(37,99,235,.18);
+      border-color:rgba(37,99,235,.7);
+      color:var(--sky);
+    }
+    .pill-check {
+      width:13px; height:13px; border-radius:3px;
+      border:1.5px solid currentColor;
+      display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    }
+    .pill input:checked + label .pill-check { background:var(--blue); border-color:var(--blue); }
+    .pill-check svg { display:none; }
+    .pill input:checked + label .pill-check svg { display:block; }
+    #srv-error { display:none; font-size:11.5px; color:rgba(239,68,68,.85); margin-top:6px; }
+
+    /* Submit */
+    .f-submit {
+      width:100%; background:var(--blue); color:#fff; font-size:14px; font-weight:600;
+      padding:13px; border:none; border-radius:7px; cursor:pointer; font-family:'Inter',sans-serif;
+      transition:all .2s; box-shadow:0 0 24px rgba(37,99,235,.35);
+      display:flex; align-items:center; justify-content:center; gap:9px;
+      margin-top:4px;
+    }
+    .f-submit:hover:not(:disabled) { background:#1a44c8; box-shadow:0 0 36px rgba(37,99,235,.55); transform:translateY(-1px); }
+    .f-submit:disabled { opacity:.55; cursor:not-allowed; transform:none; }
+    .f-submit svg { width:15px; height:15px; transition:transform .2s; }
+    .f-submit:hover:not(:disabled) svg { transform:translateX(3px); }
+    .f-spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,.3); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; display:none; flex-shrink:0; }
+    .f-submit.loading .f-spinner { display:block; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* Alerts */
+    .f-alert { display:none; border-radius:8px; padding:14px 16px; margin-top:16px; font-size:13.5px; line-height:1.5; align-items:flex-start; gap:12px; }
+    .f-alert.show { display:flex; }
+    .f-alert svg { width:18px; height:18px; flex-shrink:0; margin-top:1px; }
+    .f-alert-ok  { background:rgba(37,99,235,.12); border:1px solid rgba(37,99,235,.3); color:#93c5fd; }
+    .f-alert-err { background:rgba(239,68,68,.10); border:1px solid rgba(239,68,68,.3); color:#fca5a5; }
+    .f-alert strong { display:block; margin-bottom:3px; }
+    .f-alert p { font-size:13px; opacity:.85; }
+    .f-note { font-size:12px; color:rgba(255,255,255,.28); text-align:center; margin-top:12px; }
+    .f-note a { color:var(--sky); text-decoration:none; }
+
+    /* ── FOOTER ── */
+    footer { background:#020710; padding:56px 0 28px; border-top:1px solid var(--border); }
+    .ft-top { display:grid; grid-template-columns:2.5fr 1fr 1fr 1fr; gap:44px; padding-bottom:44px; border-bottom:1px solid var(--border); margin-bottom:26px; }
+    .ft-name { font-size:17px; font-weight:800; color:#fff; letter-spacing:-.02em; margin-bottom:9px; }
+    .ft-brand>p { font-size:13.5px; color:rgba(255,255,255,.28); line-height:1.7; max-width:240px; margin-bottom:20px; }
+    .ft-socials { display:flex; gap:7px; }
+    .ft-social { width:32px; height:32px; border-radius:6px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.4); text-decoration:none; font-size:12px; font-weight:700; transition:all .18s; }
+    .ft-social:hover { border-color:var(--sky); color:var(--sky); }
+    .ft-col h5 { font-size:10.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.45); margin-bottom:16px; }
+    .ft-col ul { list-style:none; display:flex; flex-direction:column; gap:9px; }
+    .ft-col ul a { font-size:13.5px; color:rgba(255,255,255,.28); text-decoration:none; transition:color .15s; }
+    .ft-col ul a:hover { color:#fff; }
+    .ft-bottom { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+    .ft-bottom p { font-size:12.5px; color:rgba(255,255,255,.22); }
+    .ft-legal { display:flex; gap:20px; }
+    .ft-legal a { font-size:12.5px; color:rgba(255,255,255,.18); text-decoration:none; transition:color .15s; }
+    .ft-legal a:hover { color:rgba(255,255,255,.6); }
+
+    /* ── ANIMATIONS ── */
+    .fi { opacity:0; transform:translateY(22px); transition:opacity .65s cubic-bezier(.22,.68,0,1.2),transform .65s cubic-bezier(.22,.68,0,1.2); }
+    .fi.in { opacity:1; transform:none; }
+    .d1{transition-delay:.07s} .d2{transition-delay:.14s} .d3{transition-delay:.21s}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:1024px){
+      .form-layout { grid-template-columns:1fr; gap:40px; }
+      .ft-top { grid-template-columns:1fr 1fr; }
+    }
+    @media(max-width:768px){
+      .container { padding:0 20px; }
+      .nav-links,.nav-actions .btn-ghost { display:none; }
+      .hamburger { display:flex; }
+      #page-hero { padding:104px 0 48px; }
+      .ft-top { grid-template-columns:1fr 1fr; }
+    }
+    @media(max-width:480px){
+      .ft-top { grid-template-columns:1fr; }
+      .f-row { grid-template-columns:1fr; }
+      .c-form { padding:24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+<div id="sbar"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="Logo.png" alt="EasyVora" onerror="this.style.display='none'" />
+        <div><span class="nav-logo-name">EasyVora</span><span class="nav-logo-sub">Automatización y IA</span></div>
+      </a>
+      <div class="nav-links">
+        <a href="index.html#servicios">Servicios</a>
+        <a href="index.html#proceso">Proceso</a>
+        <a href="index.html#chatbot">Chatbot IA</a>
+        <a href="index.html#porque">Nosotros</a>
+        <a href="index.html#contacto">Contacto</a>
+        <a href="formulario.html" class="active">Formulario</a>
+      </div>
+      <div class="nav-actions">
+        <a href="index.html#contacto" class="btn btn-ghost" style="padding:8px 16px;font-size:13px;">Contactar</a>
+        <a href="mailto:info@easyvoraproyect.com" class="btn btn-blue" style="padding:8px 16px;font-size:13px;">Solicitar información</a>
+      </div>
+      <button class="hamburger" onclick="toggleMob()" aria-label="Menú"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+<div id="mob-menu">
+  <a href="index.html#servicios" onclick="toggleMob()">Servicios</a>
+  <a href="index.html#proceso"   onclick="toggleMob()">Proceso</a>
+  <a href="index.html#chatbot"   onclick="toggleMob()">Chatbot IA</a>
+  <a href="index.html#porque"    onclick="toggleMob()">Nosotros</a>
+  <a href="index.html#contacto"  onclick="toggleMob()">Contacto</a>
+  <a href="formulario.html"      onclick="toggleMob()" style="color:#fff;">Formulario</a>
+  <a href="mailto:info@easyvoraproyect.com" onclick="toggleMob()" class="btn btn-blue" style="margin-top:8px;justify-content:center;">Solicitar información</a>
+</div>
+
+<!-- ══ SWAPPABLE CONTENT ══ -->
+<main id="main-content">
+
+<!-- PAGE HERO -->
+<section id="page-hero" class="dot-bg">
+  <div class="container">
+    <div class="page-hero-inner fi">
+      <div class="eyebrow">Contacto directo</div>
+      <h1>Hablemos de tu <span class="grad">próximo proyecto</span></h1>
+      <p>Cuéntanos qué necesitas. Analizaremos tu caso y te responderemos en menos de 24 horas con una propuesta personalizada.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FORM SECTION -->
+<section id="formulario-section">
+  <div class="container">
+    <div class="form-layout">
+
+      <!-- Sidebar info -->
+      <aside class="form-sidebar fi d1">
+        <h2>¿Por qué trabajar con EasyVora?</h2>
+        <p>Automatizamos los procesos de tu empresa para que tu equipo se centre en lo que realmente importa.</p>
+        <div class="info-item">
+          <div class="info-ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <div class="info-txt">
+            <h4>Respuesta en 24 horas</h4>
+            <p>Analizamos tu necesidad y te enviamos una propuesta detallada.</p>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+          </div>
+          <div class="info-txt">
+            <h4>Soluciones a medida</h4>
+            <p>Cada automatización está diseñada específicamente para tu empresa.</p>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="info-txt">
+            <h4>Sin compromisos</h4>
+            <p>Primera consulta gratuita. Sin letra pequeña, sin sorpresas.</p>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div class="info-txt">
+            <h4>info@easyvoraproyect.com</h4>
+            <p>También puedes escribirnos directamente por email.</p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Form -->
+      <div class="fi d2">
+        <div class="c-form">
+          <form id="contactForm" novalidate>
+
+            <p class="f-section-title">Datos de contacto</p>
+
+            <div class="f-row">
+              <div class="f-col">
+                <label for="f-name">Nombre<span class="req">*</span></label>
+                <input type="text" id="f-name" placeholder="Tu nombre completo" required />
+              </div>
+              <div class="f-col">
+                <label for="f-empresa">Empresa<span class="req">*</span></label>
+                <input type="text" id="f-empresa" placeholder="Nombre de tu empresa" required />
+              </div>
+            </div>
+
+            <div class="f-row">
+              <div class="f-col">
+                <label for="f-cargo">Cargo</label>
+                <input type="text" id="f-cargo" placeholder="Tu posición en la empresa" />
+              </div>
+              <div class="f-col">
+                <label for="f-email">Email<span class="req">*</span></label>
+                <input type="email" id="f-email" placeholder="tu@empresa.com" required />
+              </div>
+            </div>
+
+            <div class="f-row">
+              <div class="f-col">
+                <label for="f-tel">Teléfono</label>
+                <input type="tel" id="f-tel" placeholder="+34 600 000 000" />
+              </div>
+              <div class="f-col">
+                <label for="f-linkedin">LinkedIn</label>
+                <input type="url" id="f-linkedin" placeholder="https://linkedin.com/in/tu-perfil" />
+              </div>
+            </div>
+
+            <p class="f-section-title">Tu proyecto</p>
+
+            <!-- Servicio de interés — pills -->
+            <div class="f-col" style="margin-bottom:16px;">
+              <label>Servicio de interés<span class="req">*</span></label>
+              <div class="pills-wrap" id="pills">
+                <div class="pill">
+                  <input type="checkbox" id="sv1" value="Chatbot IA" />
+                  <label for="sv1"><span class="pill-check"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Chatbot IA</label>
+                </div>
+                <div class="pill">
+                  <input type="checkbox" id="sv2" value="Automatización de procesos" />
+                  <label for="sv2"><span class="pill-check"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Automatización de procesos</label>
+                </div>
+                <div class="pill">
+                  <input type="checkbox" id="sv3" value="Informes automáticos" />
+                  <label for="sv3"><span class="pill-check"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Informes automáticos</label>
+                </div>
+                <div class="pill">
+                  <input type="checkbox" id="sv4" value="Diseño web" />
+                  <label for="sv4"><span class="pill-check"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Diseño web</label>
+                </div>
+                <div class="pill">
+                  <input type="checkbox" id="sv5" value="Consultoría" />
+                  <label for="sv5"><span class="pill-check"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Consultoría</label>
+                </div>
+                <div class="pill">
+                  <input type="checkbox" id="sv6" value="Integración de sistemas" />
+                  <label for="sv6"><span class="pill-check"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Integración de sistemas</label>
+                </div>
+                <div class="pill">
+                  <input type="checkbox" id="sv7" value="Otro" />
+                  <label for="sv7"><span class="pill-check"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Otro</label>
+                </div>
+              </div>
+              <span id="srv-error">Selecciona al menos un servicio.</span>
+            </div>
+
+            <!-- Presupuesto -->
+            <div class="f-row">
+              <div class="f-col">
+                <label for="f-presupuesto">Presupuesto estimado</label>
+                <div class="euro-wrap">
+                  <input type="number" id="f-presupuesto" placeholder="0" min="0" step="100" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Necesidad -->
+            <div class="f-col">
+              <label for="f-necesidad">Necesidad detectada<span class="req">*</span></label>
+              <textarea id="f-necesidad" placeholder="Describe el reto o proceso que quieres mejorar…" required></textarea>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="f-submit" id="f-btn">
+              <div class="f-spinner"></div>
+              <span class="f-lbl">Enviar solicitud</span>
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+            </button>
+
+            <!-- Alerts -->
+            <div class="f-alert f-alert-ok" id="f-ok">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <div>
+                <strong>¡Solicitud enviada con éxito!</strong>
+                <p>Hemos recibido tu información. El equipo de EasyVora se pondrá en contacto en menos de 24 horas.</p>
+              </div>
+            </div>
+            <div class="f-alert f-alert-err" id="f-err">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <div>
+                <strong>Error al enviar el formulario</strong>
+                <p id="f-err-msg">Ha ocurrido un problema. Inténtalo de nuevo o escríbenos a info@easyvoraproyect.com</p>
+              </div>
+            </div>
+
+            <p class="f-note">Tus datos están protegidos. Consulta nuestra <a href="privacidad.html">política de privacidad</a>.</p>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Form page-specific JS — inside <main> so SPA re-executes it on navigation -->
+<script>
+(function(){
+  const WEBHOOK = 'https://easyvora-n8n.hlbbht.easypanel.host/webhook/ac2a2761-a64b-4d38-b83c-26738ded19d0';
+
+  /* Fade-in observer */
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('#main-content .fi:not(.in)').forEach(el => io.observe(el));
+
+  /* Cursor ring extension for form elements (works standalone and via SPA) */
+  const ring = document.getElementById('cur-ring');
+  if(ring){
+    document.querySelectorAll('#main-content a,#main-content button,#main-content label').forEach(el=>{
+      el.addEventListener('mouseenter', () => ring.classList.add('big'));
+      el.addEventListener('mouseleave', () => ring.classList.remove('big'));
+    });
+  }
+
+  /* Form helpers */
+  function getServices(){
+    return [...document.querySelectorAll('#pills input:checked')].map(c => c.value);
+  }
+
+  function validate(){
+    let ok = true;
+    ['f-name','f-empresa','f-email','f-necesidad'].forEach(id => {
+      const el = document.getElementById(id);
+      if(!el) return;
+      const empty = !el.value.trim();
+      el.classList.toggle('err', empty);
+      if(empty) ok = false;
+    });
+    const emailEl = document.getElementById('f-email');
+    if(emailEl && emailEl.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value)){
+      emailEl.classList.add('err'); ok = false;
+    }
+    const srvErr = document.getElementById('srv-error');
+    const noSrv = getServices().length === 0;
+    if(srvErr) srvErr.style.display = noSrv ? 'block' : 'none';
+    if(noSrv) ok = false;
+    return ok;
+  }
+
+  document.querySelectorAll('#main-content .f-col input, #main-content .f-col textarea').forEach(el=>{
+    el.addEventListener('input', () => el.classList.remove('err'));
+  });
+
+  /* Submit */
+  const form = document.getElementById('contactForm');
+  if(form && !form.dataset.evInit){
+    form.dataset.evInit = '1';
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const ok  = document.getElementById('f-ok');
+      const err = document.getElementById('f-err');
+      const errMsg = document.getElementById('f-err-msg');
+      if(ok)  ok.classList.remove('show');
+      if(err) err.classList.remove('show');
+
+      if(!validate()) return;
+
+      const btn = document.getElementById('f-btn');
+      if(btn){ btn.disabled = true; btn.classList.add('loading'); }
+
+      const presup = document.getElementById('f-presupuesto');
+      const payload = {
+        "name":                 document.getElementById('f-name').value.trim(),
+        "Empresa":              document.getElementById('f-empresa').value.trim(),
+        "Cargo":                (document.getElementById('f-cargo')||{value:''}).value.trim(),
+        "Email":                document.getElementById('f-email').value.trim(),
+        "Teléfono":             (document.getElementById('f-tel')||{value:''}).value.trim(),
+        "LinkedIN":             (document.getElementById('f-linkedin')||{value:''}).value.trim(),
+        "Servicio de interés":  getServices(),
+        "Presupuesto Estimado": presup && presup.value !== '' ? Number(presup.value) : null,
+        "Necesidad detectada":  document.getElementById('f-necesidad').value.trim(),
+      };
+
+      try {
+        const res = await fetch(WEBHOOK, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if(res.ok){
+          if(ok) ok.classList.add('show');
+          form.reset();
+          const srvErr = document.getElementById('srv-error');
+          if(srvErr) srvErr.style.display = 'none';
+          if(ok) ok.scrollIntoView({ behavior:'smooth', block:'nearest' });
+        } else {
+          if(errMsg) errMsg.textContent = `Error del servidor (${res.status}). Por favor, inténtalo de nuevo.`;
+          if(err) err.classList.add('show');
+        }
+      } catch(_){
+        if(errMsg) errMsg.textContent = 'No se pudo conectar con el servidor. Verifica tu conexión e inténtalo de nuevo.';
+        if(err) err.classList.add('show');
+      } finally {
+        if(btn){ btn.disabled = false; btn.classList.remove('loading'); }
+      }
+    });
+  }
+})();
+</script>
+
+</main><!-- /main-content -->
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="ft-top">
+      <div class="ft-brand">
+        <div class="ft-name">EasyVora</div>
+        <p>Inteligencia artificial y automatización para empresas que quieren trabajar mejor.</p>
+        <div class="ft-socials">
+          <a href="#" class="ft-social" aria-label="LinkedIn">in</a>
+          <a href="#" class="ft-social" aria-label="Instagram">ig</a>
+          <a href="#" class="ft-social" aria-label="WhatsApp">wa</a>
+        </div>
+      </div>
+      <div class="ft-col"><h5>Servicios</h5><ul><li><a href="index.html#servicios">IA Aplicada</a></li><li><a href="index.html#servicios">Automatización</a></li><li><a href="index.html#servicios">Análisis de Procesos</a></li><li><a href="index.html#chatbot">Chatbot WhatsApp</a></li><li><a href="index.html#servicios">Proyecto a Medida</a></li></ul></div>
+      <div class="ft-col"><h5>Empresa</h5><ul><li><a href="index.html#proceso">Cómo trabajamos</a></li><li><a href="index.html#porque">Por qué EasyVora</a></li><li><a href="index.html#contacto">Contacto</a></li></ul></div>
+      <div class="ft-col"><h5>Contacto</h5><ul><li><a href="mailto:info@easyvoraproyect.com">info@easyvoraproyect.com</a></li><li><a href="formulario.html">Formulario</a></li></ul></div>
+    </div>
+    <div class="ft-bottom">
+      <p>© 2025 EasyVora · Automatización y Servicios de IA</p>
+      <div class="ft-legal"><a href="privacidad.html">Privacidad</a><a href="aviso-legal.html">Aviso legal</a><a href="cookies.html">Cookies</a></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const WEBHOOK = 'https://easyvora-n8n.hlbbht.easypanel.host/webhook/ac2a2761-a64b-4d38-b83c-26738ded19d0';
+
+  /* ── Cursor ── */
+  const dot  = document.getElementById('cur-dot');
+  const ring = document.getElementById('cur-ring');
+  let mx=0, my=0, rx=0, ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; dot.style.left=mx+'px'; dot.style.top=my+'px'; });
+  (function animRing(){ rx+=(mx-rx)*.12; ry+=(my-ry)*.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animRing); })();
+  document.querySelectorAll('a,button,label,.pill label').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('big'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('big'));
+  });
+
+  /* ── Scroll bar & nav ── */
+  const sbar = document.getElementById('sbar');
+  const nav  = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
+    sbar.style.width = pct + '%';
+    nav.classList.toggle('scrolled', window.scrollY > 10);
+  });
+
+  /* ── Mobile menu ── */
+  function toggleMob() {
+    const m = document.getElementById('mob-menu');
+    m.style.display = m.style.display === 'block' ? 'none' : 'block';
+  }
+
+  /* ── Fade-in on scroll ── */
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fi').forEach(el => io.observe(el));
+
+  /* ── Form helpers ── */
+  function getServices() {
+    return [...document.querySelectorAll('#pills input:checked')].map(c => c.value);
+  }
+
+  function validate() {
+    let ok = true;
+    [['f-name','text'],['f-empresa','text'],['f-email','email'],['f-necesidad','text']].forEach(([id]) => {
+      const el = document.getElementById(id);
+      const empty = !el.value.trim();
+      el.classList.toggle('err', empty);
+      if (empty) ok = false;
+    });
+    const emailEl = document.getElementById('f-email');
+    if (emailEl.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value)) {
+      emailEl.classList.add('err'); ok = false;
+    }
+    const srvErr = document.getElementById('srv-error');
+    const noSrv = getServices().length === 0;
+    srvErr.style.display = noSrv ? 'block' : 'none';
+    if (noSrv) ok = false;
+    return ok;
+  }
+
+  document.querySelectorAll('.f-col input, .f-col textarea').forEach(el => {
+    el.addEventListener('input', () => el.classList.remove('err'));
+  });
+
+  /* ── Submit ── */
+  document.getElementById('contactForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    document.getElementById('f-ok').classList.remove('show');
+    document.getElementById('f-err').classList.remove('show');
+
+    if (!validate()) return;
+
+    const btn = document.getElementById('f-btn');
+    btn.disabled = true;
+    btn.classList.add('loading');
+
+    const presup = document.getElementById('f-presupuesto').value;
+    const payload = {
+      "name":                 document.getElementById('f-name').value.trim(),
+      "Empresa":              document.getElementById('f-empresa').value.trim(),
+      "Cargo":                document.getElementById('f-cargo').value.trim(),
+      "Email":                document.getElementById('f-email').value.trim(),
+      "Teléfono":             document.getElementById('f-tel').value.trim(),
+      "LinkedIN":             document.getElementById('f-linkedin').value.trim(),
+      "Servicio de interés":  getServices(),
+      "Presupuesto Estimado": presup !== '' ? Number(presup) : null,
+      "Necesidad detectada":  document.getElementById('f-necesidad').value.trim(),
+    };
+
+    try {
+      const res = await fetch(WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        document.getElementById('f-ok').classList.add('show');
+        document.getElementById('contactForm').reset();
+        document.getElementById('srv-error').style.display = 'none';
+        document.getElementById('f-ok').scrollIntoView({ behavior:'smooth', block:'nearest' });
+      } else {
+        document.getElementById('f-err-msg').textContent = `Error del servidor (${res.status}). Por favor, inténtalo de nuevo.`;
+        document.getElementById('f-err').classList.add('show');
+      }
+    } catch {
+      document.getElementById('f-err-msg').textContent = 'No se pudo conectar con el servidor. Verifica tu conexión e inténtalo de nuevo.';
+      document.getElementById('f-err').classList.add('show');
+    } finally {
+      btn.disabled = false;
+      btn.classList.remove('loading');
+    }
+  });
+</script>
+</body>
+</html>
