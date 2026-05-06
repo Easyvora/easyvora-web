@@ -1392,13 +1392,13 @@ async function voraSend() {
     });
     if (!res.ok) throw new Error('api-error');
     const data = await res.json();
-    const reply = data.reply;
+    const reply = data.reply || 'No he podido obtener una respuesta, inténtalo de nuevo.';
     voraHistory.push({ role: 'assistant', content: reply });
     typing.remove();
     voraAddMsg(reply, 'bot');
   } catch(err) {
     typing.remove();
-    voraAddMsg('Lo siento, no puedo responder ahora mismo. Escríbenos a info@easyvoraproyect.com y te atendemos en seguida.', 'bot');
+    voraAddMsg('No he podido obtener una respuesta, inténtalo de nuevo.', 'bot');
     voraHistory.pop();
   } finally {
     sendBtn.disabled = false;
