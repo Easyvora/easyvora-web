@@ -1392,7 +1392,7 @@ async function voraSend() {
     });
     if (!res.ok) throw new Error('api-error');
     const data = await res.json();
-    const reply = data.reply || 'No he podido obtener una respuesta, inténtalo de nuevo.';
+    const reply = (data.content && data.content[0] && data.content[0].text) || 'No he podido obtener una respuesta, inténtalo de nuevo.';
     voraHistory.push({ role: 'assistant', content: reply });
     typing.remove();
     voraAddMsg(reply, 'bot');
