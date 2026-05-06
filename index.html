@@ -1385,35 +1385,20 @@ async function voraSend() {
   input.disabled = true;
 
   try {
-    if (!VORA_KEY) throw new Error('no-key');
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('https://easyvora-n8n.hlbbht.easypanel.host/webhook/easyvora-chat', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': VORA_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-allow-browser': 'true'
-      },
-      body: JSON.stringify({
-        model: VORA_MODEL,
-        max_tokens: 320,
-        system: [{ type: 'text', text: VORA_SYS, cache_control: { type: 'ephemeral' } }],
-        messages: voraHistory
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text })
     });
     if (!res.ok) throw new Error('api-error');
     const data = await res.json();
-    const reply = data.content[0].text;
+    const reply = data.reply;
     voraHistory.push({ role: 'assistant', content: reply });
     typing.remove();
     voraAddMsg(reply, 'bot');
   } catch(err) {
     typing.remove();
-    if (err.message === 'no-key') {
-      voraAddMsg('Para activar el chat con IA, añade tu API key de Anthropic en el código. Mientras tanto, escríbenos a info@easyvoraproyect.com 😊', 'bot');
-    } else {
-      voraAddMsg('Lo siento, no puedo responder ahora mismo. Escríbenos a info@easyvoraproyect.com y te atendemos en seguida.', 'bot');
-    }
+    voraAddMsg('Lo siento, no puedo responder ahora mismo. Escríbenos a info@easyvoraproyect.com y te atendemos en seguida.', 'bot');
     voraHistory.pop();
   } finally {
     sendBtn.disabled = false;
