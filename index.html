@@ -1274,7 +1274,7 @@ function updateVoraPosition() {
   if(!localStorage.getItem('ev_cookie_consent')){
     setTimeout(()=>{
       banner.style.display='flex';
-      requestAnimationFrame(updateVoraPosition);
+      requestAnimationFrame(() => requestAnimationFrame(updateVoraPosition));
     }, 3200);
   }
   window.addEventListener('resize', updateVoraPosition, { passive: true });
