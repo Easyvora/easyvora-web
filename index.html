@@ -314,10 +314,6 @@
     #vora-btn svg { width:26px; height:26px; color:#fff; flex-shrink:0; }
     #vora-btn:hover { transform:scale(1.1); box-shadow:0 6px 30px rgba(37,99,235,.7); }
     @keyframes vora-pulse { 0%,100%{box-shadow:0 4px 20px rgba(37,99,235,.55),0 0 0 0 rgba(37,99,235,.3)} 55%{box-shadow:0 4px 20px rgba(37,99,235,.55),0 0 0 12px rgba(37,99,235,0)} }
-    #vora-tooltip { position:absolute; right:72px; bottom:50%; transform:translateY(50%); background:rgba(8,18,52,.95); border:1px solid rgba(96,165,250,.2); color:rgba(255,255,255,.88); font-size:12px; font-weight:500; padding:7px 12px; border-radius:8px; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity .2s; font-family:'Inter',sans-serif; box-shadow:0 4px 16px rgba(0,0,0,.3); }
-    #vora-tooltip::after { content:''; position:absolute; right:-6px; top:50%; transform:translateY(-50%); border:6px solid transparent; border-right:none; border-left-color:rgba(8,18,52,.95); }
-    #vora-btn:hover ~ #vora-tooltip,#vora-btn:hover+#vora-tooltip { opacity:1; }
-    #vora-widget:hover #vora-tooltip { opacity:1; }
     #vora-chat { width:340px; background:linear-gradient(160deg,#0c1d38,#070f1e); border:1px solid rgba(255,255,255,.1); border-radius:18px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,.65),0 0 0 1px rgba(96,165,250,.07); transform:scale(.88) translateY(14px); transform-origin:bottom right; transition:transform .32s cubic-bezier(.22,.68,0,1.2),opacity .28s; opacity:0; pointer-events:none; max-height:480px; }
     #vora-chat.open { transform:scale(1) translateY(0); opacity:1; pointer-events:all; }
     #vora-header { background:linear-gradient(135deg,rgba(37,99,235,.22),rgba(15,31,96,.3)); padding:13px 15px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,.07); flex-shrink:0; }
@@ -1376,9 +1372,14 @@ function updateVoraPosition() {
 function acceptCookies(){
   localStorage.setItem('ev_cookie_consent','1');
   const b = document.getElementById('cookie-banner');
-  if(b){ b.style.opacity='0'; b.style.transition='opacity .4s'; setTimeout(()=>b.remove(),420); }
-  const widget = document.getElementById('vora-widget');
-  if(widget) widget.style.bottom = getVoraBaseline() + 'px';
+  if(b){
+    b.style.opacity='0'; b.style.transition='opacity .4s';
+    setTimeout(()=>{
+      b.remove();
+      const widget = document.getElementById('vora-widget');
+      if(widget) widget.style.bottom = getVoraBaseline() + 'px';
+    }, 420);
+  }
 }
 </script>
 <script src="spa.js"></script>
@@ -1405,7 +1406,6 @@ function acceptCookies(){
     </div>
   </div>
   <button id="vora-btn" onclick="toggleVora()"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg></button>
-  <div id="vora-tooltip">¿Necesitas ayuda? Habla con Vora</div>
 </div>
 
 <script>
