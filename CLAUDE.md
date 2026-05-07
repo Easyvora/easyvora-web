@@ -2,6 +2,14 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Skills disponibles
+
+| Tarea | Archivo a leer |
+|---|---|
+| Crear componente React, web, HTML, CSS | /mnt/skills/public/frontend-design/SKILL.md |
+
+Regla: Lee UNA sola skill por tarea. Si no encaja en la tabla, no leas ninguna.
+
 ## Project Overview
 
 EasyVora — an interactive landing page for an AI automation services company targeting Spanish-speaking enterprises. The project is pure HTML/CSS/JavaScript with no build system, no framework, and no external JS libraries.
