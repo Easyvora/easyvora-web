@@ -1169,6 +1169,9 @@ const EJS_NOTIFY  = 'template_uq7z1te';
 // To: {{reply_to}} | Subject: Hemos recibido tu solicitud — EasyVora
 const EJS_CONFIRM = 'template_fpshk9q';
 
+// Inicializar EmailJS v4 con la clave pública
+if (typeof emailjs !== 'undefined') emailjs.init({ publicKey: EJS_KEY });
+
 // ── Airtable ─────────────────────────────────────────────────────────
 // ⚠ Esta clave queda visible en el código fuente del navegador.
 //   Considera moverla a un endpoint de backend si la seguridad es crítica.
@@ -1283,7 +1286,7 @@ async function handleSubmit(e) {
       telefono:  payload.telefono || 'No facilitado',
       servicio:  inferServicio(payload.mensaje) || 'No detectado',
       mensaje:   payload.mensaje,
-    }, EJS_KEY);
+    });
     anySuccess = true;
   } catch (err) {
     console.warn('[EasyVora] EmailJS notify:', err);
@@ -1293,9 +1296,10 @@ async function handleSubmit(e) {
   try {
     await emailjs.send(EJS_SERVICE, EJS_CONFIRM, {
       to_name:  payload.nombre,
+      to_email: payload.email,
       reply_to: payload.email,
       empresa:  payload.empresa,
-    }, EJS_KEY);
+    });
   } catch (err) {
     console.warn('[EasyVora] EmailJS confirm:', err);
   }
