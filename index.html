@@ -1087,10 +1087,29 @@ function toggleMob(){ const m=document.getElementById('mob-menu'); m.style.displ
 /* ══ FORM ══ */
 const API_URL = 'https://api.easyvoraproyect.com';
 
-// EmailJS — configura estos 3 valores en emailjs.com (cuenta gratuita)
-const EJS_KEY      = 'aQUPlzt_1RRuYK87b';
-const EJS_SERVICE  = 'service_d1atwoh';
-const EJS_TEMPLATE = 'template_ilpdncj';
+// ── EmailJS ──────────────────────────────────────────────────────────
+const EJS_KEY     = 'aQUPlzt_1RRuYK87b';
+const EJS_SERVICE = 'service_d1atwoh';
+
+// Plantilla de NOTIFICACIÓN INTERNA → info@easyvoraproyect.com
+// Crea en emailjs.com una plantilla con estas variables:
+//   {{from_name}}  {{empresa}}  {{cargo}}  {{reply_to}}
+//   {{telefono}}   {{servicio}} {{mensaje}}
+// To: info@easyvoraproyect.com | Subject: Nuevo contacto: {{from_name}} de {{empresa}}
+const EJS_NOTIFY  = 'template_XXXXXXXX'; // ← Reemplaza con el ID de la plantilla interna
+
+// Plantilla de CONFIRMACIÓN AL CLIENTE
+// Crea en emailjs.com una plantilla con estas variables:
+//   {{to_name}}  {{empresa}}
+// To: {{reply_to}} | Subject: Hemos recibido tu solicitud — EasyVora
+const EJS_CONFIRM = 'template_YYYYYYYY'; // ← Reemplaza con el ID de la plantilla de confirmación
+
+// ── Airtable ─────────────────────────────────────────────────────────
+// ⚠ Esta clave queda visible en el código fuente del navegador.
+//   Considera moverla a un endpoint de backend si la seguridad es crítica.
+const AIRTABLE_KEY   = 'YOUR_AIRTABLE_PAT'; // ← Reemplaza con tu Personal Access Token de Airtable
+const AIRTABLE_BASE  = 'appyMmXp02hXWpT1S';
+const AIRTABLE_TABLE = 'Leads';
 
 function showToast(msg, ok) {
   const t = document.createElement('div');
@@ -1110,6 +1129,46 @@ function showToast(msg, ok) {
   }, 4500);
 }
 
+// Detecta el servicio de interés a partir del contenido del mensaje
+function inferServicio(msg) {
+  const m = msg.toLowerCase();
+  if (/chatbot|whatsapp|bot/.test(m))                                  return 'Chatbot IA';
+  if (/automatiz|flujo|proceso|rpa/.test(m))                           return 'Automatización de Procesos';
+  if (/\bia\b|inteligencia artificial|llm|gpt|claude|modelo/.test(m))  return 'IA Aplicada';
+  if (/análisis|auditoria|diagnóstico|mapeo/.test(m))                  return 'Análisis de Procesos';
+  return '';
+}
+
+// Guarda el lead en Airtable vía REST API
+async function saveToAirtable(payload) {
+  const res = await fetch(
+    `https://api.airtable.com/v0/${AIRTABLE_BASE}/${encodeURIComponent(AIRTABLE_TABLE)}`,
+    {
+      method:  'POST',
+      headers: {
+        'Authorization': `Bearer ${AIRTABLE_KEY}`,
+        'Content-Type':  'application/json',
+      },
+      body: JSON.stringify({
+        fields: {
+          'Name':                payload.nombre,
+          'Empresa':             payload.empresa,
+          'Cargo':               payload.cargo,
+          'Email':               payload.email,
+          'Teléfono':            payload.telefono || '',
+          'Localizacion':        'No especificada',
+          'Servicio de interés': inferServicio(payload.mensaje),
+          'Necesidad detectada': payload.mensaje,
+        },
+      }),
+    }
+  );
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || `Airtable HTTP ${res.status}`);
+  }
+}
+
 async function handleSubmit(e) {
   e.preventDefault();
   const f   = e.target;
@@ -1120,48 +1179,72 @@ async function handleSubmit(e) {
   btn.disabled = true;
 
   const payload = {
-    nombre:   f.nombre.value,
-    empresa:  f.empresa.value,
-    email:    f.email.value,
-    telefono: f.telefono ? (f.telefono.value || '—') : '—',
-    cargo:    f.cargo    ? (f.cargo.value    || '—') : '—',
-    mensaje:  f.mensaje.value,
+    nombre:   f.nombre.value.trim(),
+    empresa:  f.empresa?.value?.trim()  || '—',
+    email:    f.email.value.trim(),
+    telefono: f.telefono?.value?.trim() || '',
+    cargo:    f.cargo?.value?.trim()    || '—',
+    mensaje:  f.mensaje.value.trim(),
   };
 
+  let anySuccess = false;
+
+  // ── 1. Backend propio ────────────────────────────────────────────
   try {
     const res = await fetch(`${API_URL}/api/contact`, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+      body:    JSON.stringify(payload),
+      signal:  AbortSignal.timeout(8000),
     });
+    if (res.ok) anySuccess = true;
+  } catch { /* Backend no disponible, continuar con los siguientes pasos */ }
 
-    const json = await res.json();
+  // ── 2. Airtable ──────────────────────────────────────────────────
+  try {
+    await saveToAirtable(payload);
+    anySuccess = true;
+  } catch (err) {
+    console.warn('[EasyVora] Airtable:', err.message);
+  }
 
-    if (res.ok) {
-      showToast('¡Solicitud enviada! Te contactaremos pronto.', true);
-      f.reset();
-    } else {
-      showToast(json.error || 'Error al enviar. Inténtalo de nuevo.', false);
-    }
-  } catch {
-    // Backend no disponible — envía con EmailJS (sin abrir ningún cliente de correo)
-    try {
-      await emailjs.send(EJS_SERVICE, EJS_TEMPLATE, {
-        from_name: payload.nombre,
-        empresa:   payload.empresa,
-        reply_to:  payload.email,
-        telefono:  payload.telefono,
-        cargo:     payload.cargo,
-        mensaje:   payload.mensaje,
-      }, EJS_KEY);
-      showToast('¡Solicitud enviada! Te contactaremos pronto.', true);
-      f.reset();
-    } catch {
-      showToast('No se pudo enviar. Escríbenos a info@easyvoraproyect.com', false);
-    }
-  } finally {
-    btn.textContent = original;
-    btn.disabled = false;
+  // ── 3. Email notificación interna ────────────────────────────────
+  try {
+    await emailjs.send(EJS_SERVICE, EJS_NOTIFY, {
+      from_name: payload.nombre,
+      empresa:   payload.empresa,
+      cargo:     payload.cargo,
+      reply_to:  payload.email,
+      telefono:  payload.telefono || 'No facilitado',
+      servicio:  inferServicio(payload.mensaje) || 'No detectado',
+      mensaje:   payload.mensaje,
+    }, EJS_KEY);
+    anySuccess = true;
+  } catch (err) {
+    console.warn('[EasyVora] EmailJS notify:', err);
+  }
+
+  // ── 4. Email confirmación al cliente ─────────────────────────────
+  try {
+    await emailjs.send(EJS_SERVICE, EJS_CONFIRM, {
+      to_name:  payload.nombre,
+      reply_to: payload.email,
+      empresa:  payload.empresa,
+    }, EJS_KEY);
+  } catch (err) {
+    console.warn('[EasyVora] EmailJS confirm:', err);
+  }
+
+  // ── 5. Resultado ─────────────────────────────────────────────────
+  btn.textContent = original;
+  btn.disabled = false;
+
+  if (anySuccess) {
+    showToast('¡Solicitud enviada! Te contactaremos en menos de 24 horas.', true);
+    f.reset();
+    closeContactForm();
+  } else {
+    showToast('No se pudo enviar. Escríbenos a info@easyvoraproyect.com', false);
   }
 }
 
