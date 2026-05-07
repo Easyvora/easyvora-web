@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RPA vs automatización tradicional: cuál elegir para tu empresa — EasyVora Blog</title>
+  <meta name="description" content="RPA y automatización tradicional son dos enfoques distintos con casos de uso diferentes. Te ayudamos a elegir cuál encaja mejor con tu empresa." />
+  <meta property="og:title" content="RPA vs automatización tradicional: cuál elegir para tu empresa" />
+  <meta property="og:description" content="RPA y automatización tradicional son dos enfoques distintos. Te ayudamos a elegir el correcto para tu situación." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://easyvoraproyect.com/blog/rpa-vs-automatizacion-tradicional.html" />
+  <link rel="canonical" href="https://easyvoraproyect.com/blog/rpa-vs-automatizacion-tradicional.html" />
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Article","headline":"RPA vs automatización tradicional: cuál elegir para tu empresa","description":"RPA y automatización tradicional son dos enfoques distintos con casos de uso diferentes.","author":{"@type":"Organization","name":"EasyVora"},"publisher":{"@type":"Organization","name":"EasyVora","url":"https://easyvoraproyect.com"},"datePublished":"2025-05-10","url":"https://easyvoraproyect.com/blog/rpa-vs-automatizacion-tradicional.html"}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: #04091A; color: rgba(255,255,255,.85); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    :root { --blue:#2563EB; --sky:#60A5FA; --navy:#0F1F60; --card:rgba(255,255,255,.03); --border:rgba(255,255,255,.08); --muted:rgba(255,255,255,.42); --bg1:#04091A; --bg2:#060D22; }
+    #read-bar { position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#2563EB,#60A5FA);z-index:1200;width:0%;pointer-events:none;transition:width .1s; }
+    @media(pointer:fine){ body{cursor:none;} }
+    @media(pointer:coarse){ #cur-dot,#cur-ring{display:none;} }
+    #cur-dot,#cur-ring { position:fixed;top:0;left:0;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%); }
+    #cur-dot { width:5px;height:5px;background:var(--sky); }
+    #cur-ring { width:34px;height:34px;border:1.5px solid rgba(96,165,250,.5);transition:width .15s,height .15s,border-color .15s,background .15s; }
+    #cur-ring.big { width:54px;height:54px;border-color:rgba(96,165,250,.25);background:rgba(96,165,250,.05); }
+    #cur-ring.small { width:20px;height:20px; }
+    .container { max-width:1160px;margin:0 auto;padding:0 32px; }
+    .btn { display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;padding:12px 24px;border-radius:8px;border:none;cursor:none;text-decoration:none;transition:all .2s;font-family:'Inter',sans-serif;white-space:nowrap; }
+    .btn svg { width:15px;height:15px;flex-shrink:0;transition:transform .2s; }
+    .btn:hover svg { transform:translateX(4px); }
+    .btn-blue { background:var(--blue);color:#fff;box-shadow:0 0 28px rgba(37,99,235,.4); }
+    .btn-blue:hover { box-shadow:0 0 40px rgba(37,99,235,.6);transform:translateY(-1px); }
+    .btn-ghost { background:rgba(255,255,255,.05);color:#fff;border:1px solid var(--border); }
+    .btn-ghost:hover { background:rgba(255,255,255,.09);transform:translateY(-1px); }
+    #nav { position:fixed;top:0;left:0;right:0;z-index:900;background:rgba(4,9,26,.85);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);transition:box-shadow .3s; }
+    #nav.scrolled { box-shadow:0 2px 40px rgba(0,0,0,.5); }
+    .nav-inner { display:flex;align-items:center;justify-content:space-between;height:64px; }
+    .nav-logo { display:flex;align-items:center;gap:10px;text-decoration:none; }
+    .nav-logo img { height:36px;width:auto;border-radius:6px; }
+    .nav-logo-name { font-size:17px;font-weight:800;color:#fff;letter-spacing:-.02em; }
+    .nav-logo-sub { font-size:9px;font-weight:600;letter-spacing:.1em;color:var(--sky);text-transform:uppercase;display:block;margin-top:1px; }
+    .nav-links { display:flex;gap:2px; }
+    .nav-links a { font-size:13.5px;font-weight:500;color:var(--muted);text-decoration:none;padding:7px 13px;border-radius:6px;transition:color .15s,background .15s;position:relative; }
+    .nav-links a::after { content:'';position:absolute;bottom:3px;left:13px;right:13px;height:1px;background:var(--sky);transform:scaleX(0);transform-origin:left;transition:transform .22s; }
+    .nav-links a:hover,.nav-links a.active { color:#fff; }
+    .nav-links a:hover::after,.nav-links a.active::after { transform:scaleX(1); }
+    .nav-actions { display:flex;gap:8px; }
+    .hamburger { display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:none;padding:6px; }
+    .hamburger span { display:block;width:22px;height:2px;background:#fff;border-radius:1px;transition:all .3s; }
+    #mob-menu { display:none;position:fixed;top:64px;left:0;right:0;background:rgba(4,9,26,.97);border-bottom:1px solid var(--border);z-index:800;padding:10px 20px 18px;flex-direction:column; }
+    #mob-menu a { display:block;padding:10px 12px;color:var(--muted);font-size:15px;font-weight:500;text-decoration:none;border-radius:6px;transition:all .15s; }
+    #mob-menu a:hover { color:#fff;background:rgba(255,255,255,.05); }
+    .art-hero { position:relative;padding:0;margin-top:64px;overflow:hidden;min-height:380px;display:flex;align-items:flex-end; }
+    .art-hero-bg { position:absolute;inset:0; }
+    .art-hero::after { content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(4,9,26,.88) 0%,rgba(4,9,26,.4) 60%,transparent 100%);pointer-events:none; }
+    .art-hero-content { position:relative;z-index:2;padding:52px 0 48px;max-width:820px; }
+    .art-back { display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:rgba(255,255,255,.5);text-decoration:none;margin-bottom:20px;transition:color .15s; }
+    .art-back svg { width:14px;height:14px;transition:transform .2s; }
+    .art-back:hover { color:#fff; }
+    .art-back:hover svg { transform:translateX(-3px); }
+    .art-eyebrow { display:flex;align-items:center;gap:12px;margin-bottom:16px; }
+    .art-read-time { font-size:12px;color:rgba(255,255,255,.45);font-weight:500; }
+    .art-hero-content h1 { font-size:clamp(28px,4vw,48px);font-weight:800;line-height:1.1;letter-spacing:-.03em;color:#fff;margin-bottom:16px; }
+    .art-meta { display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,.4); }
+    .art-meta .sep { opacity:.4; }
+    .badge { display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:3px 10px;border-radius:4px;letter-spacing:.02em; }
+    .badge-guia { background:rgba(8,145,178,.2);color:#67e8f9;border:1px solid rgba(8,145,178,.3); }
+    .art-layout { padding:56px 0 96px; }
+    .art-grid { display:grid;grid-template-columns:1fr 240px;gap:0;align-items:start; }
+    .art-toc { order:2;position:sticky;top:84px; }
+    .toc-box { background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:20px; }
+    .toc-title { font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:14px; }
+    .toc-nav { display:flex;flex-direction:column;gap:4px; }
+    .toc-nav a { font-size:12.5px;color:rgba(255,255,255,.4);text-decoration:none;padding:5px 8px;border-radius:5px;transition:all .15s;border-left:2px solid transparent;line-height:1.4; }
+    .toc-nav a:hover { color:#fff;background:rgba(255,255,255,.04); }
+    .toc-nav a.active { color:var(--sky);border-left-color:var(--sky);background:rgba(96,165,250,.06); }
+    .art-body { order:1;max-width:720px;padding-right:52px; }
+    .art-body h2 { font-size:clamp(20px,2.4vw,26px);font-weight:700;color:#fff;line-height:1.25;letter-spacing:-.02em;margin:52px 0 18px;padding-top:8px; }
+    .art-body h2:first-child { margin-top:0; }
+    .art-body h3 { font-size:17px;font-weight:700;color:#fff;line-height:1.3;margin:32px 0 12px; }
+    .art-body p { font-size:15.5px;color:rgba(255,255,255,.72);line-height:1.8;margin-bottom:18px; }
+    .art-body ul,.art-body ol { padding-left:22px;margin-bottom:20px; }
+    .art-body li { font-size:15.5px;color:rgba(255,255,255,.72);line-height:1.75;margin-bottom:8px; }
+    .art-body strong { color:rgba(255,255,255,.9);font-weight:600; }
+    .art-body a { color:var(--sky);text-decoration:none; }
+    .art-body a:hover { text-decoration:underline; }
+    .highlight-box { background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.22);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:20px 22px;margin:28px 0;font-size:15px;color:rgba(255,255,255,.78);line-height:1.7; }
+    .highlight-box strong { color:#93c5fd; }
+    .tip-box { background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.22);border-radius:8px;padding:20px 22px;margin:28px 0;display:flex;gap:14px;align-items:flex-start; }
+    .tip-box-icon { width:32px;height:32px;border-radius:6px;background:rgba(5,150,105,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#6ee7b7; }
+    .tip-box-icon svg { width:16px;height:16px; }
+    .tip-box-body h4 { font-size:13px;font-weight:700;color:#6ee7b7;margin-bottom:5px; }
+    .tip-box-body p { font-size:14px;color:rgba(255,255,255,.65);line-height:1.65;margin:0; }
+    .stat-row { display:flex;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:32px 0; }
+    .stat-item { flex:1;background:var(--card);padding:24px 20px;text-align:center; }
+    .stat-val { font-size:32px;font-weight:800;color:#fff;letter-spacing:-.04em;line-height:1; }
+    .stat-val span { font-size:18px;color:var(--sky); }
+    .stat-lbl { font-size:12px;color:var(--muted);margin-top:6px;line-height:1.4; }
+    .steps-list { counter-reset:steps;list-style:none;padding:0;margin:28px 0; }
+    .steps-list li { counter-increment:steps;display:flex;gap:16px;align-items:flex-start;margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid var(--border); }
+    .steps-list li:last-child { border-bottom:none;margin-bottom:0;padding-bottom:0; }
+    .steps-list li::before { content:counter(steps);display:flex;align-items:center;justify-content:center;min-width:32px;height:32px;border-radius:50%;background:rgba(37,99,235,.25);border:1px solid rgba(37,99,235,.4);color:var(--sky);font-size:13px;font-weight:700;flex-shrink:0;margin-top:2px; }
+    .steps-list-body h4 { font-size:15px;font-weight:700;color:#fff;margin-bottom:5px; }
+    .steps-list-body p { font-size:14px;color:var(--muted);line-height:1.65;margin:0; }
+    .compare-table { width:100%;border-collapse:collapse;margin:28px 0;font-size:14px; }
+    .compare-table th { background:rgba(37,99,235,.15);color:rgba(255,255,255,.8);font-weight:600;font-size:12px;letter-spacing:.04em;text-transform:uppercase;padding:12px 16px;text-align:left;border-bottom:1px solid rgba(37,99,235,.3); }
+    .compare-table td { padding:12px 16px;border-bottom:1px solid var(--border);color:rgba(255,255,255,.68);vertical-align:top; }
+    .compare-table tr:last-child td { border-bottom:none; }
+    .compare-table tr:hover td { background:rgba(255,255,255,.02); }
+    .compare-table .check { color:#6ee7b7; } .compare-table .cross { color:rgba(252,165,165,.7); }
+    .art-cta-box { display:flex;align-items:center;gap:24px;background:linear-gradient(135deg,rgba(37,99,235,.12),rgba(15,31,96,.18));border:1px solid rgba(37,99,235,.22);border-radius:14px;padding:32px 36px;margin:52px 0 0; }
+    .art-cta-icon { width:56px;height:56px;border-radius:12px;background:rgba(37,99,235,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--sky); }
+    .art-cta-box h3 { font-size:18px;font-weight:700;color:#fff;margin-bottom:6px; }
+    .art-cta-box p { font-size:14px;color:var(--muted);line-height:1.6;margin:0; }
+    .art-cta-box .btn { flex-shrink:0;margin-left:auto; }
+    footer { background:#020710;padding:56px 0 28px;border-top:1px solid var(--border); }
+    .ft-top { display:grid;grid-template-columns:2.5fr 1fr 1fr 1fr;gap:44px;padding-bottom:44px;border-bottom:1px solid var(--border);margin-bottom:26px; }
+    .ft-name { font-size:17px;font-weight:800;color:#fff;letter-spacing:-.02em;margin-bottom:9px; }
+    .ft-brand>p { font-size:13.5px;color:rgba(255,255,255,.28);line-height:1.7;max-width:240px;margin-bottom:20px; }
+    .ft-socials { display:flex;gap:7px; }
+    .ft-social { width:32px;height:32px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);text-decoration:none;font-size:12px;font-weight:700;transition:all .18s; }
+    .ft-social:hover { border-color:var(--sky);color:var(--sky); }
+    .ft-col h5 { font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:16px; }
+    .ft-col ul { list-style:none;display:flex;flex-direction:column;gap:9px; }
+    .ft-col ul a { font-size:13.5px;color:rgba(255,255,255,.28);text-decoration:none;transition:color .15s; }
+    .ft-col ul a:hover { color:#fff; }
+    .ft-bottom { display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap; }
+    .ft-bottom p { font-size:12.5px;color:rgba(255,255,255,.22); }
+    .ft-legal { display:flex;gap:20px; }
+    .ft-legal a { font-size:12.5px;color:rgba(255,255,255,.18);text-decoration:none;transition:color .15s; }
+    .ft-legal a:hover { color:rgba(255,255,255,.6); }
+    @media(max-width:1024px){ .art-grid{grid-template-columns:1fr;} .art-toc{order:1;position:static;margin-bottom:32px;} .art-body{order:2;max-width:100%;padding-right:0;} }
+    @media(max-width:768px){ .container{padding:0 20px;} .nav-links,.nav-actions .btn-ghost{display:none;} .hamburger{display:flex;} .art-hero-content{padding:40px 0 36px;} .ft-top{grid-template-columns:1fr 1fr;gap:28px;} .art-cta-box{flex-direction:column;text-align:center;} .art-cta-box .btn{margin-left:0;} }
+    @media(max-width:480px){ .ft-top{grid-template-columns:1fr;} .stat-row{flex-direction:column;gap:0;} }
+  </style>
+</head>
+<body>
+  <div id="read-bar"></div>
+  <div id="cur-dot"></div>
+  <div id="cur-ring"></div>
+
+  <nav id="nav">
+    <div class="container">
+      <div class="nav-inner">
+        <a href="../index.html" class="nav-logo">
+          <img src="../Logo.png" alt="EasyVora" onerror="this.style.display='none'" />
+          <div><span class="nav-logo-name">EasyVora</span><span class="nav-logo-sub">Automatización y IA</span></div>
+        </a>
+        <div class="nav-links">
+          <a href="../index.html#servicios">Servicios</a>
+          <a href="../index.html#proceso">Proceso</a>
+          <a href="../index.html#chatbot">Chatbot IA</a>
+          <a href="../index.html#porque">Nosotros</a>
+          <a href="../index.html#contacto">Contacto</a>
+          <a href="../blog.html" class="active">Blog</a>
+        </div>
+        <div class="nav-actions">
+          <a href="../index.html#contacto" class="btn btn-ghost" style="padding:8px 16px;font-size:13px;">Contactar</a>
+          <a href="mailto:info@easyvoraproyect.com" class="btn btn-blue" style="padding:8px 16px;font-size:13px;">Solicitar información</a>
+        </div>
+        <button class="hamburger" onclick="toggleMob()" aria-label="Menú"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+  <div id="mob-menu">
+    <a href="../index.html#servicios" onclick="toggleMob()">Servicios</a>
+    <a href="../index.html#proceso" onclick="toggleMob()">Proceso</a>
+    <a href="../index.html#chatbot" onclick="toggleMob()">Chatbot IA</a>
+    <a href="../index.html#porque" onclick="toggleMob()">Nosotros</a>
+    <a href="../index.html#contacto" onclick="toggleMob()">Contacto</a>
+    <a href="../blog.html" onclick="toggleMob()">Blog</a>
+    <a href="mailto:info@easyvoraproyect.com" onclick="toggleMob()" class="btn btn-blue" style="margin-top:8px;justify-content:center;">Solicitar información</a>
+  </div>
+
+  <header class="art-hero">
+    <div class="art-hero-bg">
+      <svg width="100%" height="100%" viewBox="0 0 1200 420" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;background:linear-gradient(160deg,#011416,#022428,#033036);">
+        <line x1="600" y1="40" x2="600" y2="380" stroke="rgba(103,232,249,.18)" stroke-width="1.5" stroke-dasharray="6 5"/>
+        <text x="270" y="100" text-anchor="middle" fill="rgba(103,232,249,.75)" font-size="52" font-weight="800" font-family="Inter,sans-serif">RPA</text>
+        <rect x="100" y="130" width="340" height="40" rx="5" fill="rgba(8,145,178,.2)"  stroke="rgba(103,232,249,.3)" stroke-width="1.2"/>
+        <text x="270" y="156" text-anchor="middle" fill="rgba(255,255,255,.65)" font-size="15" font-family="Inter,sans-serif">Sin código — deploy en semanas</text>
+        <rect x="100" y="182" width="340" height="40" rx="5" fill="rgba(8,145,178,.2)"  stroke="rgba(103,232,249,.3)" stroke-width="1.2"/>
+        <text x="270" y="208" text-anchor="middle" fill="rgba(255,255,255,.65)" font-size="15" font-family="Inter,sans-serif">Ideal para sistemas sin API</text>
+        <rect x="100" y="234" width="340" height="40" rx="5" fill="rgba(8,145,178,.2)"  stroke="rgba(103,232,249,.3)" stroke-width="1.2"/>
+        <text x="270" y="260" text-anchor="middle" fill="rgba(255,255,255,.65)" font-size="15" font-family="Inter,sans-serif">Fragilidad ante cambios de UI</text>
+        <rect x="100" y="286" width="340" height="40" rx="5" fill="rgba(8,145,178,.2)"  stroke="rgba(103,232,249,.3)" stroke-width="1.2"/>
+        <text x="270" y="312" text-anchor="middle" fill="rgba(255,255,255,.65)" font-size="15" font-family="Inter,sans-serif">Menor coste inicial</text>
+        <circle cx="600" cy="210" r="44" fill="rgba(4,9,26,.95)" stroke="rgba(103,232,249,.3)" stroke-width="1.5"/>
+        <text x="600" y="221" text-anchor="middle" fill="rgba(255,255,255,.85)" font-size="18" font-weight="800" font-family="Inter,sans-serif">VS</text>
+        <text x="930" y="100" text-anchor="middle" fill="rgba(96,165,250,.75)" font-size="36" font-weight="800" font-family="Inter,sans-serif">Tradicional</text>
+        <rect x="760" y="130" width="340" height="40" rx="5" fill="rgba(37,99,235,.18)" stroke="rgba(96,165,250,.3)" stroke-width="1.2"/>
+        <text x="930" y="156" text-anchor="middle" fill="rgba(255,255,255,.65)" font-size="15" font-family="Inter,sans-serif">Más control y estabilidad</text>
+        <rect x="760" y="182" width="340" height="40" rx="5" fill="rgba(37,99,235,.18)" stroke="rgba(96,165,250,.3)" stroke-width="1.2"/>
+        <text x="930" y="208" text-anchor="middle" fill="rgba(255,255,255,.65)" font-size="15" font-family="Inter,sans-serif">Escalable sin límites</text>
+        <rect x="760" y="234" width="340" height="40" rx="5" fill="rgba(37,99,235,.18)" stroke="rgba(96,165,250,.3)" stroke-width="1.2"/>
+        <text x="930" y="260" text-anchor="middle" fill="rgba(255,255,255,.65)" font-size="15" font-family="Inter,sans-serif">Requiere API y conocimiento técnico</text>
+        <rect x="760" y="286" width="340" height="40" rx="5" fill="rgba(37,99,235,.18)" stroke="rgba(96,165,250,.3)" stroke-width="1.2"/>
+        <text x="930" y="312" text-anchor="middle" fill="rgba(255,255,255,.65)" font-size="15" font-family="Inter,sans-serif">Menor mantenimiento a largo plazo</text>
+      </svg>
+    </div>
+    <div class="container">
+      <div class="art-hero-content">
+        <a href="../blog.html" class="art-back">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 4l-4 4 4 4"/></svg>
+          Volver al blog
+        </a>
+        <div class="art-eyebrow">
+          <span class="badge badge-guia">Guías prácticas</span>
+          <span class="art-read-time">8 min de lectura</span>
+        </div>
+        <h1>RPA vs automatización tradicional: cuál elegir para tu empresa</h1>
+        <div class="art-meta">
+          <span>10 de mayo de 2025</span>
+          <span class="sep">·</span>
+          <span>EasyVora</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="art-layout">
+    <div class="container">
+      <div class="art-grid">
+        <aside class="art-toc">
+          <div class="toc-box">
+            <div class="toc-title">Contenido</div>
+            <nav class="toc-nav">
+              <a href="#definiciones">Qué es RPA y automatización tradicional</a>
+              <a href="#diferencias">Las diferencias clave</a>
+              <a href="#cuando-rpa">Cuándo elegir RPA</a>
+              <a href="#cuando-tradicional">Cuándo elegir automatización tradicional</a>
+              <a href="#decision">Cómo tomar la decisión</a>
+              <a href="#conclusion">Conclusión</a>
+            </nav>
+          </div>
+        </aside>
+
+        <article class="art-body">
+
+          <h2 id="definiciones">Qué es RPA y qué es la automatización tradicional</h2>
+          <p>Cuando una empresa decide automatizar un proceso, uno de los primeros dilemas que aparece es elegir entre RPA (Robotic Process Automation) y lo que denominamos automatización tradicional o basada en integraciones. Son dos enfoques con filosofías distintas, costes distintos y casos de uso distintos. Confundirlos —o elegir el equivocado— es uno de los errores más frecuentes y costosos en proyectos de automatización.</p>
+
+          <h3>¿Qué es RPA?</h3>
+          <p>RPA son robots de software que imitan las acciones de un ser humano frente a una pantalla de ordenador. Hacen clic, copian, pegan, rellenan formularios, extraen datos de PDFs o de sistemas legacy. <strong>Operan en la capa de interfaz gráfica (UI)</strong>, sin necesidad de acceso a las APIs o bases de datos de los sistemas con los que interactúan.</p>
+          <p>Imagina un empleado que cada mañana abre el ERP, extrae los pedidos del día anterior, los copia en una hoja de Excel y los envía por email al almacén. Un bot RPA hace exactamente lo mismo, solo que en segundos y sin errores. Las plataformas más conocidas son UiPath, Automation Anywhere y Microsoft Power Automate en modo RPA.</p>
+
+          <h3>¿Qué es la automatización tradicional?</h3>
+          <p>La automatización tradicional —o automatización basada en integraciones— trabaja <strong>a nivel de API, base de datos y lógica de negocio</strong>. En lugar de imitar las acciones de un humano en la pantalla, conecta directamente los sistemas entre sí a través de sus interfaces programáticas. Incluye: código personalizado, orquestadores de flujo como n8n, Make o Zapier, pipelines de datos, webhooks y arquitecturas basadas en eventos.</p>
+          <p>Es más robusta y escalable, pero requiere que los sistemas involucrados tengan APIs disponibles y documentadas, y que haya alguien con conocimiento técnico para implementarlas y mantenerlas.</p>
+
+          <div class="stat-row">
+            <div class="stat-item">
+              <div class="stat-val">2<span>-6</span></div>
+              <div class="stat-lbl">semanas de implementación media con RPA</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-val">4<span>-16</span></div>
+              <div class="stat-lbl">semanas para automatización tradicional compleja</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-val">15<span>-20%</span></div>
+              <div class="stat-lbl">del coste de construcción en mantenimiento anual de RPA</div>
+            </div>
+          </div>
+
+          <h2 id="diferencias">Las diferencias clave</h2>
+          <p>Esta tabla resume los principales criterios de comparación entre ambos enfoques:</p>
+
+          <table class="compare-table">
+            <thead>
+              <tr><th>Criterio</th><th>RPA</th><th>Automatización Tradicional</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Tiempo de implementación</td><td>Rápido (2-6 semanas)</td><td>Variable (4-16 semanas)</td></tr>
+              <tr><td>Conocimientos técnicos</td><td>Bajo-Medio (visual)</td><td>Medio-Alto (código / APIs)</td></tr>
+              <tr><td>Dependencia de la UI</td><td>Alta — cambios en pantalla rompen el bot</td><td>Baja — la API es más estable que la UI</td></tr>
+              <tr><td>Escalabilidad</td><td>Media</td><td>Alta</td></tr>
+              <tr><td>Coste inicial</td><td>Bajo-Medio</td><td>Medio-Alto</td></tr>
+              <tr><td>Mantenimiento</td><td>Frecuente (fragilidad ante cambios)</td><td>Menor a largo plazo</td></tr>
+              <tr><td>Velocidad de ejecución</td><td>Alta (simula acciones humanas rápido)</td><td>Muy alta (comunicación nativa)</td></tr>
+              <tr><td>Funciona sin API</td><td class="check">✓ Ideal</td><td class="cross">✗ Requiere API</td></tr>
+              <tr><td>Idóneo para alto volumen</td><td>Aceptable</td><td class="check">✓ Recomendado</td></tr>
+            </tbody>
+          </table>
+
+          <h2 id="cuando-rpa">Cuándo elegir RPA</h2>
+          <p>RPA es la herramienta correcta cuando el contexto encaja con sus fortalezas. Estos son los escenarios donde brilla:</p>
+          <ul>
+            <li><strong>El sistema no tiene API:</strong> aplicaciones legacy, portales gubernamentales, ERPs antiguos que solo exponen interfaz gráfica. Si no hay API, RPA es prácticamente la única opción sin reescribir el sistema.</li>
+            <li><strong>Necesitas velocidad de implementación:</strong> tienes un proceso urgente y no puedes esperar meses de desarrollo. Un bot RPA puede estar operativo en semanas.</li>
+            <li><strong>El proceso implica copiar datos entre sistemas sin integración:</strong> exportar de un sistema, transformar manualmente e importar en otro. RPA hace esto de forma fiable si el volumen no es masivo.</li>
+            <li><strong>Es una solución temporal o puente:</strong> mientras migras a un sistema moderno con API, RPA automatiza el proceso en el sistema actual sin bloquearte.</li>
+            <li><strong>El proceso tiene reglas claras y la UI cambia poco:</strong> si el proceso es muy estable y bien definido, el mantenimiento del bot es mínimo.</li>
+          </ul>
+
+          <div class="highlight-box">
+            <strong>Piensa en RPA como cinta americana:</strong> resuelve el problema de forma rápida y efectiva. Funciona bien si el entorno es estable. Pero si cambias la pantalla, o el proceso evoluciona, tendrás que repararlo. Es una solución excelente cuando se usa conscientemente como lo que es.
+          </div>
+
+          <h2 id="cuando-tradicional">Cuándo elegir automatización tradicional</h2>
+          <p>La automatización basada en integraciones es la elección correcta cuando buscas una solución robusta y duradera:</p>
+          <ul>
+            <li><strong>Los sistemas tienen API disponible:</strong> HubSpot, Salesforce, SAP moderno, Shopify, cualquier SaaS actual tiene API. Úsala. La integración nativa es más rápida, más fiable y más fácil de mantener que un bot que imita clics.</li>
+            <li><strong>El volumen es alto:</strong> miles de transacciones por hora o por día. RPA tiene limitaciones de paralelismo y velocidad que las integraciones por API no tienen.</li>
+            <li><strong>Quieres una solución que dure años:</strong> si el proceso es estratégico y esperas que funcione sin problemas a largo plazo, una integración bien construida tiene un coste de mantenimiento mucho menor.</li>
+            <li><strong>La lógica es compleja:</strong> si el proceso involucra ramificaciones complejas, varios sistemas y lógica de negocio sofisticada, el código o un orquestador como n8n lo maneja mejor que un bot RPA.</li>
+            <li><strong>Quieres añadir IA encima:</strong> los flujos de automatización tradicional son la base sobre la que se integra IA con facilidad. Conectar un modelo de lenguaje a un webhook es trivial; conectarlo a un bot RPA es complicado.</li>
+          </ul>
+
+          <div class="tip-box">
+            <div class="tip-box-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <div class="tip-box-body">
+              <h4>Consejo de EasyVora</h4>
+              <p>Si construyes algo que esperas que funcione durante 2 o más años y tus sistemas tienen APIs, invierte en automatización tradicional. El coste de mantenimiento de RPA a lo largo del tiempo frecuentemente supera el ahorro inicial, especialmente cuando los sistemas cambian su interfaz con actualizaciones.</p>
+            </div>
+          </div>
+
+          <h2 id="decision">Cómo tomar la decisión</h2>
+          <p>Sigue estos pasos para elegir el enfoque correcto en cada proceso:</p>
+          <ol class="steps-list">
+            <li>
+              <div class="steps-list-body">
+                <h4>Inventaría los sistemas involucrados</h4>
+                <p>¿Tienen API? ¿La documentación está actualizada y es accesible? Si todos los sistemas tienen API bien documentada, la automatización tradicional es casi siempre la mejor opción. Si alguno no tiene API o esta es muy limitada, RPA entra en la ecuación.</p>
+              </div>
+            </li>
+            <li>
+              <div class="steps-list-body">
+                <h4>Estima el volumen de transacciones</h4>
+                <p>¿Cuántas veces se ejecuta el proceso al día? ¿Al mes? Para procesos con menos de 500 transacciones diarias, RPA puede ser perfectamente adecuado. Para volúmenes mayores o con necesidad de ejecución en paralelo, la automatización tradicional es más eficiente.</p>
+              </div>
+            </li>
+            <li>
+              <div class="steps-list-body">
+                <h4>Evalúa el tiempo de vida esperado</h4>
+                <p>¿Es una solución temporal mientras migras de sistema? RPA. ¿Es un proceso que debe funcionar de forma fiable durante años? Automatización tradicional, aunque requiera más inversión inicial.</p>
+              </div>
+            </li>
+            <li>
+              <div class="steps-list-body">
+                <h4>Considera la estabilidad de la UI</h4>
+                <p>Si los sistemas que necesitas automatizar actualizan su interfaz frecuentemente (lo cual es la norma en SaaS modernos), un bot RPA requerirá mantenimiento constante. Cada actualización de la pantalla puede romper el bot.</p>
+              </div>
+            </li>
+            <li>
+              <div class="steps-list-body">
+                <h4>Haz un piloto de dos semanas</h4>
+                <p>Si hay dudas genuinas entre los dos enfoques, haz una prueba de concepto pequeña con cada uno. En dos semanas tendrás datos reales sobre velocidad de implementación, estabilidad y esfuerzo de mantenimiento para tomar una decisión informada.</p>
+              </div>
+            </li>
+          </ol>
+
+          <h2 id="conclusion">Conclusión: no es una guerra</h2>
+          <p>En la práctica, la mayoría de las empresas que automatizan en profundidad usan <strong>ambos enfoques simultáneamente</strong>. RPA para los sistemas legacy que no tienen API y que no van a cambiar en el corto plazo. Automatización tradicional para los sistemas modernos donde la integración nativa es posible y el volumen o la complejidad lo justifican.</p>
+          <p>La clave no es elegir un bando, sino saber cuál herramienta aplicar en cada situación. Un diagnóstico previo del proceso —qué sistemas involucra, qué volumen tiene, qué estabilidad requiere— permite tomar la decisión correcta antes de invertir tiempo y dinero en la implementación.</p>
+          <p>En EasyVora evaluamos ambos enfoques en cada proyecto. No tenemos preferencia por ninguna herramienta: recomendamos lo que genera más valor real en menos tiempo para tu situación específica.</p>
+
+          <div class="art-cta-box">
+            <div class="art-cta-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            <div>
+              <h3>¿No sabes cuál enfoque es el correcto para tu empresa?</h3>
+              <p>En EasyVora analizamos tus procesos y sistemas actuales y te recomendamos la combinación de herramientas que genera más valor. Diagnóstico gratuito en menos de 48 horas.</p>
+            </div>
+            <a href="../index.html#contacto" class="btn btn-blue">
+              Solicitar diagnóstico gratuito
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+            </a>
+          </div>
+
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="ft-top">
+        <div class="ft-brand">
+          <div class="ft-name">EasyVora</div>
+          <p>Inteligencia artificial y automatización para empresas que quieren trabajar mejor.</p>
+          <div class="ft-socials">
+            <a href="#" class="ft-social" aria-label="LinkedIn">in</a>
+            <a href="#" class="ft-social" aria-label="Instagram">ig</a>
+            <a href="#" class="ft-social" aria-label="WhatsApp">wa</a>
+          </div>
+        </div>
+        <div class="ft-col"><h5>Servicios</h5><ul><li><a href="../index.html#servicios">IA Aplicada</a></li><li><a href="../index.html#servicios">Automatización</a></li><li><a href="../index.html#servicios">Análisis de Procesos</a></li><li><a href="../index.html#chatbot">Chatbot WhatsApp</a></li></ul></div>
+        <div class="ft-col"><h5>Empresa</h5><ul><li><a href="../index.html#proceso">Cómo trabajamos</a></li><li><a href="../index.html#porque">Por qué EasyVora</a></li><li><a href="../index.html#contacto">Contacto</a></li><li><a href="../blog.html">Blog</a></li></ul></div>
+        <div class="ft-col"><h5>Contacto</h5><ul><li><a href="mailto:info@easyvoraproyect.com">info@easyvoraproyect.com</a></li><li><a href="../index.html#contacto">Formulario</a></li></ul></div>
+      </div>
+      <div class="ft-bottom">
+        <p>© 2025 EasyVora · Automatización y Servicios de IA</p>
+        <div class="ft-legal"><a href="../privacidad.html">Privacidad</a><a href="../aviso-legal.html">Aviso legal</a><a href="../cookies.html">Cookies</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    window.addEventListener('scroll',()=>{document.getElementById('read-bar').style.width=Math.min(scrollY/(document.body.scrollHeight-innerHeight)*100,100)+'%';},{passive:true});
+    if(matchMedia('(pointer:fine)').matches){const dot=document.getElementById('cur-dot'),ring=document.getElementById('cur-ring');let mx=0,my=0,rx=0,ry=0;document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.left=mx+'px';dot.style.top=my+'px';});document.addEventListener('mousedown',()=>ring.classList.add('small'));document.addEventListener('mouseup',()=>ring.classList.remove('small'));(function lerpRing(){rx+=(mx-rx)*.45;ry+=(my-ry)*.45;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(lerpRing);})();document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',()=>ring.classList.add('big'));el.addEventListener('mouseleave',()=>ring.classList.remove('big'));});}
+    const nav=document.getElementById('nav');
+    window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',scrollY>20);},{passive:true});
+    function toggleMob(){const m=document.getElementById('mob-menu');m.style.display=(m.style.display==='flex')?'none':'flex';}
+    const tocLinks=document.querySelectorAll('.toc-nav a');
+    const headings=[...document.querySelectorAll('.art-body h2[id]')];
+    window.addEventListener('scroll',()=>{let c='';headings.forEach(h=>{if(scrollY>=h.offsetTop-120)c=h.id;});tocLinks.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+c));},{passive:true});
+  </script>
+</body>
+</html>

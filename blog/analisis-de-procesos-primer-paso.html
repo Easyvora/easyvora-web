@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Análisis de procesos: el primer paso antes de automatizar | EasyVora Blog</title>
+  <meta name="description" content="Antes de automatizar cualquier proceso necesitas analizarlo a fondo. Aprende la metodología de 5 pasos que usamos en EasyVora para identificar qué automatizar y cómo hacerlo bien.">
+  <meta name="keywords" content="análisis de procesos, automatización, metodología, mapeo de procesos, BPM, optimización">
+  <meta property="og:title" content="Análisis de procesos: el primer paso antes de automatizar cualquier cosa">
+  <meta property="og:description" content="El 60% de los proyectos de automatización fracasan por saltarse el análisis previo. Aquí tienes la metodología completa para no cometer ese error.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://easyvora.com/blog/analisis-de-procesos-primer-paso.html">
+  <link rel="canonical" href="https://easyvora.com/blog/analisis-de-procesos-primer-paso.html">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Análisis de procesos: el primer paso antes de automatizar cualquier cosa",
+    "description": "Antes de automatizar cualquier proceso necesitas analizarlo a fondo. Aprende la metodología de 5 pasos que usamos en EasyVora para identificar qué automatizar.",
+    "datePublished": "2025-05-14",
+    "dateModified": "2025-05-14",
+    "author": {"@type": "Organization", "name": "EasyVora"},
+    "publisher": {"@type": "Organization", "name": "EasyVora", "logo": {"@type": "ImageObject", "url": "https://easyvora.com/Logo.png"}}
+  }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #2563EB;
+      --accent: #60A5FA;
+      --bg-primary: #04091A;
+      --bg-secondary: #070E24;
+      --bg-card: #0A1628;
+      --text-primary: #F0F4FF;
+      --text-secondary: #94A3B8;
+      --border: rgba(96,165,250,0.15);
+      --cyan: #22D3EE;
+      --green: #34D399;
+      --amber: #F59E0B;
+      --purple: #A78BFA;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.7;
+      cursor: none;
+      overflow-x: hidden;
+    }
+
+    /* Reading progress */
+    #progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--cyan));
+      z-index: 9999; transition: width 0.1s linear;
+    }
+
+    /* Custom cursor */
+    #cursor-dot, #cursor-ring {
+      position: fixed; pointer-events: none; z-index: 99999; border-radius: 50%;
+    }
+    #cursor-dot { width: 6px; height: 6px; background: var(--accent); transform: translate(-50%,-50%); }
+    #cursor-ring { width: 28px; height: 28px; border: 1.5px solid rgba(96,165,250,0.5); transform: translate(-50%,-50%); transition: width 0.2s, height 0.2s; }
+
+    /* Navbar */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(4,9,26,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 48px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo img { height: 32px; }
+    .nav-logo span { font-weight: 700; font-size: 1.1rem; color: var(--text-primary); }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta {
+      padding: 8px 20px; background: var(--primary); color: #fff;
+      border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* Hero */
+    .hero {
+      position: relative; overflow: hidden;
+      background: linear-gradient(160deg,#020812,#040e20,#060f2c);
+      padding: 80px 48px 60px;
+    }
+    .hero-inner { max-width: 860px; margin: 0 auto; position: relative; z-index: 2; }
+    .hero-svg {
+      position: absolute; right: 0; top: 0; bottom: 0; width: 46%;
+      opacity: 0.22; pointer-events: none;
+    }
+    .badge-guia {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(34,211,238,0.12); border: 1px solid rgba(34,211,238,0.3);
+      color: var(--cyan); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; line-height: 1.2;
+      margin-bottom: 20px; color: var(--text-primary);
+    }
+    .hero-meta { display: flex; gap: 20px; flex-wrap: wrap; color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 28px; }
+    .hero-meta span { display: flex; align-items: center; gap: 5px; }
+    .hero-excerpt { font-size: 1.1rem; color: var(--text-secondary); max-width: 620px; line-height: 1.7; }
+
+    /* Stat row */
+    .stat-row {
+      display: flex; gap: 32px; flex-wrap: wrap; margin: 36px 0;
+    }
+    .stat-item { text-align: center; }
+    .stat-item .num { font-size: 2.2rem; font-weight: 800; color: var(--cyan); line-height: 1; }
+    .stat-item .lbl { font-size: 0.78rem; color: var(--text-secondary); margin-top: 4px; }
+
+    /* Layout */
+    .art-wrap { max-width: 1140px; margin: 0 auto; padding: 60px 48px; display: grid; grid-template-columns: 1fr 260px; gap: 60px; align-items: start; }
+    @media(max-width: 900px){ .art-wrap { grid-template-columns: 1fr; padding: 40px 24px; } .toc-aside { display: none; } }
+
+    /* TOC */
+    .toc-aside { position: sticky; top: 88px; }
+    .toc-box {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px;
+    }
+    .toc-box h3 { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); margin-bottom: 16px; }
+    .toc-box ol { list-style: none; counter-reset: toc; }
+    .toc-box li { counter-increment: toc; margin-bottom: 10px; }
+    .toc-box a {
+      display: flex; gap: 8px; align-items: flex-start;
+      color: var(--text-secondary); text-decoration: none; font-size: 0.82rem; line-height: 1.4;
+      transition: color 0.2s;
+    }
+    .toc-box a::before { content: counter(toc)"."; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+    .toc-box a:hover, .toc-box a.active { color: var(--accent); }
+
+    /* Article body */
+    .art-body h2 {
+      font-size: 1.55rem; font-weight: 700; color: var(--text-primary);
+      margin: 52px 0 18px; padding-top: 8px; border-top: 1px solid var(--border);
+    }
+    .art-body h2:first-child { margin-top: 0; border-top: none; }
+    .art-body h3 { font-size: 1.15rem; font-weight: 600; color: var(--accent); margin: 28px 0 12px; }
+    .art-body p { color: var(--text-secondary); margin-bottom: 18px; font-size: 0.97rem; }
+    .art-body strong { color: var(--text-primary); }
+
+    .highlight-box {
+      background: rgba(37,99,235,0.1); border-left: 3px solid var(--primary);
+      border-radius: 0 10px 10px 0; padding: 20px 24px; margin: 28px 0;
+    }
+    .highlight-box p { margin: 0; }
+
+    .tip-box {
+      background: rgba(34,211,238,0.07); border: 1px solid rgba(34,211,238,0.25);
+      border-radius: 10px; padding: 18px 22px; margin: 28px 0; display: flex; gap: 14px;
+    }
+    .tip-box .tip-icon { font-size: 1.4rem; flex-shrink: 0; line-height: 1; }
+    .tip-box p { margin: 0; font-size: 0.9rem; }
+
+    .warning-box {
+      background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.25);
+      border-radius: 10px; padding: 18px 22px; margin: 28px 0; display: flex; gap: 14px;
+    }
+    .warning-box .tip-icon { font-size: 1.4rem; flex-shrink: 0; line-height: 1; }
+    .warning-box p { margin: 0; font-size: 0.9rem; color: #FCA5A5; }
+
+    /* Steps list */
+    .steps-list { list-style: none; margin: 24px 0; }
+    .steps-list li {
+      display: flex; gap: 18px; margin-bottom: 20px; padding: 20px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+    }
+    .step-num {
+      width: 36px; height: 36px; flex-shrink: 0; border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--cyan));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 800; color: #fff;
+    }
+    .step-content h4 { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 5px; }
+    .step-content p { margin: 0; font-size: 0.88rem; color: var(--text-secondary); }
+
+    /* Errors list */
+    .error-list { list-style: none; margin: 24px 0; }
+    .error-list li {
+      display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px;
+      padding: 14px 18px; background: rgba(239,68,68,0.06);
+      border: 1px solid rgba(239,68,68,0.2); border-radius: 10px;
+    }
+    .error-list .x-icon { color: #F87171; font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+    .error-list p { margin: 0; font-size: 0.9rem; }
+
+    /* Compare table */
+    .compare-table { width: 100%; border-collapse: collapse; margin: 28px 0; font-size: 0.88rem; }
+    .compare-table th {
+      background: var(--bg-card); padding: 14px 16px; text-align: left;
+      font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-table th:first-child { border-radius: 8px 0 0 0; }
+    .compare-table th:last-child { border-radius: 0 8px 0 0; }
+    .compare-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table td:first-child { color: var(--text-primary); font-weight: 600; }
+    .compare-table td:nth-child(2) { color: var(--text-secondary); }
+    .compare-table td:nth-child(3) { color: var(--cyan); font-weight: 500; }
+
+    /* Tools grid */
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin: 28px 0; }
+    .tool-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 18px;
+    }
+    .tool-card h4 { font-size: 0.88rem; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+    .tool-card p { margin: 0; font-size: 0.82rem; color: var(--text-secondary); }
+
+    /* CTA box */
+    .cta-box {
+      background: linear-gradient(135deg, rgba(37,99,235,0.15), rgba(34,211,238,0.08));
+      border: 1px solid rgba(37,99,235,0.3); border-radius: 16px;
+      padding: 36px; text-align: center; margin: 48px 0 0;
+    }
+    .cta-box h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; }
+    .cta-box p { color: var(--text-secondary); margin-bottom: 24px; font-size: 0.95rem; }
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--primary); color: #fff; padding: 14px 32px;
+      border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 0.95rem;
+      transition: opacity 0.2s;
+    }
+    .cta-btn:hover { opacity: 0.85; }
+
+    /* Footer */
+    footer {
+      background: var(--bg-secondary); border-top: 1px solid var(--border);
+      padding: 40px 48px; text-align: center;
+    }
+    footer p { color: var(--text-secondary); font-size: 0.85rem; }
+    footer a { color: var(--accent); text-decoration: none; }
+    .footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
+
+    @media(max-width: 768px){
+      nav { padding: 14px 20px; }
+      .nav-links { display: none; }
+      .hero { padding: 60px 24px 40px; }
+      .hero-svg { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div id="progress-bar"></div>
+  <div id="cursor-dot"></div>
+  <div id="cursor-ring"></div>
+
+  <nav>
+    <a class="nav-logo" href="../index.html">
+      <img src="../Logo.png" alt="EasyVora">
+      <span>EasyVora</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="../index.html#servicios">Servicios</a></li>
+      <li><a href="../index.html#proceso">Proceso</a></li>
+      <li><a href="../blog.html">Blog</a></li>
+      <li><a href="../index.html#contacto">Contacto</a></li>
+    </ul>
+    <a class="nav-cta" href="../index.html#contacto">Hablar con un experto</a>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <svg class="hero-svg" viewBox="0 0 600 480" xmlns="http://www.w3.org/2000/svg">
+      <!-- Flowchart diagram -->
+      <!-- Start node -->
+      <rect x="230" y="30" width="140" height="50" rx="25" fill="none" stroke="#22D3EE" stroke-width="2"/>
+      <text x="300" y="60" text-anchor="middle" fill="#22D3EE" font-size="13" font-weight="600">Proceso actual</text>
+      <!-- Arrow down -->
+      <line x1="300" y1="80" x2="300" y2="120" stroke="#22D3EE" stroke-width="1.5"/>
+      <polygon points="300,125 294,112 306,112" fill="#22D3EE"/>
+      <!-- Diamond: ¿Documentado? -->
+      <polygon points="300,130 370,170 300,210 230,170" fill="none" stroke="#60A5FA" stroke-width="2"/>
+      <text x="300" y="167" text-anchor="middle" fill="#60A5FA" font-size="11">¿Documentado?</text>
+      <!-- Arrow NO right -->
+      <line x1="370" y1="170" x2="430" y2="170" stroke="#F87171" stroke-width="1.5"/>
+      <polygon points="435,170 422,164 422,176" fill="#F87171"/>
+      <rect x="437" y="148" width="90" height="44" rx="8" fill="none" stroke="#F87171" stroke-width="1.5"/>
+      <text x="482" y="167" text-anchor="middle" fill="#F87171" font-size="10">Mapear</text>
+      <text x="482" y="181" text-anchor="middle" fill="#F87171" font-size="10">proceso</text>
+      <!-- Arrow YES down -->
+      <line x1="300" y1="210" x2="300" y2="255" stroke="#34D399" stroke-width="1.5"/>
+      <polygon points="300,260 294,247 306,247" fill="#34D399"/>
+      <text x="310" y="237" fill="#34D399" font-size="10">SÍ</text>
+      <!-- Rect: Medir tiempo -->
+      <rect x="218" y="262" width="164" height="48" rx="8" fill="none" stroke="#22D3EE" stroke-width="1.5"/>
+      <text x="300" y="283" text-anchor="middle" fill="#22D3EE" font-size="11">Medir tiempos</text>
+      <text x="300" y="298" text-anchor="middle" fill="#22D3EE" font-size="11">y recursos</text>
+      <!-- Arrow down -->
+      <line x1="300" y1="310" x2="300" y2="350" stroke="#22D3EE" stroke-width="1.5"/>
+      <polygon points="300,355 294,342 306,342" fill="#22D3EE"/>
+      <!-- Diamond: ¿Automatizable? -->
+      <polygon points="300,360 376,400 300,440 224,400" fill="none" stroke="#A78BFA" stroke-width="2"/>
+      <text x="300" y="397" text-anchor="middle" fill="#A78BFA" font-size="11">¿Automatizable?</text>
+      <!-- Yes / No labels -->
+      <text x="388" y="403" fill="#34D399" font-size="10">SÍ</text>
+      <text x="240" y="450" fill="#F87171" font-size="10">NO → Optimizar primero</text>
+      <!-- Arrow YES right -->
+      <line x1="376" y1="400" x2="430" y2="400" stroke="#34D399" stroke-width="1.5"/>
+      <polygon points="435,400 422,394 422,406" fill="#34D399"/>
+      <rect x="437" y="378" width="100" height="44" rx="8" fill="none" stroke="#34D399" stroke-width="2"/>
+      <text x="487" y="397" text-anchor="middle" fill="#34D399" font-size="10">Diseñar</text>
+      <text x="487" y="411" text-anchor="middle" fill="#34D399" font-size="10">automatización</text>
+    </svg>
+
+    <div class="hero-inner">
+      <div class="badge-guia">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5"/></svg>
+        Guías prácticas
+      </div>
+      <h1>Análisis de procesos: el primer paso antes de automatizar cualquier cosa</h1>
+      <div class="hero-meta">
+        <span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          14 mayo 2025
+        </span>
+        <span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          7 min lectura
+        </span>
+        <span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Equipo EasyVora
+        </span>
+      </div>
+      <p class="hero-excerpt">
+        El 60% de los proyectos de automatización fracasan. La razón más común: saltar directamente a la solución técnica sin entender el proceso que se quiere automatizar. Aquí tienes la metodología completa para no cometer ese error.
+      </p>
+      <div class="stat-row">
+        <div class="stat-item"><div class="num">60%</div><div class="lbl">proyectos que fracasan<br>por falta de análisis previo</div></div>
+        <div class="stat-item"><div class="num">5</div><div class="lbl">pasos de la metodología<br>EasyVora de análisis</div></div>
+        <div class="stat-item"><div class="num">3×</div><div class="lbl">más ROI con análisis<br>previo estructurado</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Article -->
+  <div class="art-wrap">
+    <article class="art-body">
+
+      <h2 id="que-es">Qué es el análisis de procesos (y por qué no es lo que crees)</h2>
+      <p>
+        El análisis de procesos es la actividad sistemática de documentar, medir y comprender cómo funciona un proceso de negocio <strong>antes de intervenir en él</strong>. No es simplemente "hablar con el equipo" ni "dibujar un diagrama de flujo en Lucidchart en media hora".
+      </p>
+      <p>
+        Es un trabajo de investigación que combina observación directa, medición de tiempos, identificación de variantes y detección de cuellos de botella. Su objetivo no es solo describir lo que pasa, sino entender <em>por qué</em> pasa, cuánto cuesta y qué pasaría si cambiara.
+      </p>
+
+      <div class="highlight-box">
+        <p><strong>Definición operativa:</strong> El análisis de procesos responde tres preguntas concretas: (1) ¿Qué hace exactamente este proceso paso a paso? (2) ¿Cuánto tiempo y recursos consume cada paso? (3) ¿Qué condiciones o excepciones existen que hacen que el proceso varíe?</p>
+      </div>
+
+      <p>
+        La tercera pregunta es la más importante y la más ignorada. Los procesos reales tienen variantes: el caso estándar que ocurre el 70% de las veces y los casos especiales que ocurren el otro 30%. Si automatizas solo el caso estándar, habrás automatizado el 70% del proceso. Nada mal, dirás. Pero ese 30% restante seguirá siendo manual, seguirá generando errores y, lo peor, tu automatización tendrá que detenerse o derivar manualmente cada vez que aparezca una excepción.
+      </p>
+
+      <h2 id="por-que">Por qué es el primer paso obligatorio</h2>
+      <p>
+        Los fracasos en automatización rara vez se deben a problemas técnicos. Las herramientas —Make, Zapier, N8N, UiPath, Power Automate— son fiables y maduras. Los fracasos suceden cuando se automatiza un proceso que no estaba bien definido, o cuando se descubre a mitad de la implementación que el proceso funciona diferente en el departamento de Madrid que en el de Barcelona.
+      </p>
+
+      <div class="warning-box">
+        <div class="tip-icon">&#9888;</div>
+        <p><strong>Patrón de fracaso más común:</strong> Una empresa decide automatizar la gestión de pedidos. Se diseña el flujo, se conectan los sistemas, se prueba en desarrollo. Todo funciona. En producción, el sistema se rompe cada vez que un cliente hace un pedido con dirección de facturación diferente a la de envío —un caso que el equipo de desarrollo no conocía porque nadie lo documentó durante el análisis.</p>
+      </div>
+
+      <p>
+        La consecuencia es costosa: horas de trabajo técnico perdidas, reputación dañada, y a veces un proceso manual-automático híbrido que es peor que el original. El análisis previo no es burocracia: es la diferencia entre una automatización que funciona y una que crea nuevos problemas.
+      </p>
+
+      <h3>El coste real de saltarse el análisis</h3>
+      <p>
+        Cuando estimamos el impacto de saltarse el análisis en proyectos que hemos visto en el mercado, los números son consistentes:
+      </p>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Escenario</th>
+            <th>Sin análisis previo</th>
+            <th>Con análisis estructurado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Tiempo de implementación</td>
+            <td>Se dispara un 40-80% sobre lo estimado</td>
+            <td>Se ajusta al cronograma (±15%)</td>
+          </tr>
+          <tr>
+            <td>Excepciones descubiertas en prod.</td>
+            <td>5-15 por cada proceso</td>
+            <td>0-2 (el resto se detectaron antes)</td>
+          </tr>
+          <tr>
+            <td>Retrabajos post-lanzamiento</td>
+            <td>Frecuentes (primeros 3 meses)</td>
+            <td>Mínimos o inexistentes</td>
+          </tr>
+          <tr>
+            <td>Adopción del equipo</td>
+            <td>Resistencia (no reconocen el proceso)</td>
+            <td>Alta (el equipo validó el diseño)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 id="metodologia">La metodología de 5 pasos de EasyVora</h2>
+      <p>
+        Esta es la metodología que aplicamos en cada proyecto antes de escribir una sola línea de automatización. Cada paso tiene entregables concretos, no es solo una conversación.
+      </p>
+
+      <ul class="steps-list">
+        <li>
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>Inventario inicial: qué procesos existen</h4>
+            <p>Antes de analizar en profundidad, hay que saber qué procesos existen. Trabajamos con los responsables de cada área para listar todos los procesos candidatos a automatizar, con una estimación rápida de volumen (transacciones por mes), tiempo actual (horas/persona por transacción) y criticidad para el negocio.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>Priorización por impacto y viabilidad</h4>
+            <p>No todos los procesos son igualmente buenos candidatos para automatizar. Usamos una matriz 2×2 (impacto vs. viabilidad técnica) para priorizar. Los procesos en el cuadrante "alto impacto + alta viabilidad" van primero. Los de "alto impacto + baja viabilidad" requieren análisis adicional. Los de bajo impacto se posponen.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Mapeo detallado del proceso seleccionado</h4>
+            <p>Para cada proceso priorizado, hacemos un mapeo paso a paso con el equipo que lo ejecuta. No con el manager que cree saber cómo funciona, sino con las personas que lo hacen a diario. Documentamos cada acción, cada decisión, cada sistema involucrado, cada excepción conocida. El entregable es un diagrama de flujo validado por el equipo.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h4>Medición de tiempos y recursos actuales</h4>
+            <p>Con el mapa validado, medimos el proceso real. Esto incluye: tiempo total por transacción (no la estimación del manager, sino el cronometraje real), volumen mensual de transacciones, coste por persona-hora y tasa de error actual. Estos números son el baseline contra el que mediremos el ROI de la automatización.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <h4>Diseño del proceso futuro (to-be)</h4>
+            <p>El último paso antes de la implementación es definir cómo será el proceso automatizado. No es el proceso actual con bots encima: es una oportunidad para rediseñar el proceso, eliminar pasos innecesarios y simplificar antes de automatizar. Automatizar un proceso ineficiente solo hace que la ineficiencia ocurra más rápido.</p>
+          </div>
+        </li>
+      </ul>
+
+      <div class="tip-box">
+        <div class="tip-icon">&#128161;</div>
+        <p><strong>Regla de oro:</strong> Antes de automatizar cualquier paso, pregúntate si ese paso debería existir. El mejor paso para automatizar es el que ya no necesitas porque lo eliminaste al optimizar el proceso.</p>
+      </div>
+
+      <h2 id="herramientas">Herramientas para el análisis</h2>
+      <p>
+        No necesitas software especializado para hacer un buen análisis de procesos. Estas son las herramientas más útiles según la fase:
+      </p>
+
+      <div class="tools-grid">
+        <div class="tool-card">
+          <h4>Lucidchart / Miro</h4>
+          <p>Mapeo visual de procesos. Excelentes para talleres colaborativos con el equipo en tiempo real.</p>
+        </div>
+        <div class="tool-card">
+          <h4>Notion / Confluence</h4>
+          <p>Documentación estructurada de procesos. Permite mantener el inventario actualizado con responsables y frecuencias.</p>
+        </div>
+        <div class="tool-card">
+          <h4>Excel / Google Sheets</h4>
+          <p>Registro de tiempos y cálculo de ROI. Una hoja bien diseñada basta para el baseline y la proyección de ahorros.</p>
+        </div>
+        <div class="tool-card">
+          <h4>Loom / Screen recordings</h4>
+          <p>Grabación del proceso real en pantalla. Vale más que cualquier descripción textual para capturar lo que realmente hace el equipo.</p>
+        </div>
+        <div class="tool-card">
+          <h4>BPMN 2.0</h4>
+          <p>Estándar para notación de procesos. Recomendado cuando el proceso involucra múltiples departamentos o sistemas.</p>
+        </div>
+        <div class="tool-card">
+          <h4>Process mining tools</h4>
+          <p>Para empresas con sistemas ERP maduros: Celonis, UiPath Process Mining. Descubren procesos reales desde los logs.</p>
+        </div>
+      </div>
+
+      <h2 id="indicadores">Indicadores clave a medir antes de automatizar</h2>
+      <p>
+        El análisis no es completo si no incluye mediciones cuantitativas. Estos son los indicadores que debes registrar como baseline antes de cualquier automatización:
+      </p>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Indicador</th>
+            <th>Qué mide</th>
+            <th>Cómo medirlo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Cycle time</td>
+            <td>Tiempo total desde inicio hasta fin del proceso</td>
+            <td>Cronometrar 10-20 ejecuciones reales</td>
+          </tr>
+          <tr>
+            <td>Lead time</td>
+            <td>Tiempo total incluyendo esperas</td>
+            <td>Revisar timestamps en sistemas o registros</td>
+          </tr>
+          <tr>
+            <td>Tasa de error</td>
+            <td>% de ejecuciones que requieren corrección</td>
+            <td>Analizar retrabajos del último trimestre</td>
+          </tr>
+          <tr>
+            <td>Volumen mensual</td>
+            <td>Nº de transacciones por mes</td>
+            <td>Datos históricos del sistema</td>
+          </tr>
+          <tr>
+            <td>Coste por transacción</td>
+            <td>Horas × coste hora del empleado</td>
+            <td>Cycle time × tarifa interna</td>
+          </tr>
+          <tr>
+            <td>Tasa de variantes</td>
+            <td>% de ejecuciones que siguen el flujo estándar</td>
+            <td>Observación directa o análisis de logs</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="highlight-box">
+        <p><strong>Benchmark de referencia:</strong> Un proceso bien candidato para automatización tiene normalmente un cycle time superior a 15 minutos, un volumen mayor de 50 transacciones/mes, una tasa de error superior al 3% y una tasa de variantes superior al 75% (es decir, más del 75% de las ejecuciones siguen el mismo flujo).</p>
+      </div>
+
+      <h2 id="errores">Los 5 errores más comunes en el análisis de procesos</h2>
+      <p>
+        Después de hacer decenas de análisis de procesos, estos son los errores que vemos repetirse:
+      </p>
+
+      <ul class="error-list">
+        <li>
+          <span class="x-icon">&#10007;</span>
+          <p><strong>Hablar solo con el manager, no con quien ejecuta el proceso.</strong> Los managers describen el proceso como debería funcionar. Las personas que lo ejecutan saben cómo funciona realmente, incluyendo todos los atajos, excepciones y soluciones improvisadas que se han acumulado con los años.</p>
+        </li>
+        <li>
+          <span class="x-icon">&#10007;</span>
+          <p><strong>Documentar el proceso ideal en lugar del proceso real.</strong> Cuando preguntas cómo funciona un proceso, la gente tiende a describir cómo debería funcionar. Necesitas observar el proceso en acción o revisar registros históricos para capturar cómo funciona de verdad.</p>
+        </li>
+        <li>
+          <span class="x-icon">&#10007;</span>
+          <p><strong>Ignorar las excepciones porque "rara vez ocurren".</strong> Si una excepción ocurre el 10% de las veces y el proceso tiene 500 transacciones al mes, eso son 50 casos al mes que tu automatización no sabrá manejar. "Rara vez" en volumen puede ser un problema diario.</p>
+        </li>
+        <li>
+          <span class="x-icon">&#10007;</span>
+          <p><strong>No medir el baseline antes de implementar.</strong> Sin un baseline cuantificado, no puedes demostrar el ROI de la automatización. Y sin ROI demostrado, es difícil conseguir presupuesto para el siguiente proyecto o justificar los costes del actual.</p>
+        </li>
+        <li>
+          <span class="x-icon">&#10007;</span>
+          <p><strong>Automatizar el proceso sin optimizarlo primero.</strong> Si hay pasos innecesarios en el proceso actual, automatizarlos no los elimina: los hace más rápidos. Siempre vale la pena preguntarse si cada paso del proceso debe existir antes de invertir en automatizarlo.</p>
+        </li>
+      </ul>
+
+      <h2 id="siguiente">El siguiente paso: de análisis a implementación</h2>
+      <p>
+        Con el análisis completo en mano —proceso mapeado, baseline medido, proceso futuro diseñado— estás en condiciones de empezar la implementación con alta probabilidad de éxito. El análisis no es un obstáculo burocrático: es lo que convierte un proyecto de automatización en una inversión predecible en lugar de una apuesta.
+      </p>
+      <p>
+        La transición del análisis a la implementación tiene un checklist concreto:
+      </p>
+
+      <div class="highlight-box">
+        <p>
+          <strong>Checklist pre-implementación:</strong><br><br>
+          ✓ Proceso mapeado y validado por el equipo que lo ejecuta<br>
+          ✓ Todas las variantes y excepciones documentadas<br>
+          ✓ Baseline cuantificado (cycle time, volumen, coste, tasa de error)<br>
+          ✓ Proceso "to-be" diseñado y aprobado por el responsable de área<br>
+          ✓ Criterios de éxito definidos (qué debe mejorar y en cuánto)<br>
+          ✓ Plan de manejo de excepciones documentado<br>
+          ✓ Responsable designado para validar la automatización en producción
+        </p>
+      </div>
+
+      <p>
+        Si tienes todos estos puntos cubiertos, la implementación técnica —con Make, N8N, Zapier, Power Automate o cualquier otra herramienta— es relativamente directa. La incertidumbre ya se ha resuelto en el análisis.
+      </p>
+
+      <div class="cta-box">
+        <h3>¿Tienes un proceso que quieres automatizar?</h3>
+        <p>En EasyVora empezamos siempre por el análisis. Reserva una sesión gratuita de diagnóstico y te ayudamos a identificar qué procesos de tu empresa tienen mayor potencial de automatización.</p>
+        <a class="cta-btn" href="../index.html#contacto">
+          Solicitar diagnóstico gratuito
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+
+    </article>
+
+    <!-- TOC Sidebar -->
+    <aside class="toc-aside">
+      <div class="toc-box">
+        <h3>Contenido</h3>
+        <ol>
+          <li><a href="#que-es" class="toc-link">Qué es el análisis de procesos</a></li>
+          <li><a href="#por-que" class="toc-link">Por qué es el primer paso</a></li>
+          <li><a href="#metodologia" class="toc-link">Metodología de 5 pasos</a></li>
+          <li><a href="#herramientas" class="toc-link">Herramientas para el análisis</a></li>
+          <li><a href="#indicadores" class="toc-link">Indicadores clave</a></li>
+          <li><a href="#errores" class="toc-link">5 errores comunes</a></li>
+          <li><a href="#siguiente" class="toc-link">De análisis a implementación</a></li>
+        </ol>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    <div class="footer-links">
+      <a href="../index.html">Inicio</a>
+      <a href="../blog.html">Blog</a>
+      <a href="../index.html#servicios">Servicios</a>
+      <a href="../index.html#contacto">Contacto</a>
+    </div>
+    <p>&copy; 2025 EasyVora. Todos los derechos reservados.</p>
+  </footer>
+
+  <script>
+    // Reading progress
+    const bar = document.getElementById('progress-bar');
+    window.addEventListener('scroll', () => {
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (window.scrollY / total * 100) + '%';
+    });
+
+    // Custom cursor
+    const dot = document.getElementById('cursor-dot');
+    const ring = document.getElementById('cursor-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; dot.style.left = mx + 'px'; dot.style.top = my + 'px'; });
+    (function lerp() {
+      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(lerp);
+    })();
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => { ring.style.width = '44px'; ring.style.height = '44px'; });
+      el.addEventListener('mouseleave', () => { ring.style.width = '28px'; ring.style.height = '28px'; });
+    });
+
+    // TOC active tracking
+    const headings = document.querySelectorAll('.art-body h2[id]');
+    const tocLinks = document.querySelectorAll('.toc-link');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          tocLinks.forEach(l => l.classList.remove('active'));
+          const active = document.querySelector(`.toc-link[href="#${entry.target.id}"]`);
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    headings.forEach(h => observer.observe(h));
+  </script>
+</body>
+</html>
