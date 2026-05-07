@@ -307,6 +307,19 @@
     .ft-legal a { font-size:12.5px; color:rgba(255,255,255,.18); text-decoration:none; transition:color .15s; }
     .ft-legal a:hover { color:rgba(255,255,255,.6); }
 
+    /* ── FAQ ── */
+    #faq { padding:96px 0; background:var(--bg2); }
+    .faq-list { max-width:720px; margin:0 auto; }
+    .faq-item { border-bottom:1px solid var(--border); }
+    .faq-item:first-child { border-top:1px solid var(--border); }
+    .faq-q { width:100%; background:none; border:none; text-align:left; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:22px 0; cursor:pointer; font-family:'Inter',sans-serif; font-size:16px; font-weight:600; color:#fff; transition:color .2s; }
+    .faq-q:hover { color:var(--sky); }
+    .faq-arrow { width:20px; height:20px; flex-shrink:0; color:var(--sky); transition:transform .32s cubic-bezier(.22,.68,0,1.2); }
+    .faq-item.open .faq-arrow { transform:rotate(180deg); }
+    .faq-a { max-height:0; overflow:hidden; transition:max-height .38s cubic-bezier(.22,.68,0,1.2); }
+    .faq-a-inner { padding:0 32px 22px 0; font-size:15px; color:var(--muted); line-height:1.75; }
+    .faq-item.open .faq-a { max-height:320px; }
+
     /* ── VORA WIDGET ── */
     #vora-widget { position:fixed; bottom:24px; right:24px; z-index:9000; display:flex; flex-direction:column; align-items:flex-end; gap:12px; transition:bottom .4s cubic-bezier(.22,.68,0,1.2); }
     #vora-btn { width:60px; height:60px; border-radius:50%; border:2px solid rgba(96,165,250,.35); background:linear-gradient(135deg,#1a44c8,var(--blue)); box-shadow:0 4px 20px rgba(37,99,235,.55); cursor:none; padding:0; overflow:hidden; transition:transform .2s,box-shadow .2s; animation:vora-pulse 2.8s ease-in-out infinite; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
@@ -469,6 +482,7 @@
         <a href="#proceso">Proceso</a>
         <a href="#chatbot">Chatbot IA</a>
         <a href="#porque">Nosotros</a>
+        <a href="#faq">FAQ</a>
         <a href="#contacto">Contacto</a>
         <a href="blog.html">Blog</a>
       </div>
@@ -485,6 +499,7 @@
   <a href="#proceso"   onclick="toggleMob()">Proceso</a>
   <a href="#chatbot"   onclick="toggleMob()">Chatbot IA</a>
   <a href="#porque"    onclick="toggleMob()">Nosotros</a>
+  <a href="#faq"       onclick="toggleMob()">FAQ</a>
   <a href="#contacto"  onclick="toggleMob()">Contacto</a>
   <a href="blog.html"  onclick="toggleMob()">Blog</a>
   <a href="mailto:info@easyvoraproyect.com" onclick="toggleMob()" class="btn btn-blue" style="margin-top:8px;justify-content:center;">Solicitar información</a>
@@ -668,6 +683,60 @@
       <div class="why-item fi d1"><div class="why-n">04</div><h3>Acompañamiento real</h3><p>No desaparecemos tras la entrega. Somos tu equipo de IA a largo plazo.</p></div>
       <div class="why-item fi d2"><div class="why-n">05</div><h3>Seguridad y RGPD</h3><p>Todas las soluciones cumplen los estándares de seguridad y normativa vigente.</p></div>
       <div class="why-item fi d3"><div class="why-n">06</div><h3>Escalable sin sorpresas</h3><p>Las soluciones crecen con tu empresa. Sin costes ocultos.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="container">
+    <div class="s-hdr center fi">
+      <div class="eyebrow">FAQ</div>
+      <h2>Preguntas <span class="grad">frecuentes</span></h2>
+      <p>Lo que más nos preguntan antes de empezar.</p>
+    </div>
+    <div class="faq-list">
+
+      <div class="faq-item fi">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          ¿Cuánto tiempo tarda en implementarse una solución?
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Depende del servicio. Un chatbot de WhatsApp puede estar operativo en 1-2 semanas. Una automatización de procesos compleja puede requerir entre 3 y 6 semanas. Siempre definimos plazos concretos antes de empezar.</div></div>
+      </div>
+
+      <div class="faq-item fi d1">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          ¿Necesito tener conocimientos técnicos para trabajar con vosotros?
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">No. Nos encargamos de toda la parte técnica. Tú solo necesitas contarnos qué quieres mejorar en tu empresa y nosotros lo traducimos en soluciones concretas.</div></div>
+      </div>
+
+      <div class="faq-item fi d2">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          ¿Tengo que cambiar las herramientas que uso actualmente?
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">En la mayoría de casos no. Nos integramos con las herramientas que ya tienes: CRM, ERP, WhatsApp, email, hojas de cálculo. Nuestro objetivo es mejorar lo que ya funciona, no sustituirlo.</div></div>
+      </div>
+
+      <div class="faq-item fi d3">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          ¿Qué pasa si la solución no funciona como esperaba?
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Incluimos un período de ajuste y garantía en todos los proyectos. No desaparecemos tras la entrega — si algo no rinde como acordamos, lo corregimos sin coste adicional.</div></div>
+      </div>
+
+      <div class="faq-item fi d1">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          ¿Cuál es el coste mínimo para empezar?
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">La consulta inicial y el diagnóstico son gratuitos y sin compromiso. A partir de ahí, cada propuesta es personalizada según el alcance del proyecto. No tenemos tarifas fijas porque cada empresa es diferente.</div></div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -1345,6 +1414,14 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',
   const t=document.querySelector(a.getAttribute('href'));
   if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'});}
 }));
+
+/* ══ FAQ ══ */
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
 
 /* ══ COOKIE BANNER ══ */
 function getVoraBaseline() { return window.innerWidth <= 400 ? 16 : 24; }
