@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IA aplicada a PYMEs: casos reales sin necesidad de grandes inversiones | EasyVora</title>
+  <meta name="description" content="Descubre cómo PYMEs reales están usando inteligencia artificial para reducir costes y escalar operaciones desde 50€/mes, sin equipos de datos ni grandes inversiones." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: #04091A; color: rgba(255,255,255,.85); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    :root { --blue:#2563EB; --sky:#60A5FA; --navy:#0F1F60; --card:rgba(255,255,255,.03); --border:rgba(255,255,255,.08); --muted:rgba(255,255,255,.42); --bg1:#04091A; --bg2:#060D22; }
+    #read-bar { position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#2563EB,#60A5FA);z-index:1200;width:0%;pointer-events:none;transition:width .1s; }
+    @media(pointer:fine){ body{cursor:none;} }
+    @media(pointer:coarse){ #cur-dot,#cur-ring{display:none;} }
+    #cur-dot,#cur-ring { position:fixed;top:0;left:0;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%); }
+    #cur-dot { width:5px;height:5px;background:var(--sky); }
+    #cur-ring { width:34px;height:34px;border:1.5px solid rgba(96,165,250,.5);transition:width .15s,height .15s,border-color .15s,background .15s; }
+    #cur-ring.big { width:54px;height:54px;border-color:rgba(96,165,250,.25);background:rgba(96,165,250,.05); }
+    #cur-ring.small { width:20px;height:20px; }
+    .container { max-width:1160px;margin:0 auto;padding:0 32px; }
+    .btn { display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;padding:12px 24px;border-radius:8px;border:none;cursor:none;text-decoration:none;transition:all .2s;font-family:'Inter',sans-serif;white-space:nowrap; }
+    .btn svg { width:15px;height:15px;flex-shrink:0;transition:transform .2s; }
+    .btn:hover svg { transform:translateX(4px); }
+    .btn-blue { background:var(--blue);color:#fff;box-shadow:0 0 28px rgba(37,99,235,.4); }
+    .btn-blue:hover { box-shadow:0 0 40px rgba(37,99,235,.6);transform:translateY(-1px); }
+    .btn-ghost { background:rgba(255,255,255,.05);color:#fff;border:1px solid var(--border); }
+    .btn-ghost:hover { background:rgba(255,255,255,.09);transform:translateY(-1px); }
+    #nav { position:fixed;top:0;left:0;right:0;z-index:900;background:rgba(4,9,26,.85);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);transition:box-shadow .3s; }
+    #nav.scrolled { box-shadow:0 2px 40px rgba(0,0,0,.5); }
+    .nav-inner { display:flex;align-items:center;justify-content:space-between;height:64px; }
+    .nav-logo { display:flex;align-items:center;gap:10px;text-decoration:none; }
+    .nav-logo img { height:36px;width:auto;border-radius:6px; }
+    .nav-logo-name { font-size:17px;font-weight:800;color:#fff;letter-spacing:-.02em; }
+    .nav-logo-sub { font-size:9px;font-weight:600;letter-spacing:.1em;color:var(--sky);text-transform:uppercase;display:block;margin-top:1px; }
+    .nav-links { display:flex;gap:2px; }
+    .nav-links a { font-size:13.5px;font-weight:500;color:var(--muted);text-decoration:none;padding:7px 13px;border-radius:6px;transition:color .15s,background .15s;position:relative; }
+    .nav-links a::after { content:'';position:absolute;bottom:3px;left:13px;right:13px;height:1px;background:var(--sky);transform:scaleX(0);transform-origin:left;transition:transform .22s; }
+    .nav-links a:hover, .nav-links a.active { color:#fff; }
+    .nav-links a:hover::after, .nav-links a.active::after { transform:scaleX(1); }
+    .nav-actions { display:flex;gap:8px; }
+    .hamburger { display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:none;padding:6px; }
+    .hamburger span { display:block;width:22px;height:2px;background:#fff;border-radius:1px;transition:all .3s; }
+    #mob-menu { display:none;position:fixed;top:64px;left:0;right:0;background:rgba(4,9,26,.97);border-bottom:1px solid var(--border);z-index:800;padding:10px 20px 18px;flex-direction:column; }
+    #mob-menu a { display:block;padding:10px 12px;color:var(--muted);font-size:15px;font-weight:500;text-decoration:none;border-radius:6px;transition:all .15s; }
+    #mob-menu a:hover { color:#fff;background:rgba(255,255,255,.05); }
+    .art-hero { position:relative;padding:0;margin-top:64px;overflow:hidden;min-height:380px;display:flex;align-items:flex-end; }
+    .art-hero-bg { position:absolute;inset:0; }
+    .art-hero::after { content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(4,9,26,.85) 0%,rgba(4,9,26,.4) 60%,transparent 100%);pointer-events:none; }
+    .art-hero-content { position:relative;z-index:2;padding:52px 0 48px;max-width:820px; }
+    .art-back { display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:rgba(255,255,255,.5);text-decoration:none;margin-bottom:20px;transition:color .15s; }
+    .art-back svg { width:14px;height:14px;transition:transform .2s; }
+    .art-back:hover { color:#fff; }
+    .art-back:hover svg { transform:translateX(-3px); }
+    .art-eyebrow { display:flex;align-items:center;gap:12px;margin-bottom:16px; }
+    .art-read-time { font-size:12px;color:rgba(255,255,255,.45);font-weight:500; }
+    .art-hero-content h1 { font-size:clamp(28px,4vw,48px);font-weight:800;line-height:1.1;letter-spacing:-.03em;color:#fff;margin-bottom:16px; }
+    .art-meta { display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,.4); }
+    .art-meta .sep { opacity:.4; }
+    .badge { display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:3px 10px;border-radius:4px;letter-spacing:.02em; }
+    .badge-auto { background:rgba(37,99,235,.18);color:#93c5fd;border:1px solid rgba(37,99,235,.3); }
+    .badge-ia { background:rgba(124,58,237,.2);color:#c4b5fd;border:1px solid rgba(124,58,237,.3); }
+    .badge-chat { background:rgba(5,150,105,.2);color:#6ee7b7;border:1px solid rgba(5,150,105,.3); }
+    .badge-exito { background:rgba(217,119,6,.2);color:#fcd34d;border:1px solid rgba(217,119,6,.3); }
+    .badge-guia { background:rgba(8,145,178,.2);color:#67e8f9;border:1px solid rgba(8,145,178,.3); }
+    .art-layout { padding:56px 0 96px; }
+    .art-grid { display:grid;grid-template-columns:1fr 240px;gap:0;align-items:start; }
+    .art-toc { order:2;position:sticky;top:84px; }
+    .toc-box { background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:20px; }
+    .toc-title { font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:14px; }
+    .toc-nav { display:flex;flex-direction:column;gap:4px; }
+    .toc-nav a { font-size:12.5px;color:rgba(255,255,255,.4);text-decoration:none;padding:5px 8px;border-radius:5px;transition:all .15s;border-left:2px solid transparent;line-height:1.4; }
+    .toc-nav a:hover { color:#fff;background:rgba(255,255,255,.04); }
+    .toc-nav a.active { color:var(--sky);border-left-color:var(--sky);background:rgba(96,165,250,.06); }
+    .art-body { order:1;max-width:720px;padding-right:52px; }
+    .art-body h2 { font-size:clamp(20px,2.4vw,26px);font-weight:700;color:#fff;line-height:1.25;letter-spacing:-.02em;margin:52px 0 18px;padding-top:8px; }
+    .art-body h2:first-child { margin-top:0; }
+    .art-body h3 { font-size:17px;font-weight:700;color:#fff;line-height:1.3;margin:32px 0 12px; }
+    .art-body p { font-size:15.5px;color:rgba(255,255,255,.72);line-height:1.8;margin-bottom:18px; }
+    .art-body ul, .art-body ol { padding-left:22px;margin-bottom:20px; }
+    .art-body li { font-size:15.5px;color:rgba(255,255,255,.72);line-height:1.75;margin-bottom:8px; }
+    .art-body strong { color:rgba(255,255,255,.9);font-weight:600; }
+    .art-body a { color:var(--sky);text-decoration:none; }
+    .art-body a:hover { text-decoration:underline; }
+    .highlight-box { background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.22);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:20px 22px;margin:28px 0;font-size:15px;color:rgba(255,255,255,.78);line-height:1.7; }
+    .highlight-box strong { color:#93c5fd; }
+    .tip-box { background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.22);border-radius:8px;padding:20px 22px;margin:28px 0;display:flex;gap:14px;align-items:flex-start; }
+    .tip-box-icon { width:32px;height:32px;border-radius:6px;background:rgba(5,150,105,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#6ee7b7; }
+    .tip-box-icon svg { width:16px;height:16px; }
+    .tip-box-body h4 { font-size:13px;font-weight:700;color:#6ee7b7;margin-bottom:5px; }
+    .tip-box-body p { font-size:14px;color:rgba(255,255,255,.65);line-height:1.65;margin:0; }
+    .stat-row { display:flex;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:32px 0; }
+    .stat-item { flex:1;background:var(--card);padding:24px 20px;text-align:center; }
+    .stat-val { font-size:32px;font-weight:800;color:#fff;letter-spacing:-.04em;line-height:1; }
+    .stat-val span { font-size:18px;color:var(--sky); }
+    .stat-lbl { font-size:12px;color:var(--muted);margin-top:6px;line-height:1.4; }
+    .steps-list { counter-reset:steps;list-style:none;padding:0;margin:28px 0; }
+    .steps-list li { counter-increment:steps;display:flex;gap:16px;align-items:flex-start;margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid var(--border); }
+    .steps-list li:last-child { border-bottom:none;margin-bottom:0;padding-bottom:0; }
+    .steps-list li::before { content:counter(steps);display:flex;align-items:center;justify-content:center;min-width:32px;height:32px;border-radius:50%;background:rgba(37,99,235,.25);border:1px solid rgba(37,99,235,.4);color:var(--sky);font-size:13px;font-weight:700;flex-shrink:0;margin-top:2px; }
+    .steps-list-body h4 { font-size:15px;font-weight:700;color:#fff;margin-bottom:5px; }
+    .steps-list-body p { font-size:14px;color:var(--muted);line-height:1.65;margin:0; }
+    .compare-table { width:100%;border-collapse:collapse;margin:28px 0;font-size:14px; }
+    .compare-table th { background:rgba(37,99,235,.15);color:rgba(255,255,255,.8);font-weight:600;font-size:12px;letter-spacing:.04em;text-transform:uppercase;padding:12px 16px;text-align:left;border-bottom:1px solid rgba(37,99,235,.3); }
+    .compare-table td { padding:12px 16px;border-bottom:1px solid var(--border);color:rgba(255,255,255,.68);vertical-align:top; }
+    .compare-table tr:last-child td { border-bottom:none; }
+    .compare-table tr:hover td { background:rgba(255,255,255,.02); }
+    .compare-table .check { color:#6ee7b7; } .compare-table .cross { color:rgba(252,165,165,.7); }
+    .art-cta-box { display:flex;align-items:center;gap:24px;background:linear-gradient(135deg,rgba(37,99,235,.12),rgba(15,31,96,.18));border:1px solid rgba(37,99,235,.22);border-radius:14px;padding:32px 36px;margin:52px 0 0; }
+    .art-cta-icon { width:56px;height:56px;border-radius:12px;background:rgba(37,99,235,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--sky); }
+    .art-cta-box h3 { font-size:18px;font-weight:700;color:#fff;margin-bottom:6px; }
+    .art-cta-box p { font-size:14px;color:var(--muted);line-height:1.6;margin:0; }
+    .art-cta-box .btn { flex-shrink:0;margin-left:auto; }
+    footer { background:#020710;padding:56px 0 28px;border-top:1px solid var(--border); }
+    .ft-top { display:grid;grid-template-columns:2.5fr 1fr 1fr 1fr;gap:44px;padding-bottom:44px;border-bottom:1px solid var(--border);margin-bottom:26px; }
+    .ft-name { font-size:17px;font-weight:800;color:#fff;letter-spacing:-.02em;margin-bottom:9px; }
+    .ft-brand>p { font-size:13.5px;color:rgba(255,255,255,.28);line-height:1.7;max-width:240px;margin-bottom:20px; }
+    .ft-socials { display:flex;gap:7px; }
+    .ft-social { width:32px;height:32px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);text-decoration:none;font-size:12px;font-weight:700;transition:all .18s; }
+    .ft-social:hover { border-color:var(--sky);color:var(--sky); }
+    .ft-col h5 { font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:16px; }
+    .ft-col ul { list-style:none;display:flex;flex-direction:column;gap:9px; }
+    .ft-col ul a { font-size:13.5px;color:rgba(255,255,255,.28);text-decoration:none;transition:color .15s; }
+    .ft-col ul a:hover { color:#fff; }
+    .ft-bottom { display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap; }
+    .ft-bottom p { font-size:12.5px;color:rgba(255,255,255,.22); }
+    .ft-legal { display:flex;gap:20px; }
+    .ft-legal a { font-size:12.5px;color:rgba(255,255,255,.18);text-decoration:none;transition:color .15s; }
+    .ft-legal a:hover { color:rgba(255,255,255,.6); }
+    @media(max-width:1024px){ .art-grid{grid-template-columns:1fr;} .art-toc{order:1;position:static;margin-bottom:32px;} .art-body{order:2;max-width:100%;padding-right:0;} }
+    @media(max-width:768px){ .container{padding:0 20px;} .nav-links,.nav-actions .btn-ghost{display:none;} .hamburger{display:flex;} .art-hero-content{padding:40px 0 36px;} .ft-top{grid-template-columns:1fr 1fr;gap:28px;} .art-cta-box{flex-direction:column;text-align:center;} .art-cta-box .btn{margin-left:0;} }
+    @media(max-width:480px){ .ft-top{grid-template-columns:1fr;} .stat-row{flex-direction:column;gap:0;} }
+  </style>
+</head>
+<body>
+
+<div id="read-bar"></div>
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-logo">
+        <img src="../Logo.png" alt="EasyVora" />
+        <div>
+          <span class="nav-logo-name">EasyVora</span>
+          <span class="nav-logo-sub">AI Automation</span>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a href="../index.html#servicios">Servicios</a>
+        <a href="../index.html#proceso">Proceso</a>
+        <a href="../index.html#por-que">Por qué nosotros</a>
+        <a href="../blog.html" class="active">Blog</a>
+        <a href="../index.html#contacto">Contacto</a>
+      </div>
+      <div class="nav-actions">
+        <a href="../blog.html" class="btn btn-ghost">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Blog
+        </a>
+        <a href="../index.html#contacto" class="btn btn-blue">
+          Hablar con experto
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      <button class="hamburger" onclick="toggleMob()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+<div id="mob-menu">
+  <a href="../index.html#servicios">Servicios</a>
+  <a href="../index.html#proceso">Proceso</a>
+  <a href="../index.html#por-que">Por qué nosotros</a>
+  <a href="../blog.html">Blog</a>
+  <a href="../index.html#contacto">Contacto</a>
+</div>
+
+<!-- HERO -->
+<section class="art-hero">
+  <div class="art-hero-bg" style="background:linear-gradient(160deg,#0f0520,#1e0a48,#280d60);">
+    <!-- Neural network SVG -->
+    <svg width="100%" height="100%" viewBox="0 0 900 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" style="opacity:.22;">
+      <!-- Layer 1 nodes -->
+      <circle cx="120" cy="80" r="7" fill="#7c3aed" opacity=".8"/>
+      <circle cx="120" cy="160" r="7" fill="#7c3aed" opacity=".8"/>
+      <circle cx="120" cy="240" r="7" fill="#7c3aed" opacity=".8"/>
+      <circle cx="120" cy="320" r="7" fill="#7c3aed" opacity=".8"/>
+      <!-- Layer 2 nodes -->
+      <circle cx="300" cy="100" r="9" fill="#9333ea" opacity=".9"/>
+      <circle cx="300" cy="200" r="9" fill="#9333ea" opacity=".9"/>
+      <circle cx="300" cy="300" r="9" fill="#9333ea" opacity=".9"/>
+      <!-- Layer 3 nodes -->
+      <circle cx="500" cy="80" r="9" fill="#a855f7" opacity=".9"/>
+      <circle cx="500" cy="180" r="9" fill="#a855f7" opacity=".9"/>
+      <circle cx="500" cy="280" r="9" fill="#a855f7" opacity=".9"/>
+      <circle cx="500" cy="360" r="9" fill="#a855f7" opacity=".9"/>
+      <!-- Layer 4 nodes -->
+      <circle cx="700" cy="140" r="10" fill="#c084fc" opacity=".9"/>
+      <circle cx="700" cy="250" r="10" fill="#c084fc" opacity=".9"/>
+      <!-- Output node -->
+      <circle cx="850" cy="200" r="12" fill="#e879f9" opacity=".9"/>
+      <!-- Connections L1->L2 -->
+      <line x1="120" y1="80" x2="300" y2="100" stroke="#7c3aed" stroke-width="1" opacity=".4"/>
+      <line x1="120" y1="80" x2="300" y2="200" stroke="#7c3aed" stroke-width="1" opacity=".3"/>
+      <line x1="120" y1="160" x2="300" y2="100" stroke="#7c3aed" stroke-width="1" opacity=".4"/>
+      <line x1="120" y1="160" x2="300" y2="200" stroke="#7c3aed" stroke-width="1" opacity=".4"/>
+      <line x1="120" y1="160" x2="300" y2="300" stroke="#7c3aed" stroke-width="1" opacity=".3"/>
+      <line x1="120" y1="240" x2="300" y2="200" stroke="#7c3aed" stroke-width="1" opacity=".4"/>
+      <line x1="120" y1="240" x2="300" y2="300" stroke="#7c3aed" stroke-width="1" opacity=".4"/>
+      <line x1="120" y1="320" x2="300" y2="200" stroke="#7c3aed" stroke-width="1" opacity=".3"/>
+      <line x1="120" y1="320" x2="300" y2="300" stroke="#7c3aed" stroke-width="1" opacity=".4"/>
+      <!-- Connections L2->L3 -->
+      <line x1="300" y1="100" x2="500" y2="80" stroke="#9333ea" stroke-width="1" opacity=".4"/>
+      <line x1="300" y1="100" x2="500" y2="180" stroke="#9333ea" stroke-width="1" opacity=".4"/>
+      <line x1="300" y1="200" x2="500" y2="80" stroke="#9333ea" stroke-width="1" opacity=".3"/>
+      <line x1="300" y1="200" x2="500" y2="180" stroke="#9333ea" stroke-width="1" opacity=".4"/>
+      <line x1="300" y1="200" x2="500" y2="280" stroke="#9333ea" stroke-width="1" opacity=".4"/>
+      <line x1="300" y1="300" x2="500" y2="180" stroke="#9333ea" stroke-width="1" opacity=".3"/>
+      <line x1="300" y1="300" x2="500" y2="280" stroke="#9333ea" stroke-width="1" opacity=".4"/>
+      <line x1="300" y1="300" x2="500" y2="360" stroke="#9333ea" stroke-width="1" opacity=".4"/>
+      <!-- Connections L3->L4 -->
+      <line x1="500" y1="80" x2="700" y2="140" stroke="#a855f7" stroke-width="1.2" opacity=".45"/>
+      <line x1="500" y1="180" x2="700" y2="140" stroke="#a855f7" stroke-width="1.2" opacity=".45"/>
+      <line x1="500" y1="180" x2="700" y2="250" stroke="#a855f7" stroke-width="1.2" opacity=".45"/>
+      <line x1="500" y1="280" x2="700" y2="140" stroke="#a855f7" stroke-width="1.2" opacity=".35"/>
+      <line x1="500" y1="280" x2="700" y2="250" stroke="#a855f7" stroke-width="1.2" opacity=".45"/>
+      <line x1="500" y1="360" x2="700" y2="250" stroke="#a855f7" stroke-width="1.2" opacity=".45"/>
+      <!-- Connections L4->Output -->
+      <line x1="700" y1="140" x2="850" y2="200" stroke="#c084fc" stroke-width="1.5" opacity=".55"/>
+      <line x1="700" y1="250" x2="850" y2="200" stroke="#c084fc" stroke-width="1.5" opacity=".55"/>
+    </svg>
+  </div>
+  <div class="container">
+    <div class="art-hero-content">
+      <a href="../blog.html" class="art-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Volver al blog
+      </a>
+      <div class="art-eyebrow">
+        <span class="badge badge-ia">IA Aplicada</span>
+        <span class="art-read-time">7 min de lectura</span>
+      </div>
+      <h1>IA aplicada a PYMEs: casos reales sin necesidad de grandes inversiones</h1>
+      <div class="art-meta">
+        <span>EasyVora</span>
+        <span class="sep">·</span>
+        <time datetime="2025-04-29">29 de abril de 2025</time>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARTICLE LAYOUT -->
+<section class="art-layout">
+  <div class="container">
+    <div class="art-grid">
+
+      <!-- TABLE OF CONTENTS -->
+      <aside class="art-toc">
+        <div class="toc-box">
+          <p class="toc-title">En este artículo</p>
+          <nav class="toc-nav">
+            <a href="#mito">El mito de que la IA es para grandes empresas</a>
+            <a href="#casos">Casos reales de PYMEs con IA</a>
+            <a href="#herramientas">Herramientas de IA accesibles para PYMEs</a>
+            <a href="#como-empezar">Cómo empezar sin conocimientos técnicos</a>
+            <a href="#errores">Errores comunes al implementar IA</a>
+            <a href="#siguiente">El siguiente paso</a>
+          </nav>
+        </div>
+      </aside>
+
+      <!-- ARTICLE BODY -->
+      <article class="art-body">
+
+        <h2 id="mito">El mito de que la IA es para grandes empresas</h2>
+        <p>Durante años, la inteligencia artificial fue terreno exclusivo de empresas como Google, Amazon o IBM. Implementar un sistema de IA requería equipos de ingenieros de datos, infraestructura en la nube de seis cifras y meses de desarrollo a medida. Para una PYME con 10 o 15 empleados, era simplemente inalcanzable.</p>
+        <p>Ese mundo ya no existe. En 2025, el acceso a modelos de lenguaje avanzados, herramientas de automatización visual y APIs preconstruidas ha democratizado la IA de una forma que hubiera parecido ciencia ficción hace apenas cinco años. La barrera real hoy no es el presupuesto, es el conocimiento: saber qué procesos automatizar y qué herramientas usar.</p>
+        <p>Para darte una referencia concreta: un asistente de email inteligente basado en GPT-4 cuesta menos de 30€ al mes. Una automatización de clasificación de facturas con Make y un modelo de visión se puede tener operativa por menos de 100€/mes. Una PYME que facture 500.000€ anuales puede acceder a tecnología IA que hace cinco años habría costado un proyecto de 200.000€.</p>
+
+        <div class="stat-row">
+          <div class="stat-item">
+            <div class="stat-val">67<span>%</span></div>
+            <div class="stat-lbl">de PYMEs que adoptan IA reportan mejoras en eficiencia en el primer año</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-val">4<span>-8x</span></div>
+            <div class="stat-lbl">retorno sobre inversión en el primer año en casos bien implementados</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-val">50<span>€</span></div>
+            <div class="stat-lbl">desde esta cifra mensual se puede tener IA funcional en procesos clave</div>
+          </div>
+        </div>
+
+        <p>El cambio de paradigma es importante: ya no se trata de "construir" IA, sino de "conectar" IA. Las piezas existen y están disponibles. Lo que diferencia a las PYMEs que crecen con IA de las que se quedan mirando es la capacidad de identificar los procesos correctos y configurar la solución adecuada.</p>
+
+        <h2 id="casos">Casos reales de PYMEs con IA</h2>
+        <p>Los siguientes casos son representativos de implementaciones reales en empresas de entre 5 y 50 empleados. Ninguno requirió un departamento de tecnología ni una inversión inicial superior a 5.000€.</p>
+
+        <h3>Asesoría contable — clasificación automática de facturas</h3>
+        <p>Una asesoría de 6 personas gestionaba más de 200 facturas mensuales de sus clientes. El proceso era simple pero devastadoramente manual: recibir factura por email, abrirla, leer proveedor, importe y concepto, clasificarla en el ERP y archivarla. Cada factura consumía entre 3 y 5 minutos. Al mes, el equipo perdía casi 20 horas en esta tarea.</p>
+        <p>La solución implementada combina un flujo de Make que intercepta los emails de facturas entrantes, los envía a un modelo de visión para extraer los datos clave (emisor, importe, fecha, concepto), y los registra automáticamente en su software de contabilidad. Las facturas ambiguas o con baja confianza se marcan para revisión humana. <strong>Resultado: reducción del 80% en la entrada manual de datos.</strong> El equipo recuperó 16 horas mensuales que ahora dedica a asesoramiento de valor. Coste de la solución: aproximadamente 120€ al mes.</p>
+
+        <h3>Clínica dental — atención al cliente 24/7</h3>
+        <p>Una clínica dental con 3 ubicaciones tenía un problema clásico: el 35% de las llamadas entraban fuera del horario de atención, y la recepción no daba abasto durante las horas punta. Los pacientes colgaban, buscaban otra clínica, y las citas perdidas representaban un ingreso que nunca llegaba a materializarse.</p>
+        <p>Implementaron un chatbot de IA conectado a WhatsApp Business que gestiona reservas de citas, responde preguntas frecuentes sobre tratamientos y precios, envía recordatorios automáticos 24 horas antes de cada cita, y realiza seguimiento post-consulta solicitando opinión y ofreciendo próximas revisiones. El bot escala a un humano únicamente cuando detecta una situación que requiere criterio clínico. <strong>Resultado: 40% menos de llamadas perdidas y un 25% más de citas reservadas fuera del horario comercial.</strong> La clínica recuperó la inversión en el primer mes.</p>
+
+        <h3>E-commerce de moda — recomendaciones personalizadas</h3>
+        <p>Una tienda online de moda de tamaño mediano tenía tráfico razonable pero una tasa de conversión por debajo del 2%. El análisis mostraba que los visitantes navegaban mucho pero compraban poco. El problema era claro: la experiencia de navegación era genérica. Todo el mundo veía los mismos productos destacados, independientemente de su historial, preferencias o comportamiento en la sesión.</p>
+        <p>Integraron un motor de recomendaciones basado en IA que analiza el comportamiento del usuario en tiempo real y muestra sugerencias personalizadas. Cuando alguien ha visto tres veces unos pantalones de tiro alto pero no ha comprado, el sistema no solo recomienda artículos complementarios, sino que puede mostrar ese mismo producto con un estímulo visual diferente. <strong>Resultado: incremento del 22% en el valor medio del carrito y mejora notable en la tasa de retención.</strong> La solución se implementó en menos de dos semanas.</p>
+
+        <h3>Empresa de logística — predicción de demanda</h3>
+        <p>Una empresa de distribución regional con 15 vehículos tenía un problema de eficiencia operativa que afectaba directamente al margen: las rutas se planificaban manualmente cada mañana con datos históricos básicos, sin considerar patrones estacionales, eventos locales ni el comportamiento histórico de cada cliente. El resultado era una flota que en ocasiones viajaba a media carga o hacía desvíos innecesarios.</p>
+        <p>Implementaron un sistema de predicción de demanda que analiza los pedidos históricos, el día de la semana, la estacionalidad del sector y variables externas (clima, días festivos) para anticipar la carga de trabajo de la siguiente jornada. El planificador recibe las rutas optimizadas como propuesta cada tarde para el día siguiente. <strong>Resultado: reducción del 18% en costes de combustible y una caída del 30% en entregas tardías.</strong> La mejora en satisfacción del cliente se tradujo en un incremento del índice de renovación de contratos.</p>
+
+        <h2 id="herramientas">Herramientas de IA accesibles para PYMEs</h2>
+        <p>El ecosistema de herramientas IA para empresas ha madurado enormemente. Ya no hay que elegir entre "construir desde cero" y "no tener nada". Existe una capa intermedia de herramientas de bajo código que permiten implementar soluciones sofisticadas sin un equipo técnico.</p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Herramienta</th>
+              <th>Para qué sirve</th>
+              <th>Precio estimado</th>
+              <th>Dificultad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>ChatGPT / GPT-4 API</strong></td>
+              <td>Respuestas inteligentes, clasificación de texto, generación de contenido, análisis de documentos</td>
+              <td>Desde 20€/mes</td>
+              <td>Baja-media</td>
+            </tr>
+            <tr>
+              <td><strong>Make / n8n</strong></td>
+              <td>Automatización de flujos de trabajo con IA integrada; conecta apps, APIs y modelos de lenguaje</td>
+              <td>Desde 9€/mes</td>
+              <td>Baja</td>
+            </tr>
+            <tr>
+              <td><strong>HubSpot AI</strong></td>
+              <td>CRM con inteligencia artificial para ventas, marketing y seguimiento de clientes</td>
+              <td>Desde 45€/mes</td>
+              <td>Baja</td>
+            </tr>
+            <tr>
+              <td><strong>ElevenLabs</strong></td>
+              <td>Generación de voz IA para atención al cliente, tutoriales, contenido de audio personalizado</td>
+              <td>Desde 22€/mes</td>
+              <td>Media</td>
+            </tr>
+            <tr>
+              <td><strong>Relevance AI</strong></td>
+              <td>Construcción de agentes IA personalizados sin código para tareas de negocio específicas</td>
+              <td>Desde 19€/mes</td>
+              <td>Baja-media</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>La clave no está en usar todas estas herramientas, sino en identificar cuál resuelve el problema más costoso de tu negocio hoy. Una sola automatización bien implementada puede pagar el coste de todas las herramientas varias veces al mes.</p>
+
+        <h2 id="como-empezar">Cómo empezar sin conocimientos técnicos</h2>
+        <p>El mayor error que cometen las PYMEs al acercarse a la IA es intentar abordar demasiado a la vez. La IA es una tecnología que se aprende haciendo, y la mejor forma de aprender es con un proyecto pequeño, acotado y con resultados medibles.</p>
+
+        <ol class="steps-list">
+          <li>
+            <div class="steps-list-body">
+              <h4>Identifica un proceso repetitivo y costoso en tiempo</h4>
+              <p>Pregúntate: ¿Qué tarea hace algún miembro del equipo que consiste en leer, clasificar, copiar o responder información de forma repetitiva? Ese es tu punto de partida. Los mejores candidatos suelen ser: gestión de emails, clasificación de documentos, respuesta a preguntas frecuentes de clientes, y generación de informes periódicos.</p>
+            </div>
+          </li>
+          <li>
+            <div class="steps-list-body">
+              <h4>Valida que hay datos o información estructurada para trabajar</h4>
+              <p>La IA necesita información con la que trabajar. No hace falta un gran dataset, pero sí un mínimo de ejemplos representativos. Para clasificación de emails, 50-100 ejemplos son suficientes para empezar. Para predicción de demanda, necesitarás al menos 6-12 meses de histórico.</p>
+            </div>
+          </li>
+          <li>
+            <div class="steps-list-body">
+              <h4>Elige una herramienta de bajo código (Make, n8n, ChatGPT API)</h4>
+              <p>No necesitas programar. Herramientas como Make te permiten construir flujos de automatización visualmente, conectando tu email, tu CRM, una hoja de cálculo y un modelo de IA sin escribir una sola línea de código. Empieza por la plataforma que ya uses en tu negocio.</p>
+            </div>
+          </li>
+          <li>
+            <div class="steps-list-body">
+              <h4>Haz un piloto acotado: 2 semanas, un solo proceso, métricas claras</h4>
+              <p>Define antes de empezar qué significa el éxito: ¿cuántas horas deberías recuperar? ¿Cuál es la tasa de acierto mínima aceptable? Corre el piloto en paralelo con el proceso manual durante las primeras dos semanas para comparar resultados de forma objetiva.</p>
+            </div>
+          </li>
+          <li>
+            <div class="steps-list-body">
+              <h4>Mide, ajusta y escala</h4>
+              <p>Con los datos del piloto en la mano, decide si el resultado justifica la inversión. Si funciona, optimiza la solución y busca el siguiente proceso donde aplicarla. Una PYME que implementa una automatización de IA al trimestre transforma profundamente su operación en 12 meses.</p>
+            </div>
+          </li>
+        </ol>
+
+        <div class="tip-box">
+          <div class="tip-box-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          </div>
+          <div class="tip-box-body">
+            <h4>Consejo de EasyVora</h4>
+            <p>La IA no tiene que ser perfecta desde el día uno. Un modelo que hace bien el 80% del trabajo y deja el 20% restante al humano ya es rentable si ese proceso consumía 20 horas al mes. Pasar de 20 horas a 4 horas de revisión es una mejora del 80%, independientemente de que el sistema no sea perfecto.</p>
+          </div>
+        </div>
+
+        <h2 id="errores">Errores comunes al implementar IA</h2>
+        <p>El camino hacia la automatización inteligente está lleno de trampas que pueden hacer que un proyecto perfectamente viable acabe siendo un fracaso. Conocerlos de antemano es la mejor forma de evitarlos.</p>
+
+        <div class="highlight-box">
+          <strong>La IA no resuelve problemas de proceso mal diseñados.</strong> Si tu flujo de aprobación de facturas es caótico con procesos manuales, automatizarlo con IA solo convertirá el caos en caos rápido. Antes de implementar IA, el proceso debe estar claro, documentado y razonablemente eficiente.
+        </div>
+
+        <ul>
+          <li><strong>Querer automatizar todo a la vez sin priorizar.</strong> La dispersión es el enemigo de los resultados. Un proyecto de IA que intenta resolver cinco problemas a la vez raramente resuelve bien ninguno. Elige el proceso de mayor impacto y enfoca todos los recursos en él.</li>
+          <li><strong>No tener datos suficientes o de calidad para entrenar el modelo.</strong> "Basura entra, basura sale" es más verdad en IA que en cualquier otro ámbito tecnológico. Si tus datos históricos están incompletos, tienen errores o son inconsistentes, el modelo aprenderá esas mismas imperfecciones.</li>
+          <li><strong>Ignorar la fase de testing con datos reales.</strong> Probar una solución de IA solo con datos de ejemplo o casos favorables es uno de los errores más comunes. Los modelos deben probarse con casos límite, excepciones y situaciones atípicas antes de pasar a producción.</li>
+          <li><strong>No involucrar al equipo que usará la herramienta desde el principio.</strong> La resistencia al cambio mata más implementaciones de IA que los problemas técnicos. Las personas que van a usar la herramienta deben participar en su diseño, entender cómo funciona y sentir que les ayuda, no que les sustituye.</li>
+          <li><strong>Pensar que la IA resolverá problemas de proceso mal diseñados.</strong> Automatizar un proceso roto lo que hace es amplificar sus errores. La preparación del proceso es tan importante como la implementación técnica.</li>
+        </ul>
+
+        <h2 id="siguiente">El siguiente paso</h2>
+        <p>La inteligencia artificial aplicada a las PYMEs ya no es una promesa del futuro. Es una realidad operativa que hoy mismo está generando eficiencias, reduciendo costes y liberando tiempo en empresas de todos los tamaños y sectores. Las barreras de coste y complejidad técnica han caído de forma dramática en los últimos tres años.</p>
+        <p>Lo que separa a las PYMEs que están creciendo con IA de las que siguen mirando desde la barrera no es el tamaño, ni el presupuesto, ni el sector. Es la disposición a empezar con un proyecto pequeño, medir los resultados con honestidad y escalar lo que funciona.</p>
+        <p>Un piloto bien diseñado puede ejecutarse en dos semanas, costar menos de 500€ y generar resultados medibles desde el primer mes. No hace falta un consultor de transformación digital ni un presupuesto de innovación de seis cifras. Hace falta identificar el proceso correcto, elegir la herramienta adecuada y tener la disciplina de medir.</p>
+        <p>En EasyVora trabajamos con PYMEs que quieren dar ese primer paso de forma estructurada. Ofrecemos un diagnóstico gratuito en el que analizamos los procesos de tu empresa, identificamos dónde la IA puede generar mayor impacto y te presentamos un plan de acción concreto con estimaciones reales de retorno. Sin compromisos, sin tecnicismos, con números sobre la mesa.</p>
+
+        <div class="art-cta-box">
+          <div class="art-cta-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          </div>
+          <div>
+            <h3>Descubre donde la IA puede impactar tu negocio</h3>
+            <p>Diagnostico gratuito de 45 minutos. Identificamos el proceso con mayor ROI para empezar y te presentamos un plan de accion sin compromiso.</p>
+          </div>
+          <a href="../index.html#contacto" class="btn btn-blue">
+            Solicitar diagnostico
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="ft-top">
+      <div class="ft-brand">
+        <p class="ft-name">EasyVora</p>
+        <p>Automatizacion con inteligencia artificial para empresas que quieren crecer sin crecer en costes.</p>
+        <div class="ft-socials">
+          <a href="#" class="ft-social" aria-label="LinkedIn">in</a>
+          <a href="#" class="ft-social" aria-label="Twitter">X</a>
+        </div>
+      </div>
+      <div class="ft-col">
+        <h5>Servicios</h5>
+        <ul>
+          <li><a href="../index.html#servicios">Automatizacion de procesos</a></li>
+          <li><a href="../index.html#servicios">Agentes IA</a></li>
+          <li><a href="../index.html#servicios">Integraciones CRM</a></li>
+          <li><a href="../index.html#servicios">Chatbots</a></li>
+        </ul>
+      </div>
+      <div class="ft-col">
+        <h5>Empresa</h5>
+        <ul>
+          <li><a href="../index.html#por-que">Por que EasyVora</a></li>
+          <li><a href="../index.html#proceso">Proceso</a></li>
+          <li><a href="../blog.html">Blog</a></li>
+          <li><a href="../index.html#contacto">Contacto</a></li>
+        </ul>
+      </div>
+      <div class="ft-col">
+        <h5>Recursos</h5>
+        <ul>
+          <li><a href="../blog.html">Articulos</a></li>
+          <li><a href="../index.html#contacto">Diagnostico gratuito</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="ft-bottom">
+      <p>&copy; 2025 EasyVora. Todos los derechos reservados.</p>
+      <div class="ft-legal">
+        <a href="#">Privacidad</a>
+        <a href="#">Terminos</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const el = document.getElementById('read-bar');
+    el.style.width = Math.min(scrollY / (document.body.scrollHeight - innerHeight) * 100, 100) + '%';
+  }, { passive: true });
+  if (matchMedia('(pointer:fine)').matches) {
+    const dot = document.getElementById('cur-dot'), ring = document.getElementById('cur-ring');
+    let mx=0,my=0,rx=0,ry=0;
+    document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; dot.style.left=mx+'px'; dot.style.top=my+'px'; });
+    document.addEventListener('mousedown', () => ring.classList.add('small'));
+    document.addEventListener('mouseup', () => ring.classList.remove('small'));
+    (function lerpRing(){ rx+=(mx-rx)*.45; ry+=(my-ry)*.45; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(lerpRing); })();
+    document.querySelectorAll('a,button').forEach(el => { el.addEventListener('mouseenter',()=>ring.classList.add('big')); el.addEventListener('mouseleave',()=>ring.classList.remove('big')); });
+  }
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', scrollY > 20); }, { passive: true });
+  function toggleMob() { const m = document.getElementById('mob-menu'); m.style.display = (m.style.display==='flex')?'none':'flex'; }
+  const tocLinks = document.querySelectorAll('.toc-nav a');
+  const headings = [...document.querySelectorAll('.art-body h2[id]')];
+  window.addEventListener('scroll', () => {
+    let current = '';
+    headings.forEach(h => { if (scrollY >= h.offsetTop - 120) current = h.id; });
+    tocLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + current));
+  }, { passive: true });
+</script>
+</body>
+</html>
