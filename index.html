@@ -23,7 +23,7 @@
     @media (pointer:coarse){ #cur-dot,#cur-ring { display:none; } }
     #cur-dot,#cur-ring { position:fixed; top:0; left:0; border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); }
     #cur-dot  { width:5px; height:5px; background:var(--sky); }
-    #cur-ring { width:34px; height:34px; border:1.5px solid rgba(96,165,250,.5); transition:width .15s,height .15s,border-color .15s,background .15s; }
+    #cur-ring { width:34px; height:34px; border:1.5px solid rgba(96,165,250,.5); transition:width .15s,height .15s,border-color .15s,background .15s; will-change:transform; }
     #cur-ring.big   { width:54px; height:54px; border-color:rgba(96,165,250,.25); background:rgba(96,165,250,.05); }
     #cur-ring.small { width:20px; height:20px; }
 
@@ -699,6 +699,14 @@
 
       <div class="faq-item fi">
         <button class="faq-q" onclick="toggleFaq(this)">
+          ¿Cómo empezamos a trabajar juntos?
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Todo empieza con una videollamada o una reunión presencial. Antes de proponer nada, nos sentamos contigo para entender tu empresa, tus procesos y tus objetivos. No avanzamos ni presentamos ninguna propuesta sin haber hablado primero.</div></div>
+      </div>
+
+      <div class="faq-item fi d1">
+        <button class="faq-q" onclick="toggleFaq(this)">
           ¿Cuánto tiempo tarda en implementarse una solución?
           <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
@@ -734,7 +742,7 @@
           ¿Cuál es el coste mínimo para empezar?
           <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
-        <div class="faq-a"><div class="faq-a-inner">La consulta inicial y el diagnóstico son gratuitos y sin compromiso. A partir de ahí, cada propuesta es personalizada según el alcance del proyecto. No tenemos tarifas fijas porque cada empresa es diferente.</div></div>
+        <div class="faq-a"><div class="faq-a-inner">La primera llamada o reunión es gratuita y sin compromiso. A partir de ahí, el precio depende del alcance de cada proyecto — no trabajamos con tarifas fijas porque cada empresa y cada necesidad son diferentes.</div></div>
       </div>
 
     </div>
@@ -943,7 +951,7 @@ window.EV_initCanvas = function(){
     W = canvas.width = s; H = canvas.height = s;
     cx = W/2; cy = H/2; R = W * 0.38;
     particles = [];
-    for (let i = 0; i < 1800; i++) {
+    for (let i = 0; i < 1100; i++) {
       const u = Math.random(), v = Math.random();
       const theta = 2 * Math.PI * u, phi = Math.acos(2 * v - 1);
       const r = R * Math.cbrt(Math.random());
@@ -986,18 +994,17 @@ window.EV_initCanvas = function(){
     rotX = Math.max(-0.6, Math.min(0.6, rotX));
 
     const sorted = particles.map(p => {
-      let px = p.x, py = p.y, pz = p.z;
+      const proj = project(p.x, p.y, p.z);
       if (smouse.active) {
-        const proj = project(p.x, p.y, p.z);
         const dx = proj.sx - smouse.x, dy = proj.sy - smouse.y;
         const dist = Math.sqrt(dx*dx + dy*dy);
-        const inf = Math.max(0, 1 - dist / 120);
-        if (inf > 0) {
-          const push = inf * 30, nx = dx/(dist||1), ny = dy/(dist||1);
-          px += nx*push*0.3; py += ny*push*0.3; pz += inf*push*0.2;
+        if (dist < 120) {
+          const inf = 1 - dist / 120;
+          const nd = dist || 1;
+          proj.sx += dx/nd * inf * 9;
+          proj.sy += dy/nd * inf * 9;
         }
       }
-      const proj = project(px, py, pz);
       return { ...p, sx: proj.sx, sy: proj.sy, scale: proj.sc, depth: proj.depth };
     }).sort((a, b) => a.depth - b.depth);
 
