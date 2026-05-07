@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog — Automatización e IA para Empresas | EasyVora</title>
+  <meta name="description" content="Guías prácticas, casos de éxito y análisis sobre automatización de procesos e inteligencia artificial para empresas. EasyVora Blog." />
+  <meta property="og:title" content="Blog de Automatización e IA — EasyVora" />
+  <meta property="og:description" content="Guías prácticas y casos de éxito sobre automatización e IA para empresas hispanohablantes." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://easyvoraproyect.com/blog.html" />
+  <link rel="canonical" href="https://easyvoraproyect.com/blog.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: #04091A; color: rgba(255,255,255,.85); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    :root {
+      --blue: #2563EB; --sky: #60A5FA; --navy: #0F1F60;
+      --card: rgba(255,255,255,.03); --border: rgba(255,255,255,.08);
+      --muted: rgba(255,255,255,.42); --bg1: #04091A; --bg2: #060D22;
+    }
+
+    /* CURSOR */
+    @media (pointer:fine){ body { cursor: none; } }
+    @media (pointer:coarse){ #cur-dot, #cur-ring { display: none; } }
+    #cur-dot, #cur-ring { position: fixed; top: 0; left: 0; border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); }
+    #cur-dot  { width: 5px; height: 5px; background: var(--sky); }
+    #cur-ring { width: 34px; height: 34px; border: 1.5px solid rgba(96,165,250,.5); transition: width .15s, height .15s, border-color .15s, background .15s; }
+    #cur-ring.big   { width: 54px; height: 54px; border-color: rgba(96,165,250,.25); background: rgba(96,165,250,.05); }
+    #cur-ring.small { width: 20px; height: 20px; }
+
+    /* SCROLL PROGRESS */
+    #sbar { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--blue), var(--sky)); z-index: 1100; width: 0%; pointer-events: none; }
+
+    /* LAYOUT */
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 32px; }
+    .dot-bg { background-image: radial-gradient(rgba(255,255,255,.025) 1px, transparent 1px); background-size: 40px 40px; }
+
+    /* TYPE */
+    .grad {
+      background: linear-gradient(135deg, #fff 0%, var(--sky) 40%, #a5b4fc 70%, #fff 100%);
+      background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      animation: shimmer 5s ease infinite;
+    }
+    @keyframes shimmer { 0%,100%{ background-position: 0% 50% } 50%{ background-position: 100% 50% } }
+    .eyebrow { display: inline-flex; align-items: center; gap: 9px; font-size: 11px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--sky); margin-bottom: 20px; }
+    .eyebrow::before { content: ''; display: block; width: 20px; height: 1.5px; background: var(--sky); }
+
+    /* BUTTONS */
+    .btn { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; padding: 12px 24px; border-radius: 8px; border: none; cursor: none; text-decoration: none; transition: all .2s; font-family: 'Inter', sans-serif; white-space: nowrap; }
+    .btn svg { width: 15px; height: 15px; flex-shrink: 0; transition: transform .2s; }
+    .btn:hover svg { transform: translateX(4px); }
+    .btn-blue { background: var(--blue); color: #fff; box-shadow: 0 0 28px rgba(37,99,235,.4); }
+    .btn-blue:hover { box-shadow: 0 0 40px rgba(37,99,235,.6); transform: translateY(-1px); }
+    .btn-ghost { background: rgba(255,255,255,.05); color: #fff; border: 1px solid var(--border); }
+    .btn-ghost:hover { background: rgba(255,255,255,.09); transform: translateY(-1px); }
+
+    /* NAV */
+    #nav { position: fixed; top: 0; left: 0; right: 0; z-index: 900; background: rgba(4,9,26,.85); backdrop-filter: blur(18px); border-bottom: 1px solid var(--border); transition: box-shadow .3s; }
+    #nav.scrolled { box-shadow: 0 2px 40px rgba(0,0,0,.5); }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo img { height: 36px; width: auto; border-radius: 6px; }
+    .nav-logo-name { font-size: 17px; font-weight: 800; color: #fff; letter-spacing: -.02em; }
+    .nav-logo-sub  { font-size: 9px; font-weight: 600; letter-spacing: .1em; color: var(--sky); text-transform: uppercase; display: block; margin-top: 1px; }
+    .nav-links { display: flex; gap: 2px; }
+    .nav-links a { font-size: 13.5px; font-weight: 500; color: var(--muted); text-decoration: none; padding: 7px 13px; border-radius: 6px; transition: color .15s, background .15s; position: relative; }
+    .nav-links a::after { content: ''; position: absolute; bottom: 3px; left: 13px; right: 13px; height: 1px; background: var(--sky); transform: scaleX(0); transform-origin: left; transition: transform .22s; }
+    .nav-links a:hover, .nav-links a.active { color: #fff; }
+    .nav-links a:hover::after, .nav-links a.active::after { transform: scaleX(1); }
+    .nav-actions { display: flex; gap: 8px; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: none; padding: 6px; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: #fff; border-radius: 1px; transition: all .3s; }
+    #mob-menu { display: none; position: fixed; top: 64px; left: 0; right: 0; background: rgba(4,9,26,.97); border-bottom: 1px solid var(--border); z-index: 800; padding: 10px 20px 18px; flex-direction: column; }
+    #mob-menu a { display: block; padding: 10px 12px; color: var(--muted); font-size: 15px; font-weight: 500; text-decoration: none; border-radius: 6px; transition: all .15s; }
+    #mob-menu a:hover { color: #fff; background: rgba(255,255,255,.05); }
+
+    /* HERO */
+    .blog-hero { padding: 120px 0 64px; background: var(--bg2); position: relative; overflow: hidden; }
+    .blog-hero::before { content: ''; position: absolute; width: 700px; height: 700px; border-radius: 50%; background: radial-gradient(rgba(37,99,235,.12), transparent 70%); top: -250px; right: -150px; pointer-events: none; }
+    .blog-hero::after  { content: ''; position: absolute; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(rgba(96,165,250,.06), transparent 70%); bottom: -100px; left: -50px; pointer-events: none; }
+    .blog-hero-inner { position: relative; z-index: 1; max-width: 640px; }
+    .blog-hero h1 { font-size: clamp(40px,5.5vw,68px); font-weight: 800; line-height: 1.07; letter-spacing: -.03em; color: #fff; margin-bottom: 16px; }
+    .blog-hero p { font-size: 17px; color: var(--muted); line-height: 1.75; margin-bottom: 32px; max-width: 520px; }
+    .search-wrap { position: relative; max-width: 480px; }
+    .search-wrap svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,.3); width: 16px; height: 16px; pointer-events: none; }
+    #search-input { width: 100%; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 10px; padding: 13px 16px 13px 44px; font-size: 14px; color: #fff; font-family: 'Inter', sans-serif; outline: none; transition: border-color .2s, box-shadow .2s; }
+    #search-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
+    #search-input::placeholder { color: rgba(255,255,255,.25); }
+    .filters-wrap { padding: 36px 0 0; }
+    .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-btn { font-size: 13px; font-weight: 600; padding: 7px 18px; border-radius: 20px; border: 1px solid rgba(255,255,255,.1); background: transparent; color: rgba(255,255,255,.5); cursor: none; transition: all .2s; font-family: 'Inter', sans-serif; }
+    .filter-btn:hover { color: #fff; border-color: rgba(255,255,255,.28); }
+    .filter-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); box-shadow: 0 0 18px rgba(37,99,235,.4); }
+
+    /* BLOG GRID */
+    .blog-section { padding: 72px 0 96px; }
+    .featured-wrap { margin-bottom: 52px; }
+    .featured-card { display: grid; grid-template-columns: 1.45fr 1fr; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08); border-radius: 16px; overflow: hidden; transition: border-color .3s, box-shadow .3s, transform .3s; text-decoration: none; color: inherit; }
+    .featured-card:hover { border-color: rgba(96,165,250,.22); box-shadow: 0 24px 64px rgba(0,0,0,.4), 0 0 0 1px rgba(96,165,250,.08); transform: translateY(-3px); }
+    .featured-visual { position: relative; min-height: 300px; overflow: hidden; }
+    .featured-visual-inner { position: absolute; inset: 0; }
+    .featured-info { padding: 44px 40px; display: flex; flex-direction: column; justify-content: center; }
+    .featured-tag { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .featured-tag-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; background: rgba(37,99,235,.2); border: 1px solid rgba(37,99,235,.4); color: var(--sky); padding: 3px 9px; border-radius: 4px; }
+    .featured-info h2 { font-size: clamp(20px,2.3vw,25px); font-weight: 700; line-height: 1.28; color: #fff; margin-bottom: 14px; letter-spacing: -.02em; }
+    .featured-info > p { font-size: 14px; color: var(--muted); line-height: 1.75; margin-bottom: 20px; }
+    .art-meta-row { display: flex; align-items: center; gap: 10px; font-size: 12px; color: rgba(255,255,255,.32); margin-bottom: 24px; }
+    .art-meta-sep { opacity: .4; }
+
+    /* BADGES */
+    .badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 4px; letter-spacing: .02em; }
+    .badge-auto  { background: rgba(37,99,235,.18);  color: #93c5fd; border: 1px solid rgba(37,99,235,.3); }
+    .badge-ia    { background: rgba(124,58,237,.2);  color: #c4b5fd; border: 1px solid rgba(124,58,237,.3); }
+    .badge-chat  { background: rgba(5,150,105,.2);   color: #6ee7b7; border: 1px solid rgba(5,150,105,.3); }
+    .badge-exito { background: rgba(217,119,6,.2);   color: #fcd34d; border: 1px solid rgba(217,119,6,.3); }
+    .badge-guia  { background: rgba(8,145,178,.2);   color: #67e8f9; border: 1px solid rgba(8,145,178,.3); }
+
+    /* ARTICLE CARDS */
+    .cards-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+    .art-card { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; overflow: hidden; text-decoration: none; color: inherit; transition: border-color .3s, box-shadow .3s, transform .3s; display: flex; flex-direction: column; }
+    .art-card:hover { border-color: rgba(96,165,250,.2); box-shadow: 0 16px 48px rgba(0,0,0,.4); transform: translateY(-3px); }
+    .card-hero-img { height: 168px; position: relative; overflow: hidden; flex-shrink: 0; }
+    .card-hero-inner { position: absolute; inset: 0; }
+    .card-body { padding: 22px; display: flex; flex-direction: column; flex: 1; }
+    .card-body h3 { font-size: 15px; font-weight: 700; color: #fff; line-height: 1.42; margin: 10px 0 8px; letter-spacing: -.01em; }
+    .card-body > p { font-size: 13px; color: var(--muted); line-height: 1.65; flex: 1; margin-bottom: 16px; }
+    .card-meta { display: flex; align-items: center; gap: 10px; font-size: 12px; color: rgba(255,255,255,.32); margin-bottom: 14px; }
+    .card-read { font-size: 13px; font-weight: 600; color: var(--sky); display: inline-flex; align-items: center; gap: 6px; margin-top: auto; }
+    .card-read svg { width: 13px; height: 13px; transition: transform .2s; }
+    .art-card:hover .card-read svg { transform: translateX(4px); }
+
+    /* NEWSLETTER */
+    .newsletter-section { padding: 0 0 96px; }
+    .newsletter-box { background: linear-gradient(135deg, rgba(37,99,235,.1), rgba(15,31,96,.18)); border: 1px solid rgba(37,99,235,.22); border-radius: 16px; padding: 56px 48px; display: flex; align-items: center; justify-content: space-between; gap: 40px; position: relative; overflow: hidden; }
+    .newsletter-box::before { content: ''; position: absolute; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(rgba(37,99,235,.12), transparent 70%); right: -120px; top: -160px; pointer-events: none; }
+    .newsletter-text { max-width: 500px; position: relative; z-index: 1; }
+    .newsletter-text h2 { font-size: clamp(22px,2.8vw,32px); font-weight: 700; color: #fff; margin-bottom: 10px; letter-spacing: -.02em; }
+    .newsletter-text p { font-size: 15px; color: var(--muted); line-height: 1.7; }
+    .newsletter-form { display: flex; gap: 10px; position: relative; z-index: 1; flex-shrink: 0; }
+    .newsletter-input { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); border-radius: 8px; padding: 12px 18px; font-size: 14px; color: #fff; font-family: 'Inter', sans-serif; outline: none; transition: border-color .2s, box-shadow .2s; width: 260px; }
+    .newsletter-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
+    .newsletter-input::placeholder { color: rgba(255,255,255,.22); }
+    .newsletter-note { font-size: 11.5px; color: rgba(255,255,255,.28); margin-top: 10px; position: relative; z-index: 1; }
+
+    /* FOOTER */
+    footer { background: #020710; padding: 56px 0 28px; border-top: 1px solid var(--border); }
+    .ft-top { display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr; gap: 44px; padding-bottom: 44px; border-bottom: 1px solid var(--border); margin-bottom: 26px; }
+    .ft-name { font-size: 17px; font-weight: 800; color: #fff; letter-spacing: -.02em; margin-bottom: 9px; }
+    .ft-brand > p { font-size: 13.5px; color: rgba(255,255,255,.28); line-height: 1.7; max-width: 240px; margin-bottom: 20px; }
+    .ft-socials { display: flex; gap: 7px; }
+    .ft-social { width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.4); text-decoration: none; font-size: 12px; font-weight: 700; transition: all .18s; }
+    .ft-social:hover { border-color: var(--sky); color: var(--sky); }
+    .ft-col h5 { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 16px; }
+    .ft-col ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    .ft-col ul a { font-size: 13.5px; color: rgba(255,255,255,.28); text-decoration: none; transition: color .15s; }
+    .ft-col ul a:hover { color: #fff; }
+    .ft-bottom { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .ft-bottom p { font-size: 12.5px; color: rgba(255,255,255,.22); }
+    .ft-legal { display: flex; gap: 20px; }
+    .ft-legal a { font-size: 12.5px; color: rgba(255,255,255,.18); text-decoration: none; transition: color .15s; }
+    .ft-legal a:hover { color: rgba(255,255,255,.6); }
+
+    #no-results { display: none; text-align: center; padding: 64px 0; color: var(--muted); font-size: 16px; }
+
+    /* RESPONSIVE */
+    @media(max-width:1024px){
+      .cards-grid { grid-template-columns: repeat(2,1fr); }
+      .featured-card { grid-template-columns: 1fr; }
+      .featured-visual { min-height: 220px; }
+    }
+    @media(max-width:768px){
+      .container { padding: 0 20px; }
+      .nav-links, .nav-actions .btn-ghost { display: none; }
+      .hamburger { display: flex; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .newsletter-box { flex-direction: column; padding: 36px 24px; }
+      .newsletter-form { flex-direction: column; width: 100%; }
+      .newsletter-input { width: 100%; }
+      .ft-top { grid-template-columns: 1fr 1fr; gap: 28px; }
+    }
+    @media(max-width:480px){
+      .ft-top { grid-template-columns: 1fr; }
+      .blog-hero { padding: 100px 0 52px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="sbar"></div>
+  <div id="cur-dot"></div>
+  <div id="cur-ring"></div>
+
+  <nav id="nav">
+    <div class="container">
+      <div class="nav-inner">
+        <a href="index.html" class="nav-logo">
+          <img src="Logo.png" alt="EasyVora" onerror="this.style.display='none'" />
+          <div><span class="nav-logo-name">EasyVora</span><span class="nav-logo-sub">Automatización y IA</span></div>
+        </a>
+        <div class="nav-links">
+          <a href="index.html#servicios">Servicios</a>
+          <a href="index.html#proceso">Proceso</a>
+          <a href="index.html#chatbot">Chatbot IA</a>
+          <a href="index.html#porque">Nosotros</a>
+          <a href="index.html#contacto">Contacto</a>
+          <a href="blog.html" class="active">Blog</a>
+        </div>
+        <div class="nav-actions">
+          <a href="index.html#contacto" class="btn btn-ghost" style="padding:8px 16px;font-size:13px;">Contactar</a>
+          <a href="mailto:info@easyvoraproyect.com" class="btn btn-blue" style="padding:8px 16px;font-size:13px;">Solicitar información</a>
+        </div>
+        <button class="hamburger" onclick="toggleMob()" aria-label="Menú"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+  <div id="mob-menu">
+    <a href="index.html#servicios" onclick="toggleMob()">Servicios</a>
+    <a href="index.html#proceso" onclick="toggleMob()">Proceso</a>
+    <a href="index.html#chatbot" onclick="toggleMob()">Chatbot IA</a>
+    <a href="index.html#porque" onclick="toggleMob()">Nosotros</a>
+    <a href="index.html#contacto" onclick="toggleMob()">Contacto</a>
+    <a href="blog.html" onclick="toggleMob()">Blog</a>
+    <a href="mailto:info@easyvoraproyect.com" onclick="toggleMob()" class="btn btn-blue" style="margin-top:8px;justify-content:center;">Solicitar información</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="blog-hero dot-bg">
+    <div class="container">
+      <div class="blog-hero-inner">
+        <div class="eyebrow">Blog</div>
+        <h1>Recursos sobre<br/><span class="grad">IA y Automatización</span></h1>
+        <p>Guías prácticas, casos de éxito y análisis sobre cómo las empresas están usando la automatización e inteligencia artificial para trabajar mejor.</p>
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="search-input" type="search" placeholder="Buscar artículos…" oninput="filterArticles()" />
+        </div>
+      </div>
+      <div class="filters-wrap">
+        <div class="filters">
+          <button class="filter-btn active" data-cat="todos"            onclick="setFilter(this,'todos')">Todos</button>
+          <button class="filter-btn"        data-cat="Automatización"   onclick="setFilter(this,'Automatización')">Automatización</button>
+          <button class="filter-btn"        data-cat="IA Aplicada"      onclick="setFilter(this,'IA Aplicada')">IA Aplicada</button>
+          <button class="filter-btn"        data-cat="Chatbots"         onclick="setFilter(this,'Chatbots')">Chatbots</button>
+          <button class="filter-btn"        data-cat="Casos de éxito"   onclick="setFilter(this,'Casos de éxito')">Casos de éxito</button>
+          <button class="filter-btn"        data-cat="Guías prácticas"  onclick="setFilter(this,'Guías prácticas')">Guías prácticas</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOG GRID -->
+  <section class="blog-section">
+    <div class="container">
+
+      <!-- FEATURED -->
+      <div class="featured-wrap" id="featured-wrap">
+        <a href="blog/que-es-la-automatizacion-de-procesos.html" class="featured-card"
+           data-cat="Automatización"
+           data-title="qué es la automatización de procesos y por qué tu empresa la necesita automatización procesos empresa rpa flujos">
+          <div class="featured-visual">
+            <div class="featured-visual-inner" style="background:linear-gradient(135deg,#030c24,#07194d,#0d2878);">
+              <svg width="100%" height="100%" viewBox="0 0 560 310" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+                <circle cx="280" cy="155" r="40" fill="rgba(37,99,235,.35)" stroke="rgba(96,165,250,.7)" stroke-width="2"/>
+                <circle cx="280" cy="155" r="26" fill="rgba(37,99,235,.55)"/>
+                <path d="M268 148 L272 148 L272 152 Q275.5 153 278 155 L282 153 L285 156 L283 160 Q284 163 283 166 L285 170 L282 173 L278 171 Q275.5 173 272 174 L272 178 L264 178 L264 174 Q260.5 173 258 171 L254 173 L251 170 L253 166 Q252 163 253 160 L251 156 L254 153 L258 155 Q260.5 153 264 152 L264 148 Z" fill="none" stroke="rgba(96,165,250,.95)" stroke-width="1.8"/>
+                <circle cx="280" cy="162" r="6" fill="rgba(96,165,250,.95)"/>
+                <line x1="280" y1="115" x2="130" y2="72" stroke="rgba(96,165,250,.28)" stroke-width="1.5" stroke-dasharray="5 4"/>
+                <line x1="280" y1="115" x2="430" y2="72" stroke="rgba(96,165,250,.28)" stroke-width="1.5" stroke-dasharray="5 4"/>
+                <line x1="280" y1="195" x2="130" y2="238" stroke="rgba(96,165,250,.28)" stroke-width="1.5" stroke-dasharray="5 4"/>
+                <line x1="280" y1="195" x2="430" y2="238" stroke="rgba(96,165,250,.28)" stroke-width="1.5" stroke-dasharray="5 4"/>
+                <line x1="130" y1="72" x2="430" y2="72" stroke="rgba(96,165,250,.12)" stroke-width="1" stroke-dasharray="3 6"/>
+                <line x1="130" y1="238" x2="430" y2="238" stroke="rgba(96,165,250,.12)" stroke-width="1" stroke-dasharray="3 6"/>
+                <circle cx="130" cy="72"  r="22" fill="rgba(37,99,235,.2)" stroke="rgba(96,165,250,.5)" stroke-width="1.5"/>
+                <circle cx="430" cy="72"  r="22" fill="rgba(37,99,235,.2)" stroke="rgba(96,165,250,.5)" stroke-width="1.5"/>
+                <circle cx="130" cy="238" r="22" fill="rgba(37,99,235,.2)" stroke="rgba(96,165,250,.5)" stroke-width="1.5"/>
+                <circle cx="430" cy="238" r="22" fill="rgba(37,99,235,.2)" stroke="rgba(96,165,250,.5)" stroke-width="1.5"/>
+                <circle cx="60"  cy="155" r="14" fill="rgba(37,99,235,.15)" stroke="rgba(96,165,250,.3)" stroke-width="1"/>
+                <circle cx="500" cy="155" r="14" fill="rgba(37,99,235,.15)" stroke="rgba(96,165,250,.3)" stroke-width="1"/>
+                <line x1="280" y1="115" x2="280" y2="55"  stroke="rgba(96,165,250,.2)" stroke-width="1" stroke-dasharray="3 5"/>
+                <line x1="280" y1="195" x2="280" y2="255" stroke="rgba(96,165,250,.2)" stroke-width="1" stroke-dasharray="3 5"/>
+                <circle cx="185" cy="100" r="4" fill="rgba(96,165,250,.25)"/>
+                <circle cx="375" cy="100" r="4" fill="rgba(96,165,250,.25)"/>
+                <circle cx="185" cy="210" r="4" fill="rgba(96,165,250,.25)"/>
+                <circle cx="375" cy="210" r="4" fill="rgba(96,165,250,.25)"/>
+              </svg>
+            </div>
+          </div>
+          <div class="featured-info">
+            <div class="featured-tag">
+              <span class="featured-tag-label">Destacado</span>
+              <span class="badge badge-auto">Automatización</span>
+            </div>
+            <h2>Qué es la automatización de procesos y por qué tu empresa la necesita</h2>
+            <p>Muchas empresas pierden horas diarias en tareas repetitivas que una máquina podría hacer mejor y más rápido. Te explicamos qué es la automatización, qué tipos existen y cómo calcular el ROI real.</p>
+            <div class="art-meta-row">
+              <span>15 Abr 2025</span>
+              <span class="art-meta-sep">·</span>
+              <span>6 min de lectura</span>
+            </div>
+            <a href="blog/que-es-la-automatizacion-de-procesos.html" class="btn btn-blue" style="align-self:flex-start;">
+              Leer artículo
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+            </a>
+          </div>
+        </a>
+      </div>
+
+      <!-- GRID 5 CARDS -->
+      <div class="cards-grid" id="cards-grid">
+
+        <!-- Card: Chatbot WhatsApp -->
+        <a href="blog/chatbot-whatsapp-reduce-ausencias.html" class="art-card"
+           data-cat="Chatbots"
+           data-title="cómo un chatbot de whatsapp puede reducir las ausencias en tu negocio un 40% chatbot bot recordatorios citas">
+          <div class="card-hero-img">
+            <div class="card-hero-inner" style="background:linear-gradient(135deg,#011a10,#033d22,#045930);">
+              <svg width="100%" height="100%" viewBox="0 0 320 168" fill="none" style="position:absolute;inset:0;" preserveAspectRatio="xMidYMid slice">
+                <rect x="110" y="14" width="88" height="140" rx="13" fill="none" stroke="rgba(110,231,183,.28)" stroke-width="1.5"/>
+                <rect x="117" y="24" width="74" height="120" rx="8" fill="rgba(5,150,105,.1)"/>
+                <rect x="125" y="36" width="50" height="16" rx="8" fill="rgba(5,150,105,.45)"/>
+                <rect x="125" y="57" width="38" height="13" rx="6" fill="rgba(255,255,255,.1)"/>
+                <rect x="125" y="75" width="55" height="16" rx="8" fill="rgba(5,150,105,.45)"/>
+                <rect x="125" y="96" width="42" height="13" rx="6" fill="rgba(255,255,255,.1)"/>
+                <rect x="125" y="114" width="48" height="16" rx="8" fill="rgba(5,150,105,.45)"/>
+                <path d="M78 84 Q94 68 109 84" stroke="rgba(110,231,183,.45)" stroke-width="2" fill="none"/>
+                <path d="M67 84 Q94 55 121 84" stroke="rgba(110,231,183,.28)" stroke-width="1.5" fill="none"/>
+                <path d="M87 84 Q94 78 101 84" stroke="rgba(110,231,183,.65)" stroke-width="2.5" fill="none"/>
+                <circle cx="235" cy="84" r="26" fill="rgba(5,150,105,.18)" stroke="rgba(110,231,183,.42)" stroke-width="1.5"/>
+                <path d="M224 84 L231 91 L246 74" stroke="rgba(110,231,183,.95)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <circle cx="60" cy="130" r="6" fill="rgba(110,231,183,.15)" stroke="rgba(110,231,183,.3)" stroke-width="1"/>
+                <circle cx="260" cy="40" r="5" fill="rgba(110,231,183,.12)" stroke="rgba(110,231,183,.25)" stroke-width="1"/>
+              </svg>
+            </div>
+          </div>
+          <div class="card-body">
+            <span class="badge badge-chat">Chatbots</span>
+            <h3>Cómo un chatbot de WhatsApp puede reducir las ausencias un 40%</h3>
+            <p>Las ausencias no avisadas son uno de los mayores costes ocultos de un negocio. Descubre cómo automatizar los recordatorios con IA.</p>
+            <div class="card-meta"><span>22 Abr 2025</span><span class="art-meta-sep">·</span><span>5 min</span></div>
+            <span class="card-read">Leer artículo <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+          </div>
+        </a>
+
+        <!-- Card: IA PYMEs -->
+        <a href="blog/ia-aplicada-pymes-casos-reales.html" class="art-card"
+           data-cat="IA Aplicada"
+           data-title="ia aplicada a pymes casos reales sin necesidad de grandes inversiones inteligencia artificial pequeña empresa">
+          <div class="card-hero-img">
+            <div class="card-hero-inner" style="background:linear-gradient(135deg,#130828,#22105a,#2e1278);">
+              <svg width="100%" height="100%" viewBox="0 0 320 168" fill="none" style="position:absolute;inset:0;" preserveAspectRatio="xMidYMid slice">
+                <circle cx="60"  cy="56"  r="9" fill="rgba(167,139,250,.3)"  stroke="rgba(196,181,253,.55)" stroke-width="1.5"/>
+                <circle cx="60"  cy="84"  r="9" fill="rgba(167,139,250,.3)"  stroke="rgba(196,181,253,.55)" stroke-width="1.5"/>
+                <circle cx="60"  cy="112" r="9" fill="rgba(167,139,250,.3)"  stroke="rgba(196,181,253,.55)" stroke-width="1.5"/>
+                <circle cx="133" cy="44"  r="9" fill="rgba(124,58,237,.45)"  stroke="rgba(196,181,253,.65)" stroke-width="1.5"/>
+                <circle cx="133" cy="70"  r="9" fill="rgba(124,58,237,.45)"  stroke="rgba(196,181,253,.65)" stroke-width="1.5"/>
+                <circle cx="133" cy="98"  r="9" fill="rgba(124,58,237,.45)"  stroke="rgba(196,181,253,.65)" stroke-width="1.5"/>
+                <circle cx="133" cy="124" r="9" fill="rgba(124,58,237,.45)"  stroke="rgba(196,181,253,.65)" stroke-width="1.5"/>
+                <circle cx="206" cy="56"  r="9" fill="rgba(124,58,237,.55)"  stroke="rgba(196,181,253,.75)" stroke-width="1.5"/>
+                <circle cx="206" cy="84"  r="9" fill="rgba(124,58,237,.55)"  stroke="rgba(196,181,253,.75)" stroke-width="1.5"/>
+                <circle cx="206" cy="112" r="9" fill="rgba(124,58,237,.55)"  stroke="rgba(196,181,253,.75)" stroke-width="1.5"/>
+                <circle cx="272" cy="70"  r="12" fill="rgba(167,139,250,.65)" stroke="rgba(216,180,254,.9)"  stroke-width="2"/>
+                <circle cx="272" cy="100" r="12" fill="rgba(167,139,250,.65)" stroke="rgba(216,180,254,.9)"  stroke-width="2"/>
+                <line x1="69" y1="56" x2="124" y2="44"  stroke="rgba(196,181,253,.14)" stroke-width="1"/>
+                <line x1="69" y1="56" x2="124" y2="70"  stroke="rgba(196,181,253,.14)" stroke-width="1"/>
+                <line x1="69" y1="84" x2="124" y2="70"  stroke="rgba(196,181,253,.18)" stroke-width="1"/>
+                <line x1="69" y1="84" x2="124" y2="98"  stroke="rgba(196,181,253,.14)" stroke-width="1"/>
+                <line x1="69" y1="112" x2="124" y2="98" stroke="rgba(196,181,253,.14)" stroke-width="1"/>
+                <line x1="69" y1="112" x2="124" y2="124" stroke="rgba(196,181,253,.14)" stroke-width="1"/>
+                <line x1="142" y1="44"  x2="197" y2="56"  stroke="rgba(196,181,253,.16)" stroke-width="1"/>
+                <line x1="142" y1="70"  x2="197" y2="56"  stroke="rgba(196,181,253,.14)" stroke-width="1"/>
+                <line x1="142" y1="70"  x2="197" y2="84"  stroke="rgba(196,181,253,.18)" stroke-width="1"/>
+                <line x1="142" y1="98"  x2="197" y2="84"  stroke="rgba(196,181,253,.14)" stroke-width="1"/>
+                <line x1="142" y1="98"  x2="197" y2="112" stroke="rgba(196,181,253,.16)" stroke-width="1"/>
+                <line x1="142" y1="124" x2="197" y2="112" stroke="rgba(196,181,253,.14)" stroke-width="1"/>
+                <line x1="215" y1="56"  x2="260" y2="70"  stroke="rgba(196,181,253,.26)" stroke-width="1.5"/>
+                <line x1="215" y1="84"  x2="260" y2="70"  stroke="rgba(196,181,253,.2)"  stroke-width="1"/>
+                <line x1="215" y1="84"  x2="260" y2="100" stroke="rgba(196,181,253,.2)"  stroke-width="1"/>
+                <line x1="215" y1="112" x2="260" y2="100" stroke="rgba(196,181,253,.26)" stroke-width="1.5"/>
+              </svg>
+            </div>
+          </div>
+          <div class="card-body">
+            <span class="badge badge-ia">IA Aplicada</span>
+            <h3>IA aplicada a PYMEs: casos reales sin necesidad de grandes inversiones</h3>
+            <p>La IA ya no es solo para grandes corporaciones. Descubre cómo PYMEs están ahorrando tiempo y dinero con implementaciones asequibles.</p>
+            <div class="card-meta"><span>29 Abr 2025</span><span class="art-meta-sep">·</span><span>7 min</span></div>
+            <span class="card-read">Leer artículo <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+          </div>
+        </a>
+
+        <!-- Card: HubSpot -->
+        <a href="blog/automatizar-seguimiento-clientes-hubspot.html" class="art-card"
+           data-cat="Casos de éxito"
+           data-title="cómo automatizar el seguimiento de clientes en hubspot con ia crm ventas leads">
+          <div class="card-hero-img">
+            <div class="card-hero-inner" style="background:linear-gradient(135deg,#040f2c,#071c52,#0b2568);">
+              <svg width="100%" height="100%" viewBox="0 0 320 168" fill="none" style="position:absolute;inset:0;" preserveAspectRatio="xMidYMid slice">
+                <rect x="28" y="52" width="46" height="64" rx="4" fill="rgba(37,99,235,.28)" stroke="rgba(96,165,250,.42)" stroke-width="1.5"/>
+                <text x="51" y="79" text-anchor="middle" fill="rgba(255,255,255,.75)" font-size="14" font-weight="700" font-family="Inter,sans-serif">48</text>
+                <text x="51" y="93" text-anchor="middle" fill="rgba(96,165,250,.85)" font-size="9" font-family="Inter,sans-serif">Leads</text>
+                <path d="M76 84 L96 84" stroke="rgba(96,165,250,.45)" stroke-width="2"/>
+                <polygon points="94,80 100,84 94,88" fill="rgba(96,165,250,.45)"/>
+                <rect x="100" y="58" width="46" height="52" rx="4" fill="rgba(37,99,235,.35)" stroke="rgba(96,165,250,.52)" stroke-width="1.5"/>
+                <text x="123" y="82" text-anchor="middle" fill="rgba(255,255,255,.75)" font-size="14" font-weight="700" font-family="Inter,sans-serif">31</text>
+                <text x="123" y="97" text-anchor="middle" fill="rgba(96,165,250,.85)" font-size="9" font-family="Inter,sans-serif">Califi.</text>
+                <path d="M148 84 L168 84" stroke="rgba(96,165,250,.45)" stroke-width="2"/>
+                <polygon points="166,80 172,84 166,88" fill="rgba(96,165,250,.45)"/>
+                <rect x="172" y="64" width="46" height="40" rx="4" fill="rgba(37,99,235,.45)" stroke="rgba(96,165,250,.62)" stroke-width="1.5"/>
+                <text x="195" y="85" text-anchor="middle" fill="rgba(255,255,255,.75)" font-size="14" font-weight="700" font-family="Inter,sans-serif">18</text>
+                <text x="195" y="97" text-anchor="middle" fill="rgba(96,165,250,.85)" font-size="8" font-family="Inter,sans-serif">Propuesta</text>
+                <path d="M220 84 L240 84" stroke="rgba(96,165,250,.45)" stroke-width="2"/>
+                <polygon points="238,80 244,84 238,88" fill="rgba(96,165,250,.45)"/>
+                <rect x="244" y="70" width="46" height="28" rx="4" fill="rgba(37,99,235,.65)" stroke="rgba(96,165,250,.85)" stroke-width="2"/>
+                <text x="267" y="87" text-anchor="middle" fill="rgba(255,255,255,.9)" font-size="12" font-weight="700" font-family="Inter,sans-serif">✓ 9</text>
+                <rect x="98" y="124" width="124" height="20" rx="6" fill="rgba(37,99,235,.2)" stroke="rgba(96,165,250,.28)" stroke-width="1"/>
+                <text x="160" y="138" text-anchor="middle" fill="rgba(96,165,250,.85)" font-size="9" font-family="Inter,sans-serif">IA · Seguimiento automático</text>
+              </svg>
+            </div>
+          </div>
+          <div class="card-body">
+            <span class="badge badge-exito">Casos de éxito</span>
+            <h3>Cómo automatizar el seguimiento de clientes en HubSpot con IA</h3>
+            <p>Integrar IA en HubSpot puede multiplicar por 3 la tasa de seguimiento sin aumentar el equipo de ventas. Te contamos cómo funciona.</p>
+            <div class="card-meta"><span>5 May 2025</span><span class="art-meta-sep">·</span><span>6 min</span></div>
+            <span class="card-read">Leer artículo <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+          </div>
+        </a>
+
+        <!-- Card: RPA -->
+        <a href="blog/rpa-vs-automatizacion-tradicional.html" class="art-card"
+           data-cat="Guías prácticas"
+           data-title="rpa vs automatización tradicional cuál elegir para tu empresa comparativa guía">
+          <div class="card-hero-img">
+            <div class="card-hero-inner" style="background:linear-gradient(135deg,#011618,#02292c,#033840);">
+              <svg width="100%" height="100%" viewBox="0 0 320 168" fill="none" style="position:absolute;inset:0;" preserveAspectRatio="xMidYMid slice">
+                <line x1="160" y1="16" x2="160" y2="152" stroke="rgba(103,232,249,.18)" stroke-width="1" stroke-dasharray="4 4"/>
+                <text x="80" y="44" text-anchor="middle" fill="rgba(103,232,249,.72)" font-size="15" font-weight="700" font-family="Inter,sans-serif">RPA</text>
+                <rect x="38" y="56" width="84" height="15" rx="3" fill="rgba(8,145,178,.22)" stroke="rgba(103,232,249,.32)" stroke-width="1"/>
+                <text x="80" y="68" text-anchor="middle" fill="rgba(255,255,255,.62)" font-size="9.5" font-family="Inter,sans-serif">Sin código</text>
+                <rect x="38" y="76" width="84" height="15" rx="3" fill="rgba(8,145,178,.22)" stroke="rgba(103,232,249,.32)" stroke-width="1"/>
+                <text x="80" y="88" text-anchor="middle" fill="rgba(255,255,255,.62)" font-size="9.5" font-family="Inter,sans-serif">Deploy rápido</text>
+                <rect x="38" y="96" width="84" height="15" rx="3" fill="rgba(8,145,178,.22)" stroke="rgba(103,232,249,.32)" stroke-width="1"/>
+                <text x="80" y="108" text-anchor="middle" fill="rgba(255,255,255,.62)" font-size="9.5" font-family="Inter,sans-serif">UI-based</text>
+                <rect x="38" y="116" width="84" height="15" rx="3" fill="rgba(8,145,178,.22)" stroke="rgba(103,232,249,.32)" stroke-width="1"/>
+                <text x="80" y="128" text-anchor="middle" fill="rgba(255,255,255,.62)" font-size="9.5" font-family="Inter,sans-serif">Menor coste inicial</text>
+                <text x="240" y="44" text-anchor="middle" fill="rgba(96,165,250,.72)" font-size="12" font-weight="700" font-family="Inter,sans-serif">Tradicional</text>
+                <rect x="198" y="56" width="84" height="15" rx="3" fill="rgba(37,99,235,.18)" stroke="rgba(96,165,250,.32)" stroke-width="1"/>
+                <text x="240" y="68" text-anchor="middle" fill="rgba(255,255,255,.62)" font-size="9.5" font-family="Inter,sans-serif">Más control</text>
+                <rect x="198" y="76" width="84" height="15" rx="3" fill="rgba(37,99,235,.18)" stroke="rgba(96,165,250,.32)" stroke-width="1"/>
+                <text x="240" y="88" text-anchor="middle" fill="rgba(255,255,255,.62)" font-size="9.5" font-family="Inter,sans-serif">Más escalable</text>
+                <rect x="198" y="96" width="84" height="15" rx="3" fill="rgba(37,99,235,.18)" stroke="rgba(96,165,250,.32)" stroke-width="1"/>
+                <text x="240" y="108" text-anchor="middle" fill="rgba(255,255,255,.62)" font-size="9.5" font-family="Inter,sans-serif">API nativa</text>
+                <rect x="198" y="116" width="84" height="15" rx="3" fill="rgba(37,99,235,.18)" stroke="rgba(96,165,250,.32)" stroke-width="1"/>
+                <text x="240" y="128" text-anchor="middle" fill="rgba(255,255,255,.62)" font-size="9.5" font-family="Inter,sans-serif">Mantenimiento técnico</text>
+                <circle cx="160" cy="84" r="16" fill="rgba(6,13,34,.92)" stroke="rgba(103,232,249,.32)" stroke-width="1.5"/>
+                <text x="160" y="89" text-anchor="middle" fill="rgba(255,255,255,.82)" font-size="12" font-weight="700" font-family="Inter,sans-serif">VS</text>
+              </svg>
+            </div>
+          </div>
+          <div class="card-body">
+            <span class="badge badge-guia">Guías prácticas</span>
+            <h3>RPA vs automatización tradicional: cuál elegir para tu empresa</h3>
+            <p>Dos enfoques con resultados distintos. Te ayudamos a elegir el que mejor encaja con tu situación y tus objetivos de negocio.</p>
+            <div class="card-meta"><span>10 May 2025</span><span class="art-meta-sep">·</span><span>8 min</span></div>
+            <span class="card-read">Leer artículo <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+          </div>
+        </a>
+
+        <!-- Card: Análisis de procesos -->
+        <a href="blog/analisis-de-procesos-primer-paso.html" class="art-card"
+           data-cat="Guías prácticas"
+           data-title="análisis de procesos el primer paso antes de automatizar cualquier cosa metodología diagnóstico">
+          <div class="card-hero-img">
+            <div class="card-hero-inner" style="background:linear-gradient(135deg,#020a20,#060f2e,#09163a);">
+              <svg width="100%" height="100%" viewBox="0 0 320 168" fill="none" style="position:absolute;inset:0;" preserveAspectRatio="xMidYMid slice">
+                <rect x="118" y="14" width="84" height="26" rx="13" fill="rgba(37,99,235,.42)" stroke="rgba(96,165,250,.55)" stroke-width="1.5"/>
+                <text x="160" y="32" text-anchor="middle" fill="rgba(255,255,255,.88)" font-size="11" font-weight="600" font-family="Inter,sans-serif">Inicio</text>
+                <line x1="160" y1="40" x2="160" y2="55" stroke="rgba(96,165,250,.42)" stroke-width="1.5"/>
+                <polygon points="156,53 160,60 164,53" fill="rgba(96,165,250,.42)"/>
+                <rect x="108" y="60" width="104" height="26" rx="4" fill="rgba(37,99,235,.22)" stroke="rgba(96,165,250,.42)" stroke-width="1.5"/>
+                <text x="160" y="77" text-anchor="middle" fill="rgba(255,255,255,.78)" font-size="10" font-family="Inter,sans-serif">Mapear procesos</text>
+                <line x1="160" y1="86" x2="160" y2="100" stroke="rgba(96,165,250,.42)" stroke-width="1.5"/>
+                <polygon points="156,98 160,105 164,98" fill="rgba(96,165,250,.42)"/>
+                <polygon points="160,105 196,117 160,129 124,117" fill="rgba(37,99,235,.2)" stroke="rgba(96,165,250,.52)" stroke-width="1.5"/>
+                <text x="160" y="121" text-anchor="middle" fill="rgba(255,255,255,.72)" font-size="9" font-family="Inter,sans-serif">¿Automatizable?</text>
+                <line x1="124" y1="117" x2="78" y2="117" stroke="rgba(96,165,250,.32)" stroke-width="1.5"/>
+                <rect x="40" y="105" width="38" height="24" rx="4" fill="rgba(239,68,68,.12)" stroke="rgba(252,165,165,.28)" stroke-width="1"/>
+                <text x="59" y="121" text-anchor="middle" fill="rgba(252,165,165,.72)" font-size="9" font-family="Inter,sans-serif">Optimizar</text>
+                <text x="103" y="113" text-anchor="middle" fill="rgba(252,165,165,.55)" font-size="8" font-family="Inter,sans-serif">No</text>
+                <line x1="160" y1="129" x2="160" y2="142" stroke="rgba(96,165,250,.42)" stroke-width="1.5"/>
+                <polygon points="156,140 160,147 164,140" fill="rgba(96,165,250,.42)"/>
+                <rect x="108" y="147" width="104" height="20" rx="4" fill="rgba(37,99,235,.52)" stroke="rgba(96,165,250,.72)" stroke-width="1.5"/>
+                <text x="160" y="161" text-anchor="middle" fill="rgba(255,255,255,.9)" font-size="10" font-weight="600" font-family="Inter,sans-serif">Automatizar ✓</text>
+                <text x="167" y="140" fill="rgba(110,231,183,.6)" font-size="8" font-family="Inter,sans-serif">Sí</text>
+              </svg>
+            </div>
+          </div>
+          <div class="card-body">
+            <span class="badge badge-guia">Guías prácticas</span>
+            <h3>Análisis de procesos: el primer paso antes de automatizar cualquier cosa</h3>
+            <p>Automatizar sin analizar primero es construir sin cimientos. Aprende la metodología que usamos en EasyVora para diagnosticar antes de actuar.</p>
+            <div class="card-meta"><span>14 May 2025</span><span class="art-meta-sep">·</span><span>7 min</span></div>
+            <span class="card-read">Leer artículo <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+          </div>
+        </a>
+
+      </div><!-- /cards-grid -->
+      <div id="no-results">No se encontraron artículos para tu búsqueda.</div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="newsletter-section">
+    <div class="container">
+      <div class="newsletter-box">
+        <div class="newsletter-text">
+          <div class="eyebrow">Newsletter</div>
+          <h2>Recibe contenido práctico<br/><span class="grad">cada dos semanas</span></h2>
+          <p>Guías, casos de uso y novedades sobre automatización e IA para empresas. Sin spam. Solo lo que te sea útil.</p>
+          <div class="newsletter-note">✓ Puedes darte de baja en cualquier momento</div>
+        </div>
+        <div style="position:relative;z-index:1;flex-shrink:0;">
+          <form class="newsletter-form" onsubmit="handleNewsletter(event)" style="display:flex;gap:10px;flex-wrap:wrap;">
+            <input type="email" class="newsletter-input" placeholder="tu@empresa.com" required />
+            <button type="submit" class="btn btn-blue">
+              Suscribirme
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="ft-top">
+        <div class="ft-brand">
+          <div class="ft-name">EasyVora</div>
+          <p>Inteligencia artificial y automatización para empresas que quieren trabajar mejor.</p>
+          <div class="ft-socials">
+            <a href="#" class="ft-social" aria-label="LinkedIn">in</a>
+            <a href="#" class="ft-social" aria-label="Instagram">ig</a>
+            <a href="#" class="ft-social" aria-label="WhatsApp">wa</a>
+          </div>
+        </div>
+        <div class="ft-col"><h5>Servicios</h5><ul>
+          <li><a href="index.html#servicios">IA Aplicada</a></li>
+          <li><a href="index.html#servicios">Automatización</a></li>
+          <li><a href="index.html#servicios">Análisis de Procesos</a></li>
+          <li><a href="index.html#chatbot">Chatbot WhatsApp</a></li>
+        </ul></div>
+        <div class="ft-col"><h5>Empresa</h5><ul>
+          <li><a href="index.html#proceso">Cómo trabajamos</a></li>
+          <li><a href="index.html#porque">Por qué EasyVora</a></li>
+          <li><a href="index.html#contacto">Contacto</a></li>
+          <li><a href="blog.html">Blog</a></li>
+        </ul></div>
+        <div class="ft-col"><h5>Contacto</h5><ul>
+          <li><a href="mailto:info@easyvoraproyect.com">info@easyvoraproyect.com</a></li>
+          <li><a href="index.html#contacto">Formulario</a></li>
+        </ul></div>
+      </div>
+      <div class="ft-bottom">
+        <p>© 2025 EasyVora · Automatización y Servicios de IA</p>
+        <div class="ft-legal">
+          <a href="privacidad.html">Privacidad</a>
+          <a href="aviso-legal.html">Aviso legal</a>
+          <a href="cookies.html">Cookies</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* CURSOR */
+    if (matchMedia('(pointer:fine)').matches) {
+      const dot = document.getElementById('cur-dot'), ring = document.getElementById('cur-ring');
+      let mx = 0, my = 0, rx = 0, ry = 0;
+      document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; dot.style.left = mx + 'px'; dot.style.top = my + 'px'; });
+      document.addEventListener('mousedown', () => ring.classList.add('small'));
+      document.addEventListener('mouseup',   () => ring.classList.remove('small'));
+      (function lerpRing() { rx += (mx - rx) * .45; ry += (my - ry) * .45; ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; requestAnimationFrame(lerpRing); })();
+      document.querySelectorAll('a, button, .art-card, .featured-card, .filter-btn').forEach(el => {
+        el.addEventListener('mouseenter', () => ring.classList.add('big'));
+        el.addEventListener('mouseleave', () => ring.classList.remove('big'));
+      });
+    }
+
+    /* NAV SCROLL */
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      document.getElementById('sbar').style.width = (scrollY / (document.body.scrollHeight - innerHeight) * 100) + '%';
+      nav.classList.toggle('scrolled', scrollY > 20);
+    }, { passive: true });
+
+    function toggleMob() {
+      const m = document.getElementById('mob-menu');
+      m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    /* FILTER + SEARCH */
+    let activeFilter = 'todos';
+
+    function setFilter(btn, cat) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = cat;
+      filterArticles();
+    }
+
+    function filterArticles() {
+      const q = document.getElementById('search-input').value.toLowerCase().trim();
+      const cards = [...document.querySelectorAll('#cards-grid .art-card')];
+      const featuredWrap = document.getElementById('featured-wrap');
+      const fCard = featuredWrap.querySelector('.featured-card');
+
+      const fMatch = (activeFilter === 'todos' || fCard.dataset.cat === activeFilter) &&
+                     (!q || fCard.dataset.title.includes(q));
+      featuredWrap.style.display = fMatch ? '' : 'none';
+
+      let visible = 0;
+      cards.forEach(c => {
+        const catOk  = activeFilter === 'todos' || c.dataset.cat === activeFilter;
+        const textOk = !q || c.dataset.title.includes(q);
+        const show   = catOk && textOk;
+        c.style.display = show ? 'flex' : 'none';
+        if (show) visible++;
+      });
+
+      document.getElementById('no-results').style.display = (!fMatch && visible === 0) ? 'block' : 'none';
+    }
+
+    /* NEWSLETTER */
+    function handleNewsletter(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('button');
+      const orig = btn.innerHTML;
+      btn.textContent = '¡Suscrito! ✓';
+      btn.style.background = '#059669';
+      btn.style.boxShadow = '0 0 24px rgba(5,150,105,.5)';
+      setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; btn.style.boxShadow = ''; }, 3500);
+    }
+  </script>
+</body>
+</html>
